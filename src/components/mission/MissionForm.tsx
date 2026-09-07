@@ -15,6 +15,14 @@ import {
   NavigationPriority,
   ForecastHorizon,
 } from '@/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 interface MissionFormProps {
   onSubmit: (config: MissionConfig) => void;
@@ -81,25 +89,25 @@ export const MissionForm: React.FC<MissionFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="polar-panel p-5 space-y-5">
+    <form onSubmit={handleSubmit} className="bg-white border border-slate-200/90 rounded-xl p-5 sm:p-6 space-y-5 shadow-xs">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-polar-700/60">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-ice-500/10 border border-ice-500/30 text-ice-400">
+      <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-lg bg-sky-50 border border-sky-200 text-sky-600 shadow-2xs">
             <Compass className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-slate-100">
+            <h3 className="text-sm sm:text-base font-bold font-sans text-slate-900">
               Expedition Parameters & Constraints
             </h3>
-            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-              Antarctic Navigation Request Configuration
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-semibold">
+              Antarctic High-Latitude Route Request
             </span>
           </div>
         </div>
 
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-polar-800 text-ice-300 border border-polar-700">
-          MISSION DECK
+        <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-md bg-sky-50 border border-sky-200 text-sky-800 shadow-2xs">
+          CONFIG DECK
         </span>
       </div>
 
@@ -107,53 +115,61 @@ export const MissionForm: React.FC<MissionFormProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Vessel Choice */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-            <Ship className="w-3.5 h-3.5 text-ice-400" />
+          <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+            <Ship className="w-3.5 h-3.5 text-sky-600" />
             Vessel Profile
           </label>
-          <select
+          <Select
             value={vessel}
-            onChange={(e) => setVessel(e.target.value as MissionConfig['vessel'])}
-            className="w-full bg-polar-900 border border-polar-700 rounded-md px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+            onValueChange={(val) => setVessel(val as MissionConfig['vessel'])}
           >
-            <option value="Polar Research Vessel">Polar Research Vessel (R/V Sentinel)</option>
-            <option value="Research Vessel Alpha">Research Vessel Alpha</option>
-            <option value="Ice-Class Supply Vessel">Ice-Class Supply Vessel</option>
-          </select>
+            <SelectTrigger className="bg-white border-slate-200 text-slate-800">
+              <SelectValue placeholder="Select vessel" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Polar Research Vessel">Polar Research Vessel (R/V Sentinel)</SelectItem>
+              <SelectItem value="Research Vessel Alpha">Research Vessel Alpha</SelectItem>
+              <SelectItem value="Ice-Class Supply Vessel">Ice-Class Supply Vessel</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Polar Capability (PC1 - PC7) */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-emerald-400" />
+          <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-emerald-600" />
             Polar Class Capability
           </label>
-          <select
+          <Select
             value={polarCapability}
-            onChange={(e) => setPolarCapability(e.target.value as PolarCapability)}
-            className="w-full bg-polar-900 border border-polar-700 rounded-md px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+            onValueChange={(val) => setPolarCapability(val as PolarCapability)}
           >
-            <option value="PC1">PC1 — Year-round all polar waters</option>
-            <option value="PC2">PC2 — Year-round moderate multi-year ice</option>
-            <option value="PC3">PC3 — Year-round thick first-year ice</option>
-            <option value="PC4">PC4 — Year-round thick first-year with old ice</option>
-            <option value="PC5">PC5 — Year-round medium first-year ice</option>
-            <option value="PC6">PC6 — Summer/autumn medium first-year ice</option>
-            <option value="PC7">PC7 — Summer/autumn thin first-year ice</option>
-          </select>
+            <SelectTrigger className="bg-white border-slate-200 text-slate-800">
+              <SelectValue placeholder="Select Polar Class" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="PC1">PC1 — Year-round all polar waters</SelectItem>
+              <SelectItem value="PC2">PC2 — Year-round moderate multi-year ice</SelectItem>
+              <SelectItem value="PC3">PC3 — Year-round thick first-year ice</SelectItem>
+              <SelectItem value="PC4">PC4 — Year-round thick first-year with old ice</SelectItem>
+              <SelectItem value="PC5">PC5 — Year-round medium first-year ice</SelectItem>
+              <SelectItem value="PC6">PC6 — Summer/autumn medium first-year ice</SelectItem>
+              <SelectItem value="PC7">PC7 — Summer/autumn thin first-year ice</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {/* 2. Start & Destination Coordinates */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 border-t border-polar-800">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
         {/* Start Coordinates */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-ice-400" />
-              Start Location
+            <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-sky-600" />
+              Start Location (Origin)
             </label>
-            <span className="text-[10px] font-mono text-slate-400">Lat / Lng</span>
+            <span className="text-[10px] font-mono text-slate-400 font-semibold">Lat / Lng</span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -163,7 +179,7 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={startLat}
               onChange={(e) => setStartLat(parseFloat(e.target.value))}
               placeholder="Latitude"
-              className="bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+              className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 shadow-2xs"
             />
             <input
               type="number"
@@ -171,19 +187,19 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={startLng}
               onChange={(e) => setStartLng(parseFloat(e.target.value))}
               placeholder="Longitude"
-              className="bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+              className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 shadow-2xs"
             />
           </div>
 
           {/* Quick Presets */}
           <div className="flex items-center gap-1 flex-wrap pt-0.5">
-            <span className="text-[9px] font-mono text-slate-400 mr-1">Presets:</span>
+            <span className="text-[9px] font-mono text-slate-500 mr-1 font-semibold">Presets:</span>
             {START_PRESETS.map((p, idx) => (
               <button
                 type="button"
                 key={p.name}
                 onClick={() => handleStartPreset(idx)}
-                className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-polar-900 hover:bg-polar-800 text-slate-300 border border-polar-700"
+                className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors font-medium"
               >
                 {p.name.split(' (')[0]}
               </button>
@@ -194,11 +210,11 @@ export const MissionForm: React.FC<MissionFormProps> = ({
         {/* Destination Coordinates */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              Destination
+            <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+              Destination Station
             </label>
-            <span className="text-[10px] font-mono text-slate-400">Lat / Lng</span>
+            <span className="text-[10px] font-mono text-slate-400 font-semibold">Lat / Lng</span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -208,7 +224,7 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={destLat}
               onChange={(e) => setDestLat(parseFloat(e.target.value))}
               placeholder="Latitude"
-              className="bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+              className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 shadow-2xs"
             />
             <input
               type="number"
@@ -216,19 +232,19 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={destLng}
               onChange={(e) => setDestLng(parseFloat(e.target.value))}
               placeholder="Longitude"
-              className="bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+              className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 shadow-2xs"
             />
           </div>
 
           {/* Quick Presets */}
           <div className="flex items-center gap-1 flex-wrap pt-0.5">
-            <span className="text-[9px] font-mono text-slate-400 mr-1">Presets:</span>
+            <span className="text-[9px] font-mono text-slate-500 mr-1 font-semibold">Presets:</span>
             {DESTINATION_PRESETS.map((p, idx) => (
               <button
                 type="button"
                 key={p.name}
                 onClick={() => handleDestPreset(idx)}
-                className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-polar-900 hover:bg-polar-800 text-slate-300 border border-polar-700"
+                className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors font-medium"
               >
                 {p.name.split(' (')[0]}
               </button>
@@ -238,25 +254,25 @@ export const MissionForm: React.FC<MissionFormProps> = ({
       </div>
 
       {/* 3. Mission Timing & Priority Controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1 border-t border-polar-800">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
         {/* Mission Date */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-ice-400" />
+          <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-sky-600" />
             Mission Date
           </label>
           <input
             type="date"
             value={missionDate}
             onChange={(e) => setMissionDate(e.target.value)}
-            className="w-full bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 shadow-2xs"
           />
         </div>
 
         {/* Departure Time */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-ice-400" />
+          <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-sky-600" />
             Departure Time
           </label>
           <input
@@ -264,63 +280,74 @@ export const MissionForm: React.FC<MissionFormProps> = ({
             value={departureTime}
             onChange={(e) => setDepartureTime(e.target.value)}
             placeholder="06:00 UTC"
-            className="w-full bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 shadow-2xs"
           />
         </div>
 
         {/* Navigation Priority */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-            <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+          <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+            <Sliders className="w-3.5 h-3.5 text-sky-600" />
             Navigation Priority
           </label>
-          <select
+          <Select
             value={navigationPriority}
-            onChange={(e) => setNavigationPriority(e.target.value as NavigationPriority)}
-            className="w-full bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+            onValueChange={(val) => setNavigationPriority(val as NavigationPriority)}
           >
-            <option value="Balanced">Balanced (Default)</option>
-            <option value="Safest">Safest (Minimum Risk)</option>
-            <option value="Fastest">Fastest (Time Critical)</option>
-            <option value="Fuel Efficient">Fuel Efficient</option>
-          </select>
+            <SelectTrigger className="bg-white border-slate-200 text-slate-800">
+              <SelectValue placeholder="Select Priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Balanced">Balanced (Default)</SelectItem>
+              <SelectItem value="Safest">Safest (Minimum Risk)</SelectItem>
+              <SelectItem value="Fastest">Fastest (Time Critical)</SelectItem>
+              <SelectItem value="Fuel Efficient">Fuel Efficient</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Forecast Horizon */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
+          <label className="text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-amber-600" />
             Forecast Horizon
           </label>
-          <select
+          <Select
             value={forecastHorizon}
-            onChange={(e) => setForecastHorizon(e.target.value as ForecastHorizon)}
-            className="w-full bg-polar-900 border border-polar-700 rounded px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-ice-500"
+            onValueChange={(val) => setForecastHorizon(val as ForecastHorizon)}
           >
-            <option value="24 hours">24 hours</option>
-            <option value="48 hours">48 hours</option>
-            <option value="72 hours">72 hours (Recommended)</option>
-            <option value="7 days">7 days</option>
-          </select>
+            <SelectTrigger className="bg-white border-slate-200 text-slate-800">
+              <SelectValue placeholder="Select Horizon" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="24 hours">24 hours</SelectItem>
+              <SelectItem value="48 hours">48 hours</SelectItem>
+              <SelectItem value="72 hours">72 hours (Recommended)</SelectItem>
+              <SelectItem value="7 days">7 days</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {/* 4. Action Button */}
-      <div className="pt-3 border-t border-polar-700/60 flex items-center justify-between gap-4">
-        <div className="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-          <span>Antarctic environmental ensemble models active</span>
+      <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-[11px] font-mono text-slate-500 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Antarctic environmental ensemble solvers ready</span>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ice-500 hover:bg-ice-400 text-polar-950 font-mono font-bold text-xs shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-ice-500/20"
+          variant="default"
+          size="lg"
+          className="w-full sm:w-auto font-bold tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-xs"
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-4 h-4 text-sky-400" />
           <span>Generate Navigation Plan</span>
-        </button>
+        </Button>
       </div>
     </form>
   );
 };
+

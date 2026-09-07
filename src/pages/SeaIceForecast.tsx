@@ -42,14 +42,14 @@ export const SeaIceForecast: React.FC = () => {
       actions={
         <div className="flex items-center gap-2">
           {/* Prototype AI Simulation Badge */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-ice-500/10 border border-ice-500/30 text-xs font-mono text-ice-300">
-            <Sparkles className="w-3.5 h-3.5 text-ice-400" />
-            <span className="font-semibold">Prototype AI Simulation</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-xs font-mono text-sky-700 font-semibold shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+            <span>Prototype AI Simulation</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded bg-polar-900 border border-polar-700/60 text-xs font-mono text-slate-300">
-            <Snowflake className="w-3.5 h-3.5 text-cyan-400" />
-            <span>ResUNet v3.2 ENSEMBLE ACTIVE</span>
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-700 shadow-2xs">
+            <Snowflake className="w-3.5 h-3.5 text-sky-600" />
+            <span>ResUNet v3.2 <strong className="text-sky-800">ENSEMBLE ACTIVE</strong></span>
           </div>
         </div>
       }

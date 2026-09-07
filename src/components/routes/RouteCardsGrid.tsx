@@ -17,6 +17,8 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface RouteCardsGridProps {
   selectedRouteKey: RouteKey;
@@ -33,12 +35,12 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
     <div className="space-y-3">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
         <div className="flex items-center gap-2">
-          <Compass className="w-4 h-4 text-ice-400" />
-          <h3 className="text-sm font-bold font-sans text-slate-100 uppercase tracking-wider">
-            Candidate Polar Navigation Routes (Pareto Set)
+          <Compass className="w-4 h-4 text-sky-600" />
+          <h3 className="text-sm font-bold font-sans text-slate-900 uppercase tracking-wider">
+            Candidate Polar Navigation Routes (Pareto Frontier)
           </h3>
         </div>
-        <span className="text-[11px] font-mono text-slate-400">
+        <span className="text-[11px] font-mono text-slate-500">
           Select a candidate to view trajectory, waypoints, and comparative metrics
         </span>
       </div>
@@ -52,41 +54,41 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
             <div
               key={route.id}
               onClick={() => onSelectRoute(route.key)}
-              className={`polar-panel relative p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 rounded-xl border ${
+              className={`relative p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-300 rounded-xl ${
                 isSelected
-                  ? 'border-cyan-400/90 bg-polar-900/95 shadow-lg shadow-cyan-950/40 ring-1 ring-cyan-400/40'
-                  : 'border-polar-700/60 bg-polar-950/70 hover:border-polar-600 hover:bg-polar-900/60'
+                  ? 'border-2 border-sky-600 bg-white shadow-md ring-2 ring-sky-500/20'
+                  : 'border border-slate-200/90 bg-white hover:border-slate-300 shadow-xs hover:shadow-sm'
               }`}
             >
               {/* Top Row: Route Title, Badge & Selector Dot */}
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-0.5">
+                  <div className="space-y-0.5 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-base font-bold font-sans text-slate-100">
+                      <h4 className="text-base font-bold font-sans text-slate-900 truncate">
                         {route.name}
                       </h4>
                       {/* Selection radio mark */}
                       {isSelected ? (
-                        <CheckCircle2 className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-sky-600 flex-shrink-0" />
                       ) : (
-                        <div className="w-3.5 h-3.5 rounded-full border border-polar-600 flex-shrink-0" />
+                        <div className="w-3.5 h-3.5 rounded-full border border-slate-300 flex-shrink-0" />
                       )}
                     </div>
-                    <p className="text-[11px] font-mono text-slate-400 line-clamp-1">
+                    <p className="text-[11px] font-mono text-slate-500 line-clamp-1">
                       {route.subtitle}
                     </p>
                   </div>
 
                   {/* AI Recommended or Trait Badge */}
                   {isRecommended ? (
-                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-ice-500/20 text-ice-300 border border-ice-400/50 shadow-sm animate-pulse flex-shrink-0">
-                      <Sparkles className="w-3 h-3 text-cyan-300" />
+                    <Badge variant="ice" className="gap-1 animate-pulse flex-shrink-0 font-bold bg-sky-50 text-sky-700 border-sky-300">
+                      <Sparkles className="w-3 h-3 text-sky-600" />
                       {route.badgeLabel}
-                    </span>
+                    </Badge>
                   ) : (
                     <span
-                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border flex-shrink-0"
+                      className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border flex-shrink-0"
                       style={{
                         color: route.color,
                         borderColor: `${route.color}40`,
@@ -101,57 +103,57 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
                 {/* 4 Core Metrics requested by Prompt */}
                 <div className="grid grid-cols-2 gap-2 pt-1 font-mono">
                   {/* Distance */}
-                  <div className="p-2.5 rounded-lg bg-polar-900/80 border border-polar-700/40 space-y-0.5">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
                       <Gauge className="w-3 h-3 text-slate-400" />
                       Distance
                     </span>
-                    <span className="text-sm font-bold text-slate-100 block">
+                    <span className="text-sm font-bold text-slate-900 block tabular-nums">
                       {route.distanceFormatted}
                     </span>
                   </div>
 
                   {/* ETA */}
-                  <div className="p-2.5 rounded-lg bg-polar-900/80 border border-polar-700/40 space-y-0.5">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
                       <Clock className="w-3 h-3 text-slate-400" />
                       ETA
                     </span>
-                    <span className="text-sm font-bold text-slate-100 block">
+                    <span className="text-sm font-bold text-slate-900 block tabular-nums">
                       {route.etaFormatted}
                     </span>
                   </div>
 
                   {/* Fuel */}
-                  <div className="p-2.5 rounded-lg bg-polar-900/80 border border-polar-700/40 space-y-0.5">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                      <Fuel className="w-3 h-3 text-cyan-400" />
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
+                      <Fuel className="w-3 h-3 text-sky-600" />
                       Fuel
                     </span>
-                    <span className="text-sm font-bold text-cyan-300 block">
+                    <span className="text-sm font-bold text-sky-700 block tabular-nums">
                       {route.fuelFormatted}
                     </span>
                   </div>
 
                   {/* Risk */}
-                  <div className="p-2.5 rounded-lg bg-polar-900/80 border border-polar-700/40 space-y-0.5">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                      <Shield className="w-3 h-3 text-amber-400" />
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
+                      <Shield className="w-3 h-3 text-amber-600" />
                       Risk
                     </span>
                     <div className="flex items-baseline gap-1">
                       <span
-                        className={`text-sm font-bold ${
+                        className={`text-sm font-bold tabular-nums ${
                           route.riskTier === 'SAFE'
-                            ? 'text-emerald-400'
+                            ? 'text-emerald-700'
                             : route.riskTier === 'LOW'
-                            ? 'text-cyan-400'
-                            : 'text-amber-400'
+                            ? 'text-sky-700'
+                            : 'text-amber-700'
                         }`}
                       >
                         {route.riskScore}
                       </span>
-                      <span className="text-[10px] text-slate-400">/ 100</span>
+                      <span className="text-[10px] text-slate-500">/ 100</span>
                     </div>
                   </div>
                 </div>
@@ -161,7 +163,7 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
                   {route.characteristics.slice(0, 2).map((trait, idx) => (
                     <div
                       key={idx}
-                      className="text-[11px] font-mono text-slate-300 flex items-start gap-1.5"
+                      className="text-[11px] font-mono text-slate-600 flex items-start gap-1.5"
                     >
                       <span
                         className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
@@ -175,44 +177,49 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
 
               {/* Bottom Section for AI Recommended Route: Reason & "Why this route?" button */}
               {isRecommended && (
-                <div className="mt-4 pt-3 border-t border-cyan-500/30 space-y-2.5 bg-cyan-950/20 -mx-4 -mb-4 p-4 rounded-b-xl">
+                <div className="mt-4 pt-3 border-t border-sky-200 space-y-2.5 bg-sky-50/80 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 rounded-b-xl">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-mono font-bold text-ice-400 uppercase tracking-wider flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-cyan-300" />
+                    <span className="text-[10px] font-mono font-bold text-sky-800 uppercase tracking-wider flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-sky-600" />
                       AI Recommendation Rationale
                     </span>
-                    <p className="text-xs text-slate-200 font-sans leading-relaxed italic">
-                      "{route.recommendationReason}"
+                    <p className="text-xs text-slate-700 font-sans leading-relaxed italic font-medium">
+                      &quot;{route.recommendationReason}&quot;
                     </p>
                   </div>
 
-                  {/* Why this route? Button requested by Prompt */}
-                  <button
+                  {/* Why this route? Button */}
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate('/explainability');
                     }}
-                    className="w-full py-2 px-3 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/50 text-cyan-200 hover:text-white text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all group shadow-sm"
+                    variant="default"
+                    size="sm"
+                    className="w-full gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold justify-between shadow-xs"
                   >
-                    <HelpCircle className="w-3.5 h-3.5 text-cyan-300 group-hover:rotate-12 transition-transform" />
-                    <span>Why this route?</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                    <span className="flex items-center gap-1.5">
+                      <HelpCircle className="w-3.5 h-3.5" />
+                      Why this route?
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
               )}
 
               {/* Footer for non-recommended cards */}
               {!isRecommended && (
-                <div className="mt-3 pt-2.5 border-t border-polar-700/40 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-500">
                   <span>Max Ice: {route.maxIceConcentrationPct}%</span>
-                  {route.icebreakerAssistance && (
-                    <span className="text-amber-400 flex items-center gap-1 text-[10px]">
-                      <AlertTriangle className="w-3 h-3" />
+                  {route.icebreakerAssistance ? (
+                    <Badge variant="warning" className="text-[9px]">
+                      <AlertTriangle className="w-3 h-3 mr-0.5" />
                       Escort Advised
-                    </span>
-                  )}
-                  {!route.icebreakerAssistance && (
-                    <span className="text-emerald-400 text-[10px]">Autonomous Transit</span>
+                    </Badge>
+                  ) : (
+                    <Badge variant="success" className="text-[9px]">
+                      Autonomous Transit
+                    </Badge>
                   )}
                 </div>
               )}

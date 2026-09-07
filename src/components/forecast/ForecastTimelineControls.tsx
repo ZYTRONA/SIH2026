@@ -1,6 +1,7 @@
 import React from 'react';
 import { ForecastHorizonKey } from '@/data/seaIceData';
 import { Clock, Play, Pause, RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ForecastTimelineControlsProps {
   activeHorizon: ForecastHorizonKey;
@@ -20,17 +21,19 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
   onReset,
 }) => {
   return (
-    <div className="polar-panel p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 border-polar-700/80">
+    <div className="bg-white border border-slate-200/90 rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
       {/* Label */}
-      <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
-        <Clock className="w-4 h-4 text-ice-400" />
-        <span className="font-bold uppercase tracking-wider text-slate-200">
+      <div className="flex items-center gap-2.5 text-xs font-mono text-slate-700">
+        <div className="p-1.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-600">
+          <Clock className="w-3.5 h-3.5" />
+        </div>
+        <span className="font-bold uppercase tracking-wider text-slate-900">
           FORECAST TIMELINE HORIZON:
         </span>
       </div>
 
-      {/* Buttons */}
-      <div className="flex items-center gap-1.5 flex-wrap justify-center">
+      {/* Modern Segmented Control Pills */}
+      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 shadow-2xs flex-wrap justify-center">
         {horizons.map((horizon) => {
           const isActive = activeHorizon === horizon;
 
@@ -38,10 +41,10 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
             <button
               key={horizon}
               onClick={() => onSelectHorizon(horizon)}
-              className={`px-3.5 py-1.5 rounded text-xs font-mono font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all duration-200 select-none ${
                 isActive
-                  ? 'bg-ice-500 text-polar-950 shadow-md shadow-ice-500/20 scale-105'
-                  : 'bg-polar-900 hover:bg-polar-800 text-slate-300 border border-polar-700/60 hover:text-slate-100'
+                  ? 'bg-sky-600 text-white shadow-xs border border-sky-600 font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
               }`}
             >
               {horizon}
@@ -53,35 +56,40 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
       {/* Playback & Reset Controls */}
       <div className="flex items-center gap-2">
         {onTogglePlay && (
-          <button
+          <Button
             onClick={onTogglePlay}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-polar-900 hover:bg-polar-800 border border-polar-700 text-xs font-mono text-slate-200"
+            variant={isPlaying ? 'destructive' : 'secondary'}
+            size="sm"
+            className="font-mono gap-1.5 font-semibold"
             title={isPlaying ? 'Pause timeline progression' : 'Auto-play forecast sequence'}
           >
             {isPlaying ? (
               <>
-                <Pause className="w-3.5 h-3.5 text-amber-400" />
+                <Pause className="w-3.5 h-3.5" />
                 <span>Pause</span>
               </>
             ) : (
               <>
-                <Play className="w-3.5 h-3.5 text-emerald-400" />
+                <Play className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Animate</span>
               </>
             )}
-          </button>
+          </Button>
         )}
 
         {onReset && (
-          <button
+          <Button
             onClick={onReset}
-            className="p-1.5 rounded bg-polar-900 hover:bg-polar-800 border border-polar-700 text-slate-400 hover:text-slate-200"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-slate-500 hover:text-slate-800"
             title="Reset to Current observation"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         )}
       </div>
     </div>
   );
 };
+

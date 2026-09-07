@@ -28,41 +28,41 @@ export const ShapFeatureContributionChart: React.FC = () => {
   }));
 
   return (
-    <div className="polar-panel p-5 space-y-4">
+    <div className="bg-white border border-slate-200/90 shadow-xs rounded-xl p-5 space-y-4">
       {/* Header with Mandatory Prompt-Required Label */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-polar-700/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+            <div className="p-1.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-700">
               <BarChart3 className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold font-sans text-slate-100">
+            <h3 className="text-sm font-bold font-sans text-slate-900">
               Feature Contribution Analysis
             </h3>
           </div>
           {/* Mandatory Specific Label */}
-          <span className="text-[11px] font-mono text-cyan-300 font-semibold block">
+          <span className="text-[11px] font-mono text-sky-700 font-semibold block">
             SHAP-based feature contribution for the ML risk model.
           </span>
         </div>
 
         <div className="flex items-center gap-3 text-xs font-mono">
-          <div className="flex items-center gap-1.5 text-emerald-400">
-            <span className="w-2.5 h-2.5 rounded bg-emerald-500" />
-            <span>Positive Attribution (+Safety / -Risk)</span>
+          <div className="flex items-center gap-1.5 text-sky-700 font-medium">
+            <span className="w-2.5 h-2.5 rounded-full bg-sky-600" />
+            <span>Positive (+Safety / -Risk)</span>
           </div>
-          <div className="flex items-center gap-1.5 text-orange-400">
-            <span className="w-2.5 h-2.5 rounded bg-orange-500" />
-            <span>Trade-Off Penalty (-Distance Cost)</span>
+          <div className="flex items-center gap-1.5 text-orange-700 font-medium">
+            <span className="w-2.5 h-2.5 rounded-full bg-orange-600" />
+            <span>Trade-Off Penalty (-Cost)</span>
           </div>
         </div>
       </div>
 
       {/* Mandatory Scope Clarification Note */}
-      <div className="p-3 rounded-lg bg-polar-900/90 border border-polar-700/50 flex items-start gap-2.5 text-xs font-sans">
-        <Info className="w-4 h-4 text-ice-400 flex-shrink-0 mt-0.5" />
-        <p className="text-slate-300 leading-relaxed text-[11px]">
-          <strong className="text-ice-300 font-mono">Methodology:</strong> SHAP (SHapley Additive exPlanations) attributions quantify how individual environmental hazard inputs pull the calculated polar risk score relative to baseline conditions. Positive SHAP values indicate favorable environmental conditions along the chosen corridor.
+      <div className="p-3.5 rounded-lg bg-sky-50/70 border border-sky-200/80 flex items-start gap-2.5 text-xs font-sans">
+        <Info className="w-4 h-4 text-sky-600 flex-shrink-0 mt-0.5" />
+        <p className="text-slate-700 leading-relaxed text-[11px] font-medium">
+          <strong className="text-sky-800 font-mono">Methodology:</strong> SHAP (SHapley Additive exPlanations) attributions quantify how individual environmental hazard inputs pull the calculated polar risk score relative to baseline conditions. Positive SHAP values indicate favorable environmental conditions along the chosen corridor.
         </p>
       </div>
 
@@ -76,8 +76,8 @@ export const ShapFeatureContributionChart: React.FC = () => {
           >
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#1E3558"
-              strokeOpacity={0.5}
+              stroke="#E2E8F0"
+              strokeOpacity={0.8}
               horizontal={false}
             />
             <XAxis
@@ -86,17 +86,17 @@ export const ShapFeatureContributionChart: React.FC = () => {
               stroke="#64748B"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#1E3558' }}
+              axisLine={{ stroke: '#CBD5E1' }}
               fontFamily="monospace"
               tickFormatter={(val) => `${val > 0 ? '+' : ''}${val.toFixed(2)}`}
             />
             <YAxis
               type="category"
               dataKey="name"
-              stroke="#94A3B8"
+              stroke="#475569"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#1E3558' }}
+              axisLine={{ stroke: '#CBD5E1' }}
               fontFamily="monospace"
               width={95}
             />
@@ -105,23 +105,23 @@ export const ShapFeatureContributionChart: React.FC = () => {
                 if (active && payload && payload.length) {
                   const item = payload[0].payload;
                   return (
-                    <div className="p-3 rounded-lg bg-polar-900/95 border border-polar-700/80 shadow-2xl backdrop-blur-md text-xs font-mono space-y-1.5 max-w-xs">
-                      <div className="flex items-center justify-between gap-3 border-b border-polar-700/50 pb-1">
-                        <span className="text-slate-100 font-bold">{item.name}</span>
+                    <div className="p-3 rounded-lg bg-white border border-slate-200 shadow-xl text-xs font-mono space-y-1.5 max-w-xs">
+                      <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-1">
+                        <span className="text-slate-900 font-bold">{item.name}</span>
                         <span
                           className={`font-bold ${
-                            item.shapValue >= 0 ? 'text-emerald-400' : 'text-orange-400'
+                            item.shapValue >= 0 ? 'text-sky-700' : 'text-orange-700'
                           }`}
                         >
                           SHAP: {item.shapValue > 0 ? '+' : ''}
                           {item.shapValue.toFixed(2)}
                         </span>
                       </div>
-                      <div className="text-[11px] text-slate-300">
-                        <span className="text-slate-400">Observed Value: </span>
-                        <span className="text-ice-300 font-bold">{item.rawFeatureValue}</span>
+                      <div className="text-[11px] text-slate-700">
+                        <span className="text-slate-500">Observed Value: </span>
+                        <span className="text-slate-900 font-bold">{item.rawFeatureValue}</span>
                       </div>
-                      <p className="text-[10px] text-slate-400 font-sans leading-tight">
+                      <p className="text-[10px] text-slate-600 font-sans leading-tight font-normal">
                         {item.impactDescription}
                       </p>
                     </div>
@@ -130,12 +130,12 @@ export const ShapFeatureContributionChart: React.FC = () => {
                 return null;
               }}
             />
-            <ReferenceLine x={0} stroke="#475569" strokeWidth={1.5} />
+            <ReferenceLine x={0} stroke="#94A3B8" strokeWidth={1.5} />
             <Bar dataKey="shapValue" radius={[0, 4, 4, 0]}>
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.shapValue >= 0 ? '#06B6D4' : '#F97316'}
+                  fill={entry.shapValue >= 0 ? '#0284C7' : '#EA580C'}
                 />
               ))}
             </Bar>
@@ -148,25 +148,25 @@ export const ShapFeatureContributionChart: React.FC = () => {
         {SHAP_FEATURE_CONTRIBUTIONS.map((item: ShapFeatureContribution) => (
           <div
             key={item.feature}
-            className="p-2.5 rounded-lg bg-polar-900/70 border border-polar-700/40 space-y-1"
+            className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1"
           >
             <div className="flex items-center justify-between">
-              <span className="text-slate-200 font-bold text-[11px]">{item.feature}</span>
+              <span className="text-slate-900 font-bold text-[11px]">{item.feature}</span>
               <span
                 className={`text-[11px] font-bold flex items-center gap-1 ${
-                  item.shapValue >= 0 ? 'text-cyan-400' : 'text-orange-400'
+                  item.shapValue >= 0 ? 'text-sky-700' : 'text-orange-700'
                 }`}
               >
                 {item.shapValue >= 0 ? (
-                  <TrendingUp className="w-3 h-3 text-cyan-400" />
+                  <TrendingUp className="w-3 h-3 text-sky-600" />
                 ) : (
-                  <TrendingDown className="w-3 h-3 text-orange-400" />
+                  <TrendingDown className="w-3 h-3 text-orange-600" />
                 )}
                 {item.shapValue > 0 ? '+' : ''}
                 {item.shapValue.toFixed(2)}
               </span>
             </div>
-            <div className="text-[10px] text-slate-400 truncate">
+            <div className="text-[10px] text-slate-500 truncate">
               {item.rawFeatureValue}
             </div>
           </div>

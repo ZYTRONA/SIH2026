@@ -43,13 +43,13 @@ export const IcebergIntelligence: React.FC = () => {
       actions={
         <div className="flex items-center gap-2">
           {/* Simulation Disclaimer */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-ice-500/10 border border-ice-500/30 text-xs font-mono text-ice-300">
-            <Sparkles className="w-3.5 h-3.5 text-ice-400" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-xs font-mono text-sky-700">
+            <Sparkles className="w-3.5 h-3.5 text-sky-600" />
             <span className="font-semibold">Prototype AI Simulation</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded bg-polar-900 border border-polar-700/60 text-xs font-mono text-slate-300">
-            <Radio className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-xs font-mono text-slate-700">
+            <Radio className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
             <span>RADAR TRACKER: {lockedRadars.length} TARGETS LOCKED</span>
           </div>
         </div>
@@ -58,48 +58,48 @@ export const IcebergIntelligence: React.FC = () => {
       <div className="space-y-6">
         {/* 1. Quick Telemetry KPIs */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-lg bg-polar-900/90 border border-polar-700/60 space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs font-mono">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
               <span>TRACKED OBJECTS</span>
-              <Mountain className="w-4 h-4 text-ice-400" />
+              <Mountain className="w-4 h-4 text-sky-600" />
             </div>
-            <div className="text-xl font-bold font-sans text-slate-100">
+            <div className="text-xl font-bold font-sans text-slate-900">
               {DETAILED_ICEBERGS_CATALOG.length}
             </div>
-            <span className="text-[10px] font-mono text-slate-400">Sentinel-1 & Optical SAR</span>
+            <span className="text-[10px] font-mono text-slate-500">Sentinel-1 & Optical SAR</span>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-polar-900/90 border border-polar-700/60 space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs font-mono">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
               <span>HIGH THREAT BERGS</span>
-              <ShieldAlert className="w-4 h-4 text-rose-400" />
+              <ShieldAlert className="w-4 h-4 text-rose-600" />
             </div>
-            <div className="text-xl font-bold font-sans text-rose-400">
+            <div className="text-xl font-bold font-sans text-rose-600">
               {highThreatCount} Active
             </div>
-            <span className="text-[10px] font-mono text-rose-300">Corridor Proximity &lt; 25 NM</span>
+            <span className="text-[10px] font-mono text-rose-600">Corridor Proximity &lt; 25 NM</span>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-polar-900/90 border border-polar-700/60 space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs font-mono">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
               <span>NEAREST INCURSION</span>
-              <Radar className="w-4 h-4 text-amber-400" />
+              <Radar className="w-4 h-4 text-amber-600" />
             </div>
-            <div className="text-xl font-bold font-sans text-amber-300">
+            <div className="text-xl font-bold font-sans text-amber-700">
               {selectedIceberg.routeDistanceKm} km
             </div>
-            <span className="text-[10px] font-mono text-amber-400">Target: {selectedIceberg.code}</span>
+            <span className="text-[10px] font-mono text-amber-600">Target: {selectedIceberg.code}</span>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-polar-900/90 border border-polar-700/60 space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs font-mono">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
               <span>DRIFT MODEL CONFIDENCE</span>
-              <Compass className="w-4 h-4 text-emerald-400" />
+              <Compass className="w-4 h-4 text-emerald-600" />
             </div>
-            <div className="text-xl font-bold font-sans text-emerald-400">
+            <div className="text-xl font-bold font-sans text-emerald-700">
               {selectedIceberg.confidencePct}%
             </div>
-            <span className="text-[10px] font-mono text-slate-400">Lagrangian + XGBoost</span>
+            <span className="text-[10px] font-mono text-slate-500">Lagrangian + XGBoost</span>
           </div>
         </div>
 
@@ -110,11 +110,11 @@ export const IcebergIntelligence: React.FC = () => {
             {/* Interactive Antarctic Tactical Map */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-mono px-1">
-                <span className="text-slate-300 font-bold flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                <span className="text-slate-700 font-bold flex items-center gap-1.5">
+                  <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
                   HYDRODYNAMIC DRIFT FIELD & 72H TRAJECTORY VECTORS
                 </span>
-                <span className="text-amber-400 font-semibold">
+                <span className="text-amber-700 font-semibold">
                   SELECTED: {selectedIceberg.code}
                 </span>
               </div>

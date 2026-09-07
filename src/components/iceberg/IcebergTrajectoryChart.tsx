@@ -31,21 +31,21 @@ interface CustomTooltipProps {
 const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="p-3.5 rounded-lg bg-polar-900/95 border border-polar-700/80 shadow-2xl backdrop-blur-md text-xs font-mono space-y-1.5">
-        <div className="text-slate-200 font-bold border-b border-polar-700/50 pb-1 flex items-center justify-between gap-4">
-          <span>TRAJECTORY PROJECTION</span>
-          <span className="text-ice-400">{label}</span>
+      <div className="p-3.5 rounded-lg bg-white border border-slate-200 shadow-xl text-xs font-mono space-y-1.5">
+        <div className="text-slate-800 font-bold border-b border-slate-100 pb-1 flex items-center justify-between gap-4">
+          <span className="text-slate-500 font-semibold">TRAJECTORY PROJECTION</span>
+          <span className="text-sky-700 font-bold">{label}</span>
         </div>
         {payload.map((entry, index) => (
           <div key={`item-${index}`} className="flex items-center justify-between gap-4">
-            <span className="flex items-center gap-1.5 text-slate-400">
+            <span className="flex items-center gap-1.5 text-slate-600">
               <span
                 className="w-2 h-2 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
               {entry.name}:
             </span>
-            <span className="text-slate-100 font-bold">
+            <span className="text-slate-900 font-bold">
               {entry.value}
               {entry.name.includes('Distance') ? ' km' : ' m/s'}
             </span>
@@ -70,18 +70,18 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
   }));
 
   return (
-    <div className="polar-panel p-5 space-y-4">
+    <div className="bg-white border border-slate-200/90 shadow-xs rounded-xl p-5 space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-polar-700/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-ice-500/10 border border-ice-500/30 text-ice-400">
+          <div className="p-1.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-700">
             <Compass className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-slate-100">
+            <h3 className="text-sm font-bold font-sans text-slate-900">
               {iceberg.code} Hydrodynamic Trajectory & Route Proximity
             </h3>
-            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-semibold">
               Lagrangian Drift Model & Multi-Factor Hydrodynamic Forcing
             </span>
           </div>
@@ -89,16 +89,16 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
 
         {/* Legend */}
         <div className="flex items-center gap-3 text-[11px] font-mono">
-          <div className="flex items-center gap-1.5 text-ice-300">
-            <span className="w-3 h-0.5 bg-ice-400 rounded-full inline-block" />
+          <div className="flex items-center gap-1.5 text-sky-700 font-medium">
+            <span className="w-3 h-0.5 bg-sky-600 rounded-full inline-block" />
             <span>Route Dist (km)</span>
           </div>
-          <div className="flex items-center gap-1.5 text-emerald-300">
-            <span className="w-2.5 h-2.5 bg-emerald-500/70 rounded-sm inline-block" />
+          <div className="flex items-center gap-1.5 text-emerald-700 font-medium">
+            <span className="w-2.5 h-2.5 bg-emerald-600 rounded-xs inline-block" />
             <span>Current Drag (m/s)</span>
           </div>
-          <div className="flex items-center gap-1.5 text-cyan-300">
-            <span className="w-2.5 h-2.5 bg-cyan-500/70 rounded-sm inline-block" />
+          <div className="flex items-center gap-1.5 text-teal-700 font-medium">
+            <span className="w-2.5 h-2.5 bg-teal-600 rounded-xs inline-block" />
             <span>Wind Drag (m/s)</span>
           </div>
         </div>
@@ -113,8 +113,8 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
           >
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#1E3558"
-              strokeOpacity={0.5}
+              stroke="#E2E8F0"
+              strokeOpacity={0.8}
               vertical={false}
             />
 
@@ -123,17 +123,17 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
               stroke="#64748B"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#1E3558' }}
+              axisLine={{ stroke: '#CBD5E1' }}
               fontFamily="monospace"
             />
 
             {/* Left Y Axis for Route Distance (km) */}
             <YAxis
               yAxisId="left"
-              stroke="#38BDF8"
+              stroke="#0284C7"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#1E3558' }}
+              axisLine={{ stroke: '#CBD5E1' }}
               fontFamily="monospace"
               unit="km"
             />
@@ -143,7 +143,7 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
               yAxisId="right"
               orientation="right"
               domain={[0, 1.0]}
-              stroke="#10B981"
+              stroke="#059669"
               fontSize={11}
               tickLine={false}
               axisLine={false}
@@ -158,8 +158,8 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
               yAxisId="right"
               dataKey="oceanCurrentVelocityMs"
               name="Ocean Current Forcing"
-              fill="#10B981"
-              opacity={0.6}
+              fill="#059669"
+              opacity={0.8}
               barSize={16}
               radius={[2, 2, 0, 0]}
             />
@@ -169,8 +169,8 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
               yAxisId="right"
               dataKey="windDragMs"
               name="Wind Drag Forcing"
-              fill="#06B6D4"
-              opacity={0.6}
+              fill="#0D9488"
+              opacity={0.8}
               barSize={16}
               radius={[2, 2, 0, 0]}
             />
@@ -181,10 +181,10 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
               type="monotone"
               dataKey="routeDistanceKm"
               name="Distance to Route Corridor"
-              stroke="#38BDF8"
-              strokeWidth={3}
-              dot={{ r: 4, fill: '#38BDF8', strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: '#38BDF8', stroke: '#0A1120', strokeWidth: 2 }}
+              stroke="#0284C7"
+              strokeWidth={2.5}
+              dot={{ r: 4, fill: '#0284C7', strokeWidth: 0 }}
+              activeDot={{ r: 6, fill: '#0284C7', stroke: '#FFFFFF', strokeWidth: 2 }}
             />
 
             <Legend wrapperStyle={{ display: 'none' }} />
@@ -193,12 +193,12 @@ export const IcebergTrajectoryChart: React.FC<IcebergTrajectoryChartProps> = ({
       </div>
 
       {/* Summary Caption */}
-      <div className="p-2.5 rounded bg-polar-900/60 border border-polar-700/40 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono text-slate-400 gap-2">
-        <div className="flex items-center gap-1.5 text-slate-300">
-          <Navigation className="w-3.5 h-3.5 text-ice-400" />
-          <span>CLOSEST POINT OF APPROACH (CPA): {iceberg.routeDistanceKm} km at T+48h</span>
+      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono text-slate-600 gap-2">
+        <div className="flex items-center gap-1.5 text-slate-700">
+          <Navigation className="w-3.5 h-3.5 text-sky-600" />
+          <span>CLOSEST POINT OF APPROACH (CPA): <strong className="text-slate-900">{iceberg.routeDistanceKm} km</strong> at T+48h</span>
         </div>
-        <div className="flex items-center gap-2 text-cyan-300">
+        <div className="flex items-center gap-2 text-teal-700 font-semibold">
           <Waves className="w-3.5 h-3.5" />
           <span>OCEAN / WIND RATIO: {iceberg.oceanCurrentForcingPct} : {iceberg.windDragForcingPct}</span>
         </div>

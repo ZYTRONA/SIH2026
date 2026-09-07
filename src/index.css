@@ -4,44 +4,98 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
-    @apply bg-polar-950 text-slate-200 font-sans;
+    @apply bg-slate-50 text-slate-800 font-sans selection:bg-sky-500/20 selection:text-sky-900;
+    background-color: #F8FAFC;
+    background-image: 
+      radial-gradient(ellipse 70% 40% at 50% -10%, rgba(2, 132, 199, 0.04), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 90%, rgba(13, 148, 136, 0.03), transparent 50%);
+    background-attachment: fixed;
   }
 
-  /* Custom subtle scrollbar */
+  /* Custom Clean Light Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #050B14;
+    background: #F1F5F9;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #1E3558;
-    border-radius: 3px;
+    background: #CBD5E1;
+    border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #2D4B7A;
+    background: #94A3B8;
   }
 }
 
 @layer components {
-  /* Command Center Panel */
+  /* Modern Clean Light Dashboard Panel */
   .polar-panel {
-    @apply bg-polar-850/80 border border-polar-700/60 rounded-lg shadow-panel backdrop-blur-sm;
-  }
-  
-  .polar-card {
-    @apply bg-polar-800/60 border border-polar-700/50 rounded-lg p-4;
+    @apply relative bg-white border border-slate-200/90 rounded-xl shadow-panel transition-all duration-200;
   }
 
+  .polar-panel-hover {
+    @apply hover:border-slate-300 hover:shadow-panel-hover transition-all duration-300;
+  }
+  
+  /* Modular Card */
+  .polar-card {
+    @apply relative bg-white border border-slate-200/80 rounded-xl p-4 shadow-subtle transition-all duration-200 hover:border-slate-300;
+  }
+
+  /* Status Badges */
   .polar-badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-mono font-medium border;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-mono font-semibold border tracking-wide select-none;
+  }
+
+  .polar-badge-safe {
+    @apply bg-emerald-50 border-emerald-200 text-emerald-700;
+  }
+
+  .polar-badge-warning {
+    @apply bg-amber-50 border-amber-200 text-amber-700;
+  }
+
+  .polar-badge-critical {
+    @apply bg-rose-50 border-rose-200 text-rose-700;
+  }
+
+  .polar-badge-info {
+    @apply bg-sky-50 border-sky-200 text-sky-700;
+  }
+
+  /* Tactical Light Buttons */
+  .btn-tactical {
+    @apply relative inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-mono text-xs font-semibold uppercase tracking-wider transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-tactical-primary {
+    @apply btn-tactical bg-sky-600 hover:bg-sky-700 text-white shadow-sm border border-sky-600 hover:border-sky-700;
+  }
+
+  .btn-tactical-secondary {
+    @apply btn-tactical bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-sm hover:border-slate-400;
+  }
+
+  .btn-tactical-danger {
+    @apply btn-tactical bg-rose-600 hover:bg-rose-700 text-white shadow-sm border border-rose-600;
+  }
+
+  /* Subtle Clean Grid Pattern */
+  .bg-grid-polar {
+    background-size: 24px 24px;
+    background-image: 
+      linear-gradient(to right, rgba(203, 213, 225, 0.4) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(203, 213, 225, 0.4) 1px, transparent 1px);
   }
 }
+
+

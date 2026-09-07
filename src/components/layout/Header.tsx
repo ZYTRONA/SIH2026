@@ -10,9 +10,20 @@ import {
   User,
   Shield,
   CheckCheck,
+  Search,
+  Command,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { StatusIndicator } from './StatusIndicator';
+import { CommandSearch } from '@/components/ui/command-search';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const routeTitleMap: Record<string, { title: string; category: string }> = {
   '/dashboard': {
@@ -68,8 +79,7 @@ export const Header: React.FC = () => {
   } = useAppStore();
 
   const [utcTime, setUtcTime] = useState<string>('');
-  const [showNotifications, setShowNotifications] = useState<boolean>(false);
-  const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
+  const [commandSearchOpen, setCommandSearchOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -93,102 +103,110 @@ export const Header: React.FC = () => {
   const unread = unreadCount();
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 sm:px-6 bg-polar-900/95 border-b border-polar-700/60 backdrop-blur-md">
-      {/* Left: Mobile Toggle & Dynamic Page Title */}
-      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileSidebarOpen(true)}
-          className="flex lg:hidden items-center justify-center p-2 rounded text-slate-400 hover:text-slate-100 hover:bg-polar-800 border border-polar-700/50"
-          aria-label="Open navigation menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-
-        {/* Dynamic page title */}
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
-            <h1 className="text-sm sm:text-base font-semibold text-slate-100 font-sans truncate tracking-tight">
-              {currentRouteMeta.title}
-            </h1>
-          </div>
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ice-400 truncate">
-            {currentRouteMeta.category}
-          </span>
-        </div>
-      </div>
-
-      {/* Center / Right: Mission & Vessel Badges (Hidden on mobile/tablet screens) */}
-      <div className="hidden xl:flex items-center gap-3">
-        {/* Current Mission */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-polar-950/60 border border-polar-700/50 text-xs font-mono">
-          <Compass className="w-3.5 h-3.5 text-ice-400 flex-shrink-0" />
-          <span className="text-slate-400">MISSION:</span>
-          <span className="text-slate-200 font-semibold">{missionName}</span>
-        </div>
-
-        {/* Vessel */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-polar-950/60 border border-polar-700/50 text-xs font-mono">
-          <Ship className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-          <span className="text-slate-400">VESSEL:</span>
-          <span className="text-slate-200 font-semibold">{vesselName}</span>
-          <span className="text-[10px] px-1 py-0.2 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-            {vesselClass.split(' ')[0]}
-          </span>
-        </div>
-      </div>
-
-      {/* Right Controls & Operator Deck */}
-      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-        {/* UTC Live Clock */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-polar-950/80 border border-polar-700/60 text-xs font-mono text-slate-300">
-          <Clock className="w-3.5 h-3.5 text-ice-400" />
-          <span className="tabular-nums font-medium">{utcTime || '00:00:00 UTC'}</span>
-        </div>
-
-        {/* Satellite / Connection Indicator */}
-        <div
-          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-polar-950/80 border border-polar-700/60 text-xs font-mono"
-          title="Satellite Uplink Nominal (Inmarsat FleetBroadband / Starlink Polar)"
-        >
-          <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="text-[11px] text-emerald-400 font-medium">UPLINK OK</span>
-        </div>
-
-        {/* Notifications Dropdown Toggle */}
-        <div className="relative">
+    <>
+      <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 sm:px-6 bg-white/95 border-b border-slate-200 backdrop-blur-md shadow-xs">
+        {/* Left: Mobile Toggle & Dynamic Page Title */}
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          {/* Mobile menu button */}
           <button
-            onClick={() => {
-              setShowNotifications(!showNotifications);
-              setShowProfileMenu(false);
-            }}
-            className="relative p-2 rounded text-slate-400 hover:text-slate-100 hover:bg-polar-800 border border-polar-700/50 transition-colors"
-            aria-label="Notifications"
+            onClick={() => setMobileSidebarOpen(true)}
+            className="flex lg:hidden items-center justify-center p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors"
+            aria-label="Open navigation menu"
           >
-            <Bell className="w-4 h-4" />
-            {unread > 0 && (
-              <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[9px] font-mono font-bold bg-ice-500 text-polar-950">
-                {unread}
-              </span>
-            )}
+            <Menu className="w-5 h-5" />
           </button>
 
-          {/* Notifications Flyout */}
-          {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-lg bg-polar-900 border border-polar-700 shadow-xl z-50 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-polar-700/60 bg-polar-950/60">
+          {/* Dynamic page title */}
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm sm:text-base font-bold text-slate-900 font-sans truncate tracking-tight">
+                {currentRouteMeta.title}
+              </h1>
+            </div>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-sky-700 font-semibold truncate">
+              {currentRouteMeta.category}
+            </span>
+          </div>
+        </div>
+
+        {/* Center / Search & Telemetry Bar */}
+        <div className="hidden lg:flex items-center gap-3">
+          {/* Global Quick Command Palette Trigger */}
+          <button
+            onClick={() => setCommandSearchOpen(true)}
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-mono transition-all shadow-xs group"
+          >
+            <Search className="w-3.5 h-3.5 text-sky-600 group-hover:scale-110 transition-transform" />
+            <span className="hidden xl:inline">Search Polar Modules...</span>
+            <kbd className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white border border-slate-300 text-[10px] text-slate-600 shadow-2xs font-sans">
+              <Command className="w-3 h-3" /> K
+            </kbd>
+          </button>
+
+          {/* Current Mission */}
+          <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-mono shadow-2xs">
+            <Compass className="w-3.5 h-3.5 text-sky-600 flex-shrink-0" />
+            <span className="text-slate-500 font-sans">MISSION:</span>
+            <span className="text-slate-800 font-semibold">{missionName}</span>
+          </div>
+
+          {/* Vessel */}
+          <div className="hidden 2xl:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-mono shadow-2xs">
+            <Ship className="w-3.5 h-3.5 text-sky-600 flex-shrink-0" />
+            <span className="text-slate-500 font-sans">VESSEL:</span>
+            <span className="text-slate-800 font-semibold">{vesselName}</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 border border-sky-200 font-semibold">
+              {vesselClass.split(' ')[0]}
+            </span>
+          </div>
+        </div>
+
+        {/* Right Controls & Operator Deck */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          {/* UTC Live Clock */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-white shadow-xs">
+            <Clock className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
+            <span className="tabular-nums font-bold tracking-wider">{utcTime || '00:00:00 UTC'}</span>
+          </div>
+
+          {/* Satellite / Connection Indicator */}
+          <div
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-mono shadow-2xs"
+            title="Satellite Uplink Nominal (Inmarsat FleetBroadband / Starlink Polar)"
+          >
+            <Wifi className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="text-[10px] text-emerald-700 font-bold tracking-wider">UPLINK OK</span>
+          </div>
+
+          {/* Notifications Radix Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="relative p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500"
+                aria-label="Notifications"
+              >
+                <Bell className="w-4 h-4" />
+                {unread > 0 && (
+                  <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[9px] font-mono font-bold bg-rose-500 text-white shadow-xs">
+                    {unread}
+                  </span>
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80 sm:w-96 p-0 overflow-hidden bg-white border-slate-200 shadow-xl">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-slate-50">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-200 font-mono">
+                  <span className="text-xs font-semibold text-slate-900 font-mono">
                     POLARIS ALERTS & LOGS
                   </span>
-                  <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-ice-500/20 text-ice-300">
+                  <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-sky-100 text-sky-800 font-bold">
                     {unread} New
                   </span>
                 </div>
                 {unread > 0 && (
                   <button
                     onClick={markAllNotificationsRead}
-                    className="text-[11px] text-ice-400 hover:text-ice-300 font-mono flex items-center gap-1"
+                    className="text-[11px] text-sky-700 hover:text-sky-900 font-mono flex items-center gap-1 font-semibold"
                   >
                     <CheckCheck className="w-3 h-3" />
                     Mark all read
@@ -196,12 +214,12 @@ export const Header: React.FC = () => {
                 )}
               </div>
 
-              <div className="max-h-80 overflow-y-auto divide-y divide-polar-700/40">
+              <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                 {notifications.map((n) => (
                   <div
                     key={n.id}
                     className={`p-3 text-xs transition-colors ${
-                      n.read ? 'bg-polar-900/50' : 'bg-polar-850/90'
+                      n.read ? 'bg-white' : 'bg-sky-50/40'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1">
@@ -212,7 +230,7 @@ export const Header: React.FC = () => {
                           size="sm"
                           pulse={!n.read}
                         />
-                        <span className="font-medium text-slate-200 font-sans">
+                        <span className="font-semibold text-slate-800 font-sans">
                           {n.title}
                         </span>
                       </div>
@@ -220,60 +238,55 @@ export const Header: React.FC = () => {
                         {n.timestamp}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 pl-3 leading-relaxed">
+                    <p className="text-[11px] text-slate-600 pl-3 leading-relaxed">
                       {n.message}
                     </p>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-        </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* Operator Profile */}
-        <div className="relative">
-          <button
-            onClick={() => {
-              setShowProfileMenu(!showProfileMenu);
-              setShowNotifications(false);
-            }}
-            className="flex items-center gap-2.5 pl-2 pr-2.5 py-1 rounded bg-polar-950/80 hover:bg-polar-800 border border-polar-700/60 text-left transition-colors"
-          >
-            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-ice-500/15 border border-ice-500/30 text-ice-400 font-mono text-xs font-semibold">
-              RN
-            </div>
-            <div className="hidden md:flex flex-col">
-              <span className="text-xs font-medium text-slate-200 font-sans leading-tight">
-                {operatorName}
-              </span>
-              <span className="text-[10px] font-mono text-slate-400 leading-tight">
-                {operatorRole}
-              </span>
-            </div>
-          </button>
-
-          {/* Profile Dropdown */}
-          {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-56 rounded-lg bg-polar-900 border border-polar-700 shadow-xl z-50 p-2">
-              <div className="px-3 py-2 border-b border-polar-700/60">
-                <p className="text-xs font-semibold text-slate-200">{operatorName}</p>
-                <p className="text-[10px] text-ice-400 font-mono">{operatorRole}</p>
-                <p className="text-[10px] text-slate-400 font-mono mt-1">Station: Maitri / Bharati Link</p>
-              </div>
-              <div className="pt-2 space-y-1 text-xs text-slate-300">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-polar-800 text-slate-300 cursor-pointer">
-                  <Shield className="w-3.5 h-3.5 text-ice-400" />
-                  <span>Security Clearance: Level 4</span>
+          {/* Operator Profile Radix Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2.5 pl-2 pr-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-2xs">
+                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-sky-100 border border-sky-300 text-sky-800 font-mono text-xs font-bold shadow-2xs">
+                  RN
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-polar-800 text-slate-300 cursor-pointer">
-                  <User className="w-3.5 h-3.5 text-ice-400" />
-                  <span>Navigator Settings</span>
+                <div className="hidden md:flex flex-col">
+                  <span className="text-xs font-semibold text-slate-800 font-sans leading-tight">
+                    {operatorName}
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-500 leading-tight">
+                    {operatorRole}
+                  </span>
                 </div>
-              </div>
-            </div>
-          )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-60 bg-white border-slate-200 p-1.5 shadow-xl">
+              <DropdownMenuLabel>
+                <p className="text-xs font-semibold text-slate-900 font-sans">{operatorName}</p>
+                <p className="text-[10px] text-sky-700 font-mono font-medium">{operatorRole}</p>
+                <p className="text-[10px] text-slate-500 font-mono mt-1 font-normal">Link: Maitri / Bharati Station</p>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="gap-2 text-xs text-slate-700 hover:text-slate-900">
+                <Shield className="w-3.5 h-3.5 text-sky-600" />
+                <span>Security Clearance: Level 4</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2 text-xs text-slate-700 hover:text-slate-900">
+                <User className="w-3.5 h-3.5 text-sky-600" />
+                <span>Bridge Navigator Settings</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Global Quick Command Palette Modal */}
+      <CommandSearch open={commandSearchOpen} onOpenChange={setCommandSearchOpen} />
+    </>
   );
 };
+

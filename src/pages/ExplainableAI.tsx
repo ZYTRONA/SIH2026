@@ -41,14 +41,14 @@ export const ExplainableAI: React.FC = () => {
         <ModelArchitectureCard />
 
         {/* 6. Footer Compliance Banner */}
-        <div className="p-3.5 rounded-lg bg-polar-900/60 border border-polar-700/50 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-400 gap-2">
+        <div className="p-3.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-600 gap-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span className="text-slate-300 font-bold">POLARIS Explainable AI (XAI) Framework</span>
+            <Sparkles className="w-4 h-4 text-sky-600" />
+            <span className="text-slate-900 font-bold">POLARIS Explainable AI (XAI) Framework</span>
             <span>—</span>
             <span>Local additive feature attribution & Pareto frontier transparency</span>
           </div>
-          <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+          <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
             <ShieldCheck className="w-4 h-4" />
             <span>IMO CODE OF SAFETY COMPLIANT</span>
           </div>

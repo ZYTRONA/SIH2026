@@ -70,13 +70,13 @@ export const RiskIntelligence: React.FC = () => {
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-rose-400" />
-              <h2 className="text-sm font-bold font-sans uppercase tracking-wider text-slate-100">
+              <Activity className="w-4 h-4 text-rose-600" />
+              <h2 className="text-sm font-bold font-sans uppercase tracking-wider text-slate-900">
                 Combined Antarctic Risk Heatmap & Transit Corridor
               </h2>
             </div>
-            <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center gap-2 text-[11px] font-mono text-slate-600">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>IMO Polar Code Calibrated: PC3 Structural Limit</span>
             </div>
           </div>
@@ -117,16 +117,16 @@ export const RiskIntelligence: React.FC = () => {
         </div>
 
         {/* 4. Bottom Footer Security & Compliance Notice */}
-        <div className="p-3.5 rounded-lg bg-polar-900/60 border border-polar-700/50 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-400 gap-2">
+        <div className="p-3.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-600 gap-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-ice-400" />
-            <span className="text-slate-300">
+            <Sparkles className="w-4 h-4 text-sky-600" />
+            <span className="text-slate-800 font-semibold">
               POLARIS AI Risk Decision Engine
             </span>
             <span>—</span>
             <span>Deterministic RIO structural calculations updated continuous live feed</span>
           </div>
-          <span className="text-emerald-400 font-bold">
+          <span className="text-emerald-700 font-bold">
             CURRENT VOYAGE STATUS: PERMITTED TRANSIT (RIO &gt; 0)
           </span>
         </div>

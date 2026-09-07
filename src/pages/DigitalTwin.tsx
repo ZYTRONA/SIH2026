@@ -119,10 +119,10 @@ export const DigitalTwin: React.FC = () => {
       return (
         <g className="animate-pulse">
           {/* Pulsing red hazard incursion cone */}
-          <circle cx={hx} cy={hy} r="32" fill="rgba(239, 68, 68, 0.18)" stroke="#EF4444" strokeWidth="2" strokeDasharray="4,4" />
-          <circle cx={hx} cy={hy} r="18" fill="rgba(239, 68, 68, 0.35)" stroke="#EF4444" strokeWidth="1.5" />
-          <circle cx={hx} cy={hy} r="4" fill="#EF4444" />
-          <text x={hx + 12} y={hy - 10} fill="#FCA5A5" fontSize="10" fontFamily="monospace" fontWeight="bold">
+          <circle cx={hx} cy={hy} r="32" fill="rgba(239, 68, 68, 0.2)" stroke="#DC2626" strokeWidth="2" strokeDasharray="4,4" />
+          <circle cx={hx} cy={hy} r="18" fill="rgba(239, 68, 68, 0.35)" stroke="#DC2626" strokeWidth="1.5" />
+          <circle cx={hx} cy={hy} r="4" fill="#DC2626" />
+          <text x={hx + 12} y={hy - 10} fill="#B91C1C" fontSize="10" fontFamily="monospace" fontWeight="bold">
             HAZARD INCURSION: IB-023
           </text>
         </g>
@@ -136,10 +136,10 @@ export const DigitalTwin: React.FC = () => {
       return (
         <g>
           {/* Green waypoint beacon WP-Bravo-Alt */}
-          <circle cx={wx} cy={wy} r="20" fill="rgba(16, 185, 129, 0.15)" stroke="#10B981" strokeWidth="1.5" strokeDasharray="3,3" />
-          <circle cx={wx} cy={wy} r="6" fill="#0A1120" stroke="#10B981" strokeWidth="2" />
-          <circle cx={wx} cy={wy} r="2.5" fill="#10B981" />
-          <text x={wx + 10} y={wy + 4} fill="#6EE7B7" fontSize="10" fontFamily="monospace" fontWeight="bold">
+          <circle cx={wx} cy={wy} r="20" fill="rgba(16, 185, 129, 0.2)" stroke="#059669" strokeWidth="1.5" strokeDasharray="3,3" />
+          <circle cx={wx} cy={wy} r="6" fill="#FFFFFF" stroke="#059669" strokeWidth="2" />
+          <circle cx={wx} cy={wy} r="2.5" fill="#059669" />
+          <text x={wx + 10} y={wy + 4} fill="#047857" fontSize="10" fontFamily="monospace" fontWeight="bold">
             WP-BRAVO-ALT [AVOIDANCE]
           </text>
         </g>
@@ -176,16 +176,16 @@ export const DigitalTwin: React.FC = () => {
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-cyan-400" />
-              <h3 className="text-sm font-bold font-sans text-slate-100 uppercase tracking-wider">
+              <Compass className="w-4 h-4 text-sky-600" />
+              <h3 className="text-sm font-bold font-sans text-slate-800 uppercase tracking-wider">
                 Dynamic Antarctic Simulation Chart (Polar Stereographic EPSG:3031)
               </h3>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-              <Activity className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
+              <Activity className="w-3.5 h-3.5 text-emerald-600" />
               <span>
-                Status: {currentState.phaseName}
+                Status: <strong className="text-slate-700">{currentState.phaseName}</strong>
               </span>
             </div>
           </div>

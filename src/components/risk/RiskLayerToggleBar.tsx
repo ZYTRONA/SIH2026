@@ -26,17 +26,17 @@ export const RiskLayerToggleBar: React.FC<RiskLayerToggleBarProps> = ({
     activeBg: string;
     activeBorder: string;
   }> = [
-    { key: 'seaIceRisk', label: 'Sea-Ice Risk', icon: Snowflake, color: 'text-cyan-400', activeBg: 'bg-cyan-500/15', activeBorder: 'border-cyan-500/30' },
-    { key: 'icebergRisk', label: 'Iceberg Risk', icon: Mountain, color: 'text-amber-400', activeBg: 'bg-amber-500/15', activeBorder: 'border-amber-500/30' },
-    { key: 'weatherRisk', label: 'Weather Risk', icon: Wind, color: 'text-orange-400', activeBg: 'bg-orange-500/15', activeBorder: 'border-orange-500/30' },
-    { key: 'oceanRisk', label: 'Ocean Risk', icon: Compass, color: 'text-emerald-400', activeBg: 'bg-emerald-500/15', activeBorder: 'border-emerald-500/30' },
-    { key: 'bathymetryRisk', label: 'Bathymetry Risk', icon: Anchor, color: 'text-indigo-400', activeBg: 'bg-indigo-500/15', activeBorder: 'border-indigo-500/30' },
+    { key: 'seaIceRisk', label: 'Sea-Ice Risk', icon: Snowflake, color: 'text-sky-700', activeBg: 'bg-sky-50', activeBorder: 'border-sky-300' },
+    { key: 'icebergRisk', label: 'Iceberg Risk', icon: Mountain, color: 'text-amber-700', activeBg: 'bg-amber-50', activeBorder: 'border-amber-300' },
+    { key: 'weatherRisk', label: 'Weather Risk', icon: Wind, color: 'text-orange-700', activeBg: 'bg-orange-50', activeBorder: 'border-orange-300' },
+    { key: 'oceanRisk', label: 'Ocean Risk', icon: Compass, color: 'text-emerald-700', activeBg: 'bg-emerald-50', activeBorder: 'border-emerald-300' },
+    { key: 'bathymetryRisk', label: 'Bathymetry Risk', icon: Anchor, color: 'text-indigo-700', activeBg: 'bg-indigo-50', activeBorder: 'border-indigo-300' },
   ];
 
   return (
-    <div className="polar-panel p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-200">
-        <Layers className="w-4 h-4 text-ice-400" />
+    <div className="bg-white border border-slate-200/90 shadow-xs rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800">
+        <Layers className="w-4 h-4 text-sky-600" />
         <span>RISK HEATMAP LAYERS:</span>
       </div>
 
@@ -49,17 +49,17 @@ export const RiskLayerToggleBar: React.FC<RiskLayerToggleBarProps> = ({
             <button
               key={it.key}
               onClick={() => onToggle(it.key)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
                 isActive
-                  ? `${it.activeBg} ${it.color} ${it.activeBorder} border font-bold shadow-sm`
-                  : 'bg-polar-900 hover:bg-polar-800 text-slate-400 border border-polar-700/60'
+                  ? `${it.activeBg} ${it.color} ${it.activeBorder} border font-bold shadow-xs`
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{it.label}</span>
               <span
                 className={`w-3.5 h-3.5 rounded flex items-center justify-center border text-[9px] ml-1 ${
-                  isActive ? 'border-current bg-polar-900' : 'border-polar-700 opacity-40'
+                  isActive ? 'border-current bg-white' : 'border-slate-300 opacity-40'
                 }`}
               >
                 {isActive && <Check className="w-2.5 h-2.5" />}
