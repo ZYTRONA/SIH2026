@@ -120,27 +120,7 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
 
   if (mapMode === 'openseamap') {
     return (
-      <div className="relative w-full h-[520px] sm:h-[580px] lg:h-[620px] rounded-2xl overflow-hidden flex flex-col">
-        {/* Top Right Chart Switcher */}
-        <div className="absolute top-3 right-3 z-40 flex items-center gap-1 bg-white p-1 rounded-full border border-[#e0e0e0] shadow-md select-none">
-          <button
-            onClick={() => setMapMode('openseamap')}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#0066cc] text-white shadow-xs cursor-pointer"
-          >
-            <Navigation className="w-3 h-3" />
-            <span>OpenSeaMap Nautical</span>
-          </button>
-          <button
-            onClick={() => setMapMode('polar')}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold text-neutral-600 hover:bg-[#f5f5f7] cursor-pointer"
-          >
-            <Compass className="w-3 h-3 text-neutral-400" />
-            <span>Polar HUD</span>
-          </button>
-        </div>
-
-        <AntarcticMap heightClass="h-full" />
-      </div>
+      <AntarcticMap heightClass="h-[520px] sm:h-[580px] lg:h-[620px]" />
     );
   }
 

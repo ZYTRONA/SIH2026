@@ -17,6 +17,13 @@ import {
   Navigation,
   Map as MapIcon,
   Radio,
+  Ship,
+  MapPin,
+  Ruler,
+  Play,
+  Pause,
+  RotateCcw,
+  Sparkles,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapLayerVisibility } from '@/types/map';
@@ -40,6 +47,13 @@ export interface MapControlsProps {
   engineMode?: 'mapbox' | 'tactical-fallback';
   basemapMode?: BasemapMode;
   onSelectBasemap?: (mode: BasemapMode) => void;
+  isMeasuring?: boolean;
+  onToggleMeasure?: () => void;
+  isSimulating?: boolean;
+  onToggleSimulation?: () => void;
+  simulationSpeed?: 1 | 5 | 20;
+  onChangeSimulationSpeed?: (speed: 1 | 5 | 20) => void;
+  onResetSimulation?: () => void;
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
@@ -52,16 +66,23 @@ export const MapControls: React.FC<MapControlsProps> = ({
   onCenterVessel,
   basemapMode = 'openseamap',
   onSelectBasemap,
+  isMeasuring = false,
+  onToggleMeasure,
+  isSimulating = false,
+  onToggleSimulation,
+  simulationSpeed = 5,
+  onChangeSimulationSpeed,
+  onResetSimulation,
 }) => {
   const [basemapOpen, setBasemapOpen] = useState<boolean>(false);
   const [layersOpen, setLayersOpen] = useState<boolean>(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const topControlsRef = useRef<HTMLDivElement>(null);
 
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (topControlsRef.current && !topControlsRef.current.contains(e.target as Node)) {
         setBasemapOpen(false);
         setLayersOpen(false);
       }
@@ -81,51 +102,74 @@ export const MapControls: React.FC<MapControlsProps> = ({
     {
       key: 'seaIce',
       label: 'Sea Ice Concentration',
-      sublabel: 'Sentinel-1 SAR Radar',
+      sublabel: 'Sentinel-1 SAR Radar & WMO Egg Code',
       icon: Snowflake,
       color: 'text-sky-600',
     },
     {
       key: 'icebergs',
       label: 'Iceberg Radar Targets',
-      sublabel: '32 Tracked Fragments',
+      sublabel: '37 Tracked + 72h Drift Trajectories',
       icon: Mountain,
       color: 'text-amber-600',
-      badge: '32 ACTIVE',
+      badge: '37 ACTIVE',
     },
     {
       key: 'risk',
       label: 'POLARIS Risk Corridors',
-      sublabel: 'RIO Structural Index',
+      sublabel: 'RIO Structural Limit Contours',
       icon: ShieldAlert,
       color: 'text-rose-600',
     },
     {
       key: 'routes',
-      label: 'Pareto Optimal Paths',
+      label: 'Pareto Navigation Paths',
       sublabel: 'A* Multi-Objective Solvers',
       icon: Route,
       color: 'text-[#0066cc]',
       badge: 'AI SOLVER',
     },
     {
+      key: 'aisTargets',
+      label: 'AIS Marine Traffic',
+      sublabel: '6 Polar Vessels & Closest Approach (CPA)',
+      icon: Ship,
+      color: 'text-blue-600',
+      badge: '6 SHIPS',
+    },
+    {
+      key: 'stations',
+      label: 'Antarctic Research Bases',
+      sublabel: '12 Scientific Stations & Radio Comms',
+      icon: MapPin,
+      color: 'text-emerald-700',
+      badge: '12 BASES',
+    },
+    {
+      key: 'navAids',
+      label: 'Nautical Aids to Navigation',
+      sublabel: 'Lights, Fairway Buoys & Virtual AtoN',
+      icon: Sparkles,
+      color: 'text-amber-700',
+    },
+    {
       key: 'oceanCurrents',
       label: 'Ocean Currents & Gyres',
-      sublabel: 'Circumpolar Streamlines',
+      sublabel: 'Circumpolar & Coastal Streamlines',
       icon: Compass,
       color: 'text-emerald-600',
     },
     {
       key: 'bathymetry',
       label: 'Seabed Bathymetry',
-      sublabel: 'Isobaths & Shelf Breaks',
+      sublabel: 'Isobaths (-100m to -3000m)',
       icon: Anchor,
       color: 'text-indigo-600',
     },
     {
       key: 'weather',
       label: 'Wind & Swell Vectors',
-      sublabel: '72H ECMWF Ensemble',
+      sublabel: 'ECMWF & Katabatic Wind Barbs',
       icon: CloudRain,
       color: 'text-blue-500',
     },
@@ -142,7 +186,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
     {
       id: 'openseamap',
       name: 'OpenSeaMap Nautical',
-      subtitle: 'Official nautical seamarks, buoys, beacons & depth contours',
+      subtitle: 'Official nautical seamarks, buoys, beacons & depth soundings',
       tag: 'OPENSEAMAP',
       icon: Navigation,
       isPrimary: true,
@@ -175,15 +219,21 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div ref={containerRef} className="flex items-center gap-2 pointer-events-auto select-none flex-wrap">
-        {/* 1. Unique Floating Chart Mode Pill */}
+      {/* 1. Top-Left Floating Command Islands: Chart Selector, Layers, Simulation, Ruler */}
+      <div
+        ref={topControlsRef}
+        className="absolute top-3 left-3 z-30 flex flex-wrap items-center gap-2 pointer-events-auto select-none max-w-[calc(100%-120px)]"
+      >
+        {/* Chart Engine Switcher Pill */}
         <div className="relative">
           <button
             onClick={() => {
               setBasemapOpen(!basemapOpen);
-              if (!basemapOpen) setLayersOpen(false);
+              if (!basemapOpen) {
+                setLayersOpen(false);
+              }
             }}
-            className="flex items-center gap-2 h-10 px-3.5 rounded-full bg-white/95 hover:bg-white text-[#1d1d1f] border border-[#e0e0e0] shadow-md transition-all active:scale-95 cursor-pointer group"
+            className="flex items-center gap-2 h-9 px-3 rounded-full bg-white/95 backdrop-blur-md hover:bg-white text-[#1d1d1f] border border-[#e0e0e0] shadow-md transition-all active:scale-95 cursor-pointer group"
             title="Switch Nautical Chart Engine"
           >
             <div className="p-1 rounded-full bg-[#0066cc]/10 text-[#0066cc]">
@@ -195,7 +245,11 @@ export const MapControls: React.FC<MapControlsProps> = ({
                 {currentBasemap.tag}
               </span>
             </div>
-            <ChevronDown className={`w-3.5 h-3.5 text-neutral-400 group-hover:text-[#1d1d1f] transition-transform ${basemapOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-neutral-400 group-hover:text-[#1d1d1f] transition-transform ${
+                basemapOpen ? 'rotate-180' : ''
+              }`}
+            />
           </button>
 
           {/* Basemap Selection Popover */}
@@ -206,7 +260,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-12 left-0 z-50 w-72 rounded-[18px] bg-white border border-[#e0e0e0] shadow-2xl p-2 space-y-1.5"
+                className="absolute top-11 left-0 z-50 w-72 rounded-[18px] bg-white border border-[#e0e0e0] shadow-2xl p-2 space-y-1.5"
               >
                 <div className="px-2.5 py-1.5 flex items-center justify-between border-b border-[#f0f0f0] text-[11px] font-mono text-neutral-500 font-semibold uppercase tracking-wider">
                   <span>Nautical Chart Engine</span>
@@ -231,19 +285,37 @@ export const MapControls: React.FC<MapControlsProps> = ({
                             : 'bg-[#fafafc] hover:bg-[#f5f5f7] text-[#1d1d1f] border border-[#f0f0f0]'
                         }`}
                       >
-                        <div className={`p-1.5 rounded-lg mt-0.5 ${isSelected ? 'bg-white/20 text-white' : 'bg-white border border-[#e0e0e0] text-[#0066cc]'}`}>
+                        <div
+                          className={`p-1.5 rounded-lg mt-0.5 ${
+                            isSelected
+                              ? 'bg-white/20 text-white'
+                              : 'bg-white border border-[#e0e0e0] text-[#0066cc]'
+                          }`}
+                        >
                           <Icon className="w-3.5 h-3.5" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between">
                             <span className="text-[13px] font-semibold truncate">{bm.name}</span>
                             {bm.isPrimary && (
-                              <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase ${isSelected ? 'bg-white text-[#0066cc]' : 'bg-emerald-100 text-emerald-800'}`}>
+                              <span
+                                className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase ${
+                                  isSelected
+                                    ? 'bg-white text-[#0066cc]'
+                                    : 'bg-emerald-100 text-emerald-800'
+                                }`}
+                              >
                                 RECOMMENDED
                               </span>
                             )}
                           </div>
-                          <p className={`text-[11px] leading-tight pt-0.5 ${isSelected ? 'text-white/80 font-normal' : 'text-neutral-500 font-normal'}`}>
+                          <p
+                            className={`text-[11px] leading-tight pt-0.5 ${
+                              isSelected
+                                ? 'text-white/80 font-normal'
+                                : 'text-neutral-500 font-normal'
+                            }`}
+                          >
                             {bm.subtitle}
                           </p>
                         </div>
@@ -256,24 +328,30 @@ export const MapControls: React.FC<MapControlsProps> = ({
           </AnimatePresence>
         </div>
 
-        {/* 2. Unique Floating Telemetry Layers Deck */}
+        {/* Telemetry Layers Pill */}
         <div className="relative">
           <button
             onClick={() => {
               setLayersOpen(!layersOpen);
-              if (!layersOpen) setBasemapOpen(false);
+              if (!layersOpen) {
+                setBasemapOpen(false);
+              }
             }}
-            className="flex items-center gap-2 h-10 px-3.5 rounded-full bg-white/95 hover:bg-white text-[#1d1d1f] border border-[#e0e0e0] shadow-md transition-all active:scale-95 cursor-pointer group"
+            className="flex items-center gap-2 h-9 px-3 rounded-full bg-white/95 backdrop-blur-md hover:bg-white text-[#1d1d1f] border border-[#e0e0e0] shadow-md transition-all active:scale-95 cursor-pointer group"
             title="Configure Map Telemetry Layers"
           >
             <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600">
               <Layers className="w-3.5 h-3.5" />
             </div>
-            <span className="text-[12px] font-semibold">Telemetry Layers</span>
+            <span className="text-[12px] font-semibold">Layers</span>
             <span className="px-2 py-0.5 rounded-full bg-[#f5f5f7] text-[#1d1d1f] border border-[#e0e0e0] text-[10px] font-mono font-bold">
               {activeLayersCount}/{layerItems.length}
             </span>
-            <ChevronDown className={`w-3.5 h-3.5 text-neutral-400 group-hover:text-[#1d1d1f] transition-transform ${layersOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-neutral-400 group-hover:text-[#1d1d1f] transition-transform ${
+                layersOpen ? 'rotate-180' : ''
+              }`}
+            />
           </button>
 
           {/* Telemetry Layers Drawer */}
@@ -284,17 +362,17 @@ export const MapControls: React.FC<MapControlsProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-12 left-0 z-50 w-72 rounded-[18px] bg-white border border-[#e0e0e0] shadow-2xl p-2.5 space-y-1.5"
+                className="absolute top-11 left-0 z-50 w-80 rounded-[18px] bg-white border border-[#e0e0e0] shadow-2xl p-2.5 space-y-1.5"
               >
                 <div className="px-2 py-1 flex items-center justify-between border-b border-[#f0f0f0] text-[11px] font-mono text-neutral-500 font-semibold uppercase tracking-wider">
                   <span>Overlay Intelligence</span>
                   <span className="text-emerald-700">{activeLayersCount} Visible</span>
                 </div>
 
-                <div className="space-y-1 pt-1 max-h-72 overflow-y-auto pr-0.5">
+                <div className="space-y-1 pt-1 max-h-80 overflow-y-auto pr-0.5">
                   {layerItems.map((item) => {
                     const Icon = item.icon;
-                    const isVisible = layers[item.key];
+                    const isVisible = Boolean(layers[item.key]);
 
                     return (
                       <button
@@ -307,12 +385,22 @@ export const MapControls: React.FC<MapControlsProps> = ({
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <div className={`p-1.5 rounded-lg ${isVisible ? 'bg-white border border-[#e0e0e0] ' + item.color : 'bg-neutral-100 text-neutral-400'}`}>
+                          <div
+                            className={`p-1.5 rounded-lg ${
+                              isVisible
+                                ? 'bg-white border border-[#e0e0e0] ' + item.color
+                                : 'bg-neutral-100 text-neutral-400'
+                            }`}
+                          >
                             <Icon className="w-3.5 h-3.5" />
                           </div>
                           <div className="text-left min-w-0">
-                            <span className="text-[12px] font-semibold block truncate">{item.label}</span>
-                            <span className="text-[10px] text-neutral-500 font-mono block truncate">{item.sublabel}</span>
+                            <span className="text-[12px] font-semibold block truncate">
+                              {item.label}
+                            </span>
+                            <span className="text-[10px] text-neutral-500 font-mono block truncate">
+                              {item.sublabel}
+                            </span>
                           </div>
                         </div>
 
@@ -338,7 +426,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
                 </div>
 
                 <div className="pt-2 border-t border-[#f0f0f0] flex items-center justify-between text-[11px] px-1 text-neutral-500">
-                  <span>Toggle to show/hide layers</span>
+                  <span>10 real-time tactical layers</span>
                   <button
                     onClick={() => setLayersOpen(false)}
                     className="text-[#0066cc] font-semibold hover:underline cursor-pointer"
@@ -351,81 +439,169 @@ export const MapControls: React.FC<MapControlsProps> = ({
           </AnimatePresence>
         </div>
 
-        {/* 3. Unique Tactile Viewport Actions Pill (Zoom & Focus) */}
-        <div className="flex items-center gap-1 h-10 px-2 rounded-full bg-white/95 border border-[#e0e0e0] shadow-md">
-          {/* Zoom In */}
+        {/* Live Voyage Simulation Pill */}
+        {onToggleSimulation && (
+          <div className="relative">
+            <div className="flex items-center bg-white/95 backdrop-blur-md rounded-full border border-[#e0e0e0] shadow-md p-0.5">
+              <button
+                onClick={onToggleSimulation}
+                className={`flex items-center gap-1.5 h-8 px-3 rounded-full text-[12px] font-semibold transition-all active:scale-95 cursor-pointer ${
+                  isSimulating
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f]'
+                }`}
+                title={isSimulating ? 'Pause Real-Time Voyage Simulation' : 'Start Real-Time Voyage Simulation'}
+              >
+                {isSimulating ? (
+                  <>
+                    <Pause className="w-3 h-3" />
+                    <span>Sim Active</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3 h-3 text-emerald-600" />
+                    <span>Simulate</span>
+                  </>
+                )}
+              </button>
+
+              {onChangeSimulationSpeed && (
+                <button
+                  onClick={() => {
+                    const nextSpeed = simulationSpeed === 1 ? 5 : simulationSpeed === 5 ? 20 : 1;
+                    onChangeSimulationSpeed(nextSpeed);
+                  }}
+                  className="h-8 px-2 text-[11px] font-mono font-bold text-neutral-600 hover:text-[#1d1d1f] transition-colors cursor-pointer"
+                  title="Cycle Simulation Speed Multiplier"
+                >
+                  {simulationSpeed}x
+                </button>
+              )}
+
+              {onResetSimulation && (
+                <button
+                  onClick={onResetSimulation}
+                  className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
+                  title="Reset Simulation Progress to Origin"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Interactive Measurement Ruler Pill */}
+        {onToggleMeasure && (
+          <button
+            onClick={onToggleMeasure}
+            className={`flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold border shadow-md transition-all active:scale-95 cursor-pointer ${
+              isMeasuring
+                ? 'bg-[#0066cc] text-white border-[#0066cc]'
+                : 'bg-white/95 backdrop-blur-md hover:bg-white text-[#1d1d1f] border-[#e0e0e0]'
+            }`}
+            title="Click any 2 points on the chart to measure distance (NM) and true bearing (°T)"
+          >
+            <Ruler className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Ruler</span>
+          </button>
+        )}
+      </div>
+
+      {/* 2. Bottom-Right Floating Tactical Zoom & Viewport Controls Dock */}
+      <div className="absolute bottom-11 right-3 z-30 flex flex-col items-center bg-white/95 backdrop-blur-md rounded-[16px] border border-[#e0e0e0] shadow-lg p-1 space-y-1 pointer-events-auto select-none">
+        {/* Zoom In */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onZoomIn}
+              className="h-8 w-8 rounded-[12px] bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] flex items-center justify-center transition-colors active:scale-90 cursor-pointer"
+              aria-label="Zoom In"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
+            Zoom In
+          </TooltipContent>
+        </Tooltip>
+
+        {/* Zoom Percentage */}
+        <span className="text-[10px] font-mono text-neutral-600 font-bold py-0.5 text-center tabular-nums">
+          {Math.round(zoomLevel * 100)}%
+        </span>
+
+        {/* Zoom Out */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onZoomOut}
+              className="h-8 w-8 rounded-[12px] bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] flex items-center justify-center transition-colors active:scale-90 cursor-pointer"
+              aria-label="Zoom Out"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
+            Zoom Out
+          </TooltipContent>
+        </Tooltip>
+
+        <div className="w-4 h-px bg-[#e0e0e0] my-0.5" />
+
+        {/* Center on Vessel */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onCenterVessel}
+              className="h-8 w-8 rounded-[12px] bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#0066cc] flex items-center justify-center transition-colors active:scale-90 cursor-pointer"
+              aria-label="Center on Vessel"
+            >
+              <Crosshair className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
+            Center on R/V Polar Sentinel
+          </TooltipContent>
+        </Tooltip>
+
+        {/* Fit Voyage Route Bounds */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onResetView}
+              className="h-8 w-8 rounded-[12px] bg-[#f5f5f7] hover:bg-[#e0e0e0] text-neutral-600 flex items-center justify-center transition-colors active:scale-90 cursor-pointer"
+              aria-label="Fit Corridor Bounds"
+            >
+              <Maximize2 className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
+            Fit Entire Voyage Corridor
+          </TooltipContent>
+        </Tooltip>
+
+        {/* Ruler Tool shortcut */}
+        {onToggleMeasure && (
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={onZoomIn}
-                className="h-7 w-7 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] flex items-center justify-center transition-colors active:scale-90 cursor-pointer"
-                aria-label="Zoom In"
+                onClick={onToggleMeasure}
+                className={`h-8 w-8 rounded-[12px] flex items-center justify-center transition-colors active:scale-90 cursor-pointer ${
+                  isMeasuring
+                    ? 'bg-[#0066cc] text-white'
+                    : 'bg-[#f5f5f7] hover:bg-[#e0e0e0] text-neutral-600'
+                }`}
+                aria-label="Distance Measurement Tool"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Ruler className="w-4 h-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
-              Zoom In
+            <TooltipContent side="left" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
+              {isMeasuring ? 'Exit Distance Ruler' : 'Measure Distance & Bearing (NM)'}
             </TooltipContent>
           </Tooltip>
-
-          {/* Zoom Percentage */}
-          <span className="text-[11px] font-mono text-[#1d1d1f] font-bold px-1 min-w-[36px] text-center tabular-nums">
-            {Math.round(zoomLevel * 100)}%
-          </span>
-
-          {/* Zoom Out */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={onZoomOut}
-                className="h-7 w-7 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] flex items-center justify-center transition-colors active:scale-90 cursor-pointer"
-                aria-label="Zoom Out"
-              >
-                <Minus className="w-3.5 h-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
-              Zoom Out
-            </TooltipContent>
-          </Tooltip>
-
-          <div className="h-4 w-px bg-[#e0e0e0] mx-0.5" />
-
-          {/* Center on Vessel Action */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={onCenterVessel}
-                className="flex items-center gap-1 h-7 px-2.5 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] text-[11px] font-semibold transition-colors active:scale-95 cursor-pointer"
-                aria-label="Focus Vessel Position"
-              >
-                <Crosshair className="w-3 h-3 text-[#0066cc]" />
-                <span className="hidden sm:inline">Ship</span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
-              Center on R/V Polar Sentinel
-            </TooltipContent>
-          </Tooltip>
-
-          {/* Fit Voyage Route Bounds Action */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={onResetView}
-                className="flex items-center gap-1 h-7 px-2.5 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] text-[11px] font-semibold transition-colors active:scale-95 cursor-pointer"
-                aria-label="Fit Entire Voyage Corridor"
-              >
-                <Maximize2 className="w-3 h-3 text-neutral-600" />
-                <span className="hidden sm:inline">Fit</span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0]">
-              Fit Complete Antarctic Voyage Corridor
-            </TooltipContent>
-          </Tooltip>
-        </div>
+        )}
       </div>
     </TooltipProvider>
   );

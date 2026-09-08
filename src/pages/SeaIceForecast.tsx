@@ -1,382 +1,399 @@
-import React, { useState } from 'react';
-import { ArcticMap } from '@/components/map/ArcticMap';
+import React, { useState, useEffect, useMemo } from 'react';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { AntarcticMap } from '@/components/map/AntarcticMap';
+import {
+  ForecastTimelineControls,
+  SeaIceSummarySidebar,
+  SeaIceForecastChart,
+  AIForecastInsightCard,
+  PolarCodeMatrix,
+} from '@/components/forecast';
+import {
+  ForecastHorizonKey,
+  SEA_ICE_SUMMARIES,
+} from '@/data/seaIceData';
+import {
+  VESSEL_STATE_DATA,
+  ROUTE_PATHS_DATA,
+  ICEBERGS_DATA,
+} from '@/data/mapData';
+import { SeaIceConcentrationFeature } from '@/types/map';
 import {
   RefreshCw,
+  Download,
   Snowflake,
   Wind,
-  ChevronDown,
-  TrendingUp,
-  TrendingDown,
+  Crosshair,
+  Compass,
   AlertTriangle,
-  Clock,
-  Info,
-  Layers,
+  Sliders,
+  Navigation,
+  Radio,
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
-// --- Data ---
-const forecastSteps = [
-  { label: '0h', sublabel: 'Nowcast', time: '14:00 UTC, May 24', active: true },
-  { label: '24h', sublabel: '+24h Drift', time: 'May 25, 14:00 UTC', active: false },
-  { label: '48h', sublabel: '+48h Model', time: 'May 26, 14:00 UTC', active: false },
-  { label: '72h', sublabel: '+72h Long', time: 'May 27, 14:00 UTC', active: false },
-];
+const HORIZON_SEQUENCE: ForecastHorizonKey[] = ['Current', '+24h', '+48h', '+72h', '+7 Days'];
 
-const trendData = [
-  { time: '0h', value: 82.4 },
-  { time: '24h', value: 81.8 },
-  { time: '48h', value: 81.2 },
-  { time: '72h', value: 80.6 },
-];
-
-const concentrationLegend = [
-  { label: 'Low', color: '#c8dcf0', pct: '0%' },
-  { color: '#8cc8e6', pct: '20%' },
-  { color: '#64c8dc', pct: '40%' },
-  { color: '#80d2b4', pct: '60%' },
-  { color: '#e6be50', pct: '80%' },
-  { label: 'High', color: '#dc4628', pct: '' },
-];
-
-// --- Left Panel: Forecast Timeline ---
-function ForecastTimeline() {
-  const [selected, setSelected] = useState(0);
-  return (
-    <div className="apple-card p-5 space-y-4">
-      <div className="flex items-center justify-between pb-2 border-b border-[#f0f0f0]">
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[#1d1d1f]" />
-          <span className="text-[14px] font-semibold text-[#1d1d1f]">
-            Forecast Timeline
-          </span>
-        </div>
-        <button className="h-7 w-7 rounded-full flex items-center justify-center hover:bg-[#f5f5f7] transition-colors border border-[#e0e0e0] active:scale-95">
-          <RefreshCw className="w-3.5 h-3.5 text-neutral-500" />
-        </button>
-      </div>
-      <div className="relative">
-        <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-[#e0e0e0]" />
-        <div className="space-y-1.5">
-          {forecastSteps.map((step, i) => (
-            <button
-              key={i}
-              onClick={() => setSelected(i)}
-              className={`relative flex items-start gap-3 w-full p-2.5 rounded-[12px] transition-all text-left active:scale-95 ${
-                selected === i ? 'bg-[#0066cc]/5 border border-[#0066cc]' : 'hover:bg-[#f5f5f7]'
-              }`}
-            >
-              <div className={`relative z-10 flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 ${
-                selected === i
-                  ? 'bg-[#0066cc] text-white'
-                  : 'bg-white border border-[#e0e0e0] text-neutral-400'
-              }`}>
-                {selected === i && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className={`text-[13px] font-semibold font-mono ${selected === i ? 'text-[#0066cc]' : 'text-[#1d1d1f]'}`}>
-                    {step.label}
-                  </span>
-                  {step.sublabel && (
-                    <span className="text-[11px] text-neutral-400 font-normal">{step.sublabel}</span>
-                  )}
-                </div>
-                <p className="text-[11px] text-neutral-500 font-mono mt-0.5">{step.time}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="pt-2 border-t border-[#f0f0f0] flex items-center gap-1.5 text-[11px] text-neutral-400">
-        <Info className="w-3 h-3 text-neutral-400" />
-        <span>Initialized: 14:00 UTC</span>
-      </div>
-    </div>
-  );
-}
-
-// --- Left Panel: Model Layers ---
-function ModelLayers() {
-  const [iceThickness, setIceThickness] = useState(2.5);
-  const [iceDrift, setIceDrift] = useState(20);
-
-  return (
-    <div className="apple-card p-5 space-y-4">
-      <div className="flex items-center gap-2 pb-2 border-b border-[#f0f0f0]">
-        <Layers className="w-4 h-4 text-[#1d1d1f]" />
-        <span className="text-[14px] font-semibold text-[#1d1d1f]">
-          Model Layers
-        </span>
-      </div>
-      <div className="space-y-4">
-        {/* Ice Thickness */}
-        <div className="p-3.5 rounded-[14px] bg-[#f5f5f7] border border-[#e0e0e0]">
-          <div className="flex items-center gap-2 mb-2">
-            <Snowflake className="w-4 h-4 text-[#0066cc]" />
-            <div>
-              <p className="text-[13px] font-semibold text-[#1d1d1f]">Ice Thickness</p>
-              <p className="text-[10px] text-neutral-500 font-mono">GIOMAS + AI Correction</p>
-            </div>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={5}
-            step={0.1}
-            value={iceThickness}
-            onChange={(e) => setIceThickness(Number(e.target.value))}
-            className="w-full h-1.5 bg-[#e0e0e0] rounded-full appearance-none cursor-pointer accent-[#0066cc]"
-          />
-          <div className="flex justify-between mt-1 text-[11px] font-mono text-[#1d1d1f]">
-            <span>0 m</span>
-            <span className="text-[#0066cc] font-semibold">{iceThickness} m</span>
-            <span>5 m</span>
-          </div>
-        </div>
-
-        {/* Ice Drift */}
-        <div className="p-3.5 rounded-[14px] bg-[#f5f5f7] border border-[#e0e0e0]">
-          <div className="flex items-center gap-2 mb-2">
-            <Wind className="w-4 h-4 text-emerald-600" />
-            <div>
-              <p className="text-[13px] font-semibold text-[#1d1d1f]">Ice Drift</p>
-              <p className="text-[10px] text-neutral-500 font-mono">NSIDC Hydrodynamics</p>
-            </div>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={40}
-            step={1}
-            value={iceDrift}
-            onChange={(e) => setIceDrift(Number(e.target.value))}
-            className="w-full h-1.5 bg-[#e0e0e0] rounded-full appearance-none cursor-pointer accent-[#0066cc]"
-          />
-          <div className="flex justify-between mt-1 text-[11px] font-mono text-[#1d1d1f]">
-            <span>0 cm/s</span>
-            <span className="text-[#0066cc] font-semibold">{iceDrift} cm/s</span>
-            <span>40 cm/s</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- Map with Legend Overlay ---
-function MapSection() {
-  const [layerType, setLayerType] = useState('Concentration');
-  return (
-    <div className="apple-card p-0 overflow-hidden flex flex-col h-full">
-      {/* Map Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#e0e0e0] bg-white">
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-[#f5f5f7] flex items-center justify-center text-[#0066cc] border border-[#e0e0e0]">
-            <Snowflake className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-[15px] font-semibold text-[#1d1d1f] leading-tight">
-              Sea-Ice Concentration Forecast
-            </h2>
-            <p className="text-[11px] text-neutral-500">AI Forecast &bull; Sentinel-1 SAR + Hydrodynamics</p>
-          </div>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[13px] text-[#1d1d1f] hover:bg-white transition-colors active:scale-95">
-              <span>{layerType}</span>
-              <ChevronDown className="w-3 h-3 text-neutral-400" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40 bg-white border border-[#e0e0e0] shadow-xl rounded-[14px] p-1.5">
-            {['Concentration', 'Thickness', 'Drift'].map((t) => (
-              <DropdownMenuItem key={t} onClick={() => setLayerType(t)} className="text-[13px] rounded-[8px] px-3 py-1.5 cursor-pointer">
-                {t}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      {/* Map */}
-      <div className="relative flex-1" style={{ minHeight: '520px' }}>
-        <ArcticMap className="absolute inset-0" />
-        {/* Legend Overlay */}
-        <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md rounded-[16px] border border-[#e0e0e0] p-3.5 z-[1000]">
-          <p className="text-[11px] font-semibold text-[#1d1d1f] mb-0.5">Sea-Ice Concentration</p>
-          <p className="text-[10px] text-neutral-500 mb-2 font-mono">(Valid at T+0h)</p>
-          <div className="flex items-end gap-1">
-            {concentrationLegend.map((item, i) => (
-              <div key={i} className="flex flex-col items-center">
-                {item.label && <span className="text-[8px] text-neutral-600 font-semibold mb-0.5">{item.label}</span>}
-                <div className="w-5 h-3 rounded-[3px]" style={{ backgroundColor: item.color }} />
-                {item.pct && <span className="text-[8px] font-mono text-neutral-400 mt-0.5">{item.pct}</span>}
-              </div>
-            ))}
-          </div>
-          <div className="mt-2.5 pt-2 border-t border-[#f0f0f0] flex items-center justify-between gap-2">
-            <span className="text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-normal">
-              SAR Confirmed
-            </span>
-            <span className="text-[10px] font-mono text-[#1d1d1f] font-semibold">96.4% ACC</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- Right Panel: Key Metrics ---
-function KeyMetrics() {
-  return (
-    <div className="apple-card p-5 space-y-2 bg-white">
-      <div className="flex items-center gap-2 mb-1">
-        <TrendingUp className="w-4 h-4 text-[#0066cc]" />
-        <span className="text-[12px] uppercase tracking-wider text-[#0066cc] font-semibold">
-          Ice Extent Metric
-        </span>
-      </div>
-      <p className="text-[12px] text-neutral-500">Total Polar Coverage</p>
-      <p className="text-[32px] font-semibold text-[#1d1d1f] tracking-tight leading-none">82.4%</p>
-      <p className="text-[12px] text-neutral-500 font-normal">&gt; 15% regional concentration threshold</p>
-      <div className="mt-3 flex items-center gap-2">
-        <span className="px-2.5 py-0.5 rounded-full bg-[#f5f5f7] text-[11px] font-normal border border-[#e0e0e0] text-[#1d1d1f]">
-          +3.7% vs 24h
-        </span>
-      </div>
-    </div>
-  );
-}
-
-// --- Right Panel: Concentration Trend ---
-function ConcentrationTrend() {
-  return (
-    <div className="apple-card p-5 space-y-3">
-      <div className="flex items-center gap-2">
-        <TrendingUp className="w-4 h-4 text-[#1d1d1f]" />
-        <span className="text-[14px] font-semibold text-[#1d1d1f]">
-          Concentration Curve
-        </span>
-      </div>
-      <div className="h-28">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={trendData}>
-            <XAxis dataKey="time" tick={{ fontSize: 10, fill: '#888888' }} axisLine={false} tickLine={false} />
-            <YAxis
-              domain={[78, 84]}
-              tick={{ fontSize: 10, fill: '#888888' }}
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(v) => `${v}%`}
-              width={35}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'white',
-                border: '1px solid #e0e0e0',
-                borderRadius: '12px',
-                fontSize: '11px',
-              }}
-              formatter={(value: number) => [`${value}%`, 'Coverage']}
-            />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#0066cc"
-              strokeWidth={2}
-              dot={{ fill: '#0066cc', r: 3 }}
-              activeDot={{ r: 5, stroke: '#0066cc', strokeWidth: 2, fill: 'white' }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="flex items-center gap-1.5 pt-2 border-t border-[#f0f0f0] text-[11px] text-neutral-500">
-        <TrendingDown className="w-3.5 h-3.5 text-neutral-600" />
-        <span>Rate: <strong className="text-[#1d1d1f] font-semibold">-0.6%/24h</strong></span>
-      </div>
-    </div>
-  );
-}
-
-// --- Right Panel: Critical Window ---
-function CriticalWindow() {
-  return (
-    <div className="p-5 rounded-[18px] bg-rose-50/70 border border-rose-200 text-[#1d1d1f] space-y-2">
-      <div className="flex items-center gap-2">
-        <AlertTriangle className="w-4 h-4 text-rose-600" />
-        <span className="text-[12px] uppercase tracking-wider font-semibold text-rose-800">
-          Critical Window Alert
-        </span>
-      </div>
-      <p className="text-[16px] font-semibold text-rose-950 font-mono">T+24h to T+36h</p>
-      <p className="text-[12px] text-neutral-600 font-normal">Rapid sea-ice convergence expected in sector Bravo</p>
-      <ul className="space-y-1.5 pt-1">
-        {[
-          'Extreme ice compression risk',
-          'Reduce speed to 6 kts in pack margin',
-          'Hourly satellite updates active',
-        ].map((item, i) => (
-          <li key={i} className="flex items-center gap-2 text-[12px] text-neutral-700">
-            <span className="h-1.5 w-1.5 rounded-full bg-rose-600 shrink-0" />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// --- Footer ---
-function DataFooter() {
-  return (
-    <footer className="flex flex-col sm:flex-row items-center justify-between px-6 py-3.5 bg-white border-t border-[#e0e0e0] text-[12px] text-neutral-500 shrink-0 gap-2">
-      <div className="flex items-center gap-4 flex-wrap">
-        <span className="font-semibold text-[#1d1d1f]">Data Sources:</span>
-        <span>Copernicus Marine Service</span>
-        <span>ECMWF ERA5 + HRES</span>
-        <span>SAR: Sentinel-1 / RCM</span>
-      </div>
-      <div className="flex items-center gap-3">
-        <span>Initialized: 14:00 UTC</span>
-        <span className="flex items-center gap-1 font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px]">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-          OPERATIONAL
-        </span>
-      </div>
-    </footer>
-  );
-}
-
-// --- Main Page ---
 export const SeaIceForecast: React.FC = () => {
+  const [activeHorizon, setActiveHorizon] = useState<ForecastHorizonKey>('Current');
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [selectedRouteKey, setSelectedRouteKey] = useState<string>('route-balanced');
+  const [sarThreshold, setSarThreshold] = useState<number>(-14.5);
+  const [thicknessOverride, setThicknessOverride] = useState<number>(1.25);
+  const [driftVelocityOverride, setDriftVelocityOverride] = useState<number>(1.2);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+
+  // Auto-play forecast horizon timeline progression
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setActiveHorizon((current) => {
+          const currentIndex = HORIZON_SEQUENCE.indexOf(current);
+          const nextIndex = (currentIndex + 1) % HORIZON_SEQUENCE.length;
+          return HORIZON_SEQUENCE[nextIndex];
+        });
+      }, 2500);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPlaying]);
+
+  // Sync thickness slider with active horizon baseline
+  useEffect(() => {
+    const summary = SEA_ICE_SUMMARIES[activeHorizon];
+    if (summary) {
+      setThicknessOverride(summary.estimatedMeanThicknessM);
+    }
+  }, [activeHorizon]);
+
+  // Dynamic Sea Ice Tiers adapted for the active horizon
+  const dynamicSeaIceTiers: SeaIceConcentrationFeature[] = useMemo(() => {
+    const summary = SEA_ICE_SUMMARIES[activeHorizon];
+    const avg = summary.avgConcentrationPct;
+
+    return [
+      {
+        id: 'ice-tier-1',
+        zoneName: 'Southern Ocean Marginal Drift',
+        concentrationTier: '0–20%',
+        concentrationPct: Math.round(avg * 0.28),
+        iceStage: 'Open Drift & Grease Ice',
+        color: '#0284C7',
+        fillOpacity: 0.18 + (activeHorizon !== 'Current' ? 0.04 : 0),
+        polygonPoints: '150,80 400,120 700,100 880,180 820,320 540,240 220,200 120,120',
+      },
+      {
+        id: 'ice-tier-2',
+        zoneName: 'Outer Pack Channel (Bravo Corridor)',
+        concentrationTier: '20–50%',
+        concentrationPct: Math.round(avg * 0.55),
+        iceStage: 'First-Year Thin Floes',
+        color: '#0EA5E9',
+        fillOpacity: 0.28 + (activeHorizon !== 'Current' ? 0.05 : 0),
+        polygonPoints: '220,200 540,240 820,320 860,450 720,480 420,380 260,300',
+      },
+      {
+        id: 'ice-tier-3',
+        zoneName: 'Prydz Bay High-Density Pack',
+        concentrationTier: '50–80%',
+        concentrationPct: summary.easternApproachPct,
+        iceStage: 'First-Year Medium/Thick Pack',
+        color: '#38BDF8',
+        fillOpacity: 0.38 + (activeHorizon !== 'Current' ? 0.06 : 0),
+        polygonPoints: '260,300 420,380 720,480 780,620 640,600 440,520 320,420',
+      },
+      {
+        id: 'ice-tier-4',
+        zoneName: 'Coastal Fast Ice & Amery Shelf',
+        concentrationTier: '80–100%',
+        concentrationPct: summary.amerySectorPct,
+        iceStage: 'Consolidated Multi-Year Fast Ice',
+        color: '#BAE6FD',
+        fillOpacity: 0.52 + (activeHorizon !== 'Current' ? 0.05 : 0),
+        polygonPoints: '440,520 640,600 780,620 820,740 760,820 600,760 480,680',
+      },
+    ];
+  }, [activeHorizon]);
+
+  const handleRefreshData = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  };
+
+  const handleExportData = () => {
+    const jsonStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(
+        {
+          horizon: activeHorizon,
+          summary: SEA_ICE_SUMMARIES[activeHorizon],
+          vessel: VESSEL_STATE_DATA,
+          seaIceTiers: dynamicSeaIceTiers,
+          icebergsTracked: ICEBERGS_DATA.length,
+          routes: ROUTE_PATHS_DATA,
+          exportTimestamp: new Date().toISOString(),
+        },
+        null,
+        2
+      )
+    )}`;
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', jsonStr);
+    downloadAnchor.setAttribute('download', `POLARIS_SeaIce_Forecast_${activeHorizon}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  const currentSummary = SEA_ICE_SUMMARIES[activeHorizon];
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f5f7] overflow-hidden">
-      <div className="flex-1 flex overflow-hidden p-4 sm:p-6 gap-5">
-        {/* Left Panel */}
-        <aside className="w-80 shrink-0 overflow-y-auto space-y-4 hidden lg:block">
-          <ForecastTimeline />
-          <ModelLayers />
-        </aside>
+    <PageContainer
+      title="Sea-Ice Forecast & Spatiotemporal Matrix"
+      subtitle="High-resolution Sentinel-1 SAR radar fusion, ResUNet ConvLSTM spatiotemporal forecasting, hydrodynamic drift vectors, and voyage corridor analysis."
+      badge={`FORECAST ${activeHorizon.toUpperCase()} ACTIVE`}
+      badgeType="active"
+      actions={
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportData}
+            className="btn-apple-secondary flex items-center gap-1.5 !h-9 !px-3.5 !text-[12px] cursor-pointer"
+            title="Export GeoTIFF and NetCDF4 Data Pack"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Export Dataset</span>
+          </button>
+          <button
+            onClick={handleRefreshData}
+            disabled={isRefreshing}
+            className="btn-apple-primary flex items-center gap-1.5 !h-9 !px-4 !text-[12px] cursor-pointer"
+            title="Trigger Sentinel-1 & AMSR2 Ingestion Pipeline"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Ingesting SAR...' : 'Sync Radar Pass'}</span>
+          </button>
+        </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* 1. Top Master Timeline Controller Deck */}
+        <ForecastTimelineControls
+          activeHorizon={activeHorizon}
+          onSelectHorizon={(h) => {
+            setActiveHorizon(h);
+            setIsPlaying(false);
+          }}
+          isPlaying={isPlaying}
+          onTogglePlay={() => setIsPlaying(!isPlaying)}
+          onReset={() => {
+            setActiveHorizon('Current');
+            setIsPlaying(false);
+          }}
+        />
 
-        {/* Center: Map */}
-        <main className="flex-1 min-w-0 overflow-hidden">
-          <MapSection />
-        </main>
+        {/* 2. Main Map & Forecast Intelligence Deck */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Center / Left: Interactive Antarctic Sea-Ice & Nautical Map (8 cols) */}
+          <div className="lg:col-span-8 space-y-3">
+            {/* Map Header Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
+              <div className="flex items-center gap-2">
+                <Compass className="w-4 h-4 text-[#0066cc]" />
+                <h3 className="text-[14px] font-semibold text-[#1d1d1f]">
+                  Antarctic Sea-Ice & Nautical Chart (OpenSeaMap)
+                </h3>
+              </div>
 
-        {/* Right Panel */}
-        <aside className="w-80 shrink-0 overflow-y-auto space-y-4 hidden xl:block">
-          <KeyMetrics />
-          <ConcentrationTrend />
-          <CriticalWindow />
-        </aside>
+              <div className="flex items-center gap-3 text-[11px] font-mono text-neutral-500 flex-wrap">
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[#1d1d1f]">
+                  <Crosshair className="w-3 h-3 text-[#0066cc]" />
+                  <span>SHIP: {Math.abs(VESSEL_STATE_DATA.lat).toFixed(2)}°S, {VESSEL_STATE_DATA.lng.toFixed(2)}°E</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <Radio className="w-3 h-3 text-emerald-600 animate-pulse" />
+                  <span>HORIZON: {activeHorizon}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Antarctic Map with Live Ship, Sea-Ice Heatmap, Routes, Icebergs & Stations */}
+            <AntarcticMap
+              customSeaIce={dynamicSeaIceTiers}
+              selectedRouteId={selectedRouteKey}
+              onSelectRoute={setSelectedRouteKey}
+              heightClass="h-[560px] sm:h-[620px] lg:h-[700px]"
+            />
+
+            {/* Quick Route Selector Sub-Bar */}
+            <div className="p-3 rounded-[14px] bg-white border border-[#e0e0e0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12px]">
+              <div className="flex items-center gap-2">
+                <Navigation className="w-4 h-4 text-[#0066cc]" />
+                <span className="font-semibold text-[#1d1d1f]">Corridor Traversal:</span>
+                <span className="text-neutral-500">
+                  Select Pareto route to verify ice lead penetration for {activeHorizon}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto">
+                {ROUTE_PATHS_DATA.map((r) => {
+                  const isSelected = r.id === selectedRouteKey;
+                  return (
+                    <button
+                      key={r.id}
+                      onClick={() => setSelectedRouteKey(r.id)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+                        isSelected
+                          ? 'bg-[#0066cc] text-white shadow-xs'
+                          : 'bg-[#f5f5f7] hover:bg-[#ebebed] text-[#1d1d1f] border border-[#e0e0e0]'
+                      }`}
+                    >
+                      {r.name} ({r.safetyScore}%)
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Sea Ice Summary Sidebar & Physics Parameters (4 cols) */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Spatiotemporal Summary Card */}
+            <SeaIceSummarySidebar activeHorizon={activeHorizon} />
+
+            {/* Dynamic SAR & Physics Calibration Panel */}
+            <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-5 space-y-4">
+              <div className="flex items-center gap-2 pb-2 border-b border-[#f0f0f0]">
+                <Sliders className="w-4 h-4 text-[#0066cc]" />
+                <h4 className="text-[14px] font-semibold text-[#1d1d1f]">
+                  Radar & Ice Physics Controls
+                </h4>
+              </div>
+
+              <div className="space-y-4 text-[12px]">
+                {/* SAR Backscatter Threshold */}
+                <div className="p-3.5 rounded-[14px] bg-[#fafafc] border border-[#e0e0e0] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#1d1d1f] font-semibold flex items-center gap-1.5">
+                      <Radio className="w-3.5 h-3.5 text-[#0066cc]" />
+                      SAR Backscatter Threshold (σ₀)
+                    </span>
+                    <span className="font-mono font-bold text-[#0066cc]">
+                      {sarThreshold} dB
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={-24}
+                    max={-8}
+                    step={0.5}
+                    value={sarThreshold}
+                    onChange={(e) => setSarThreshold(Number(e.target.value))}
+                    className="w-full h-1.5 bg-[#e0e0e0] rounded-full appearance-none cursor-pointer accent-[#0066cc]"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-neutral-400">
+                    <span>-24 dB (Open Water)</span>
+                    <span>-8 dB (Deformed Ridge)</span>
+                  </div>
+                </div>
+
+                {/* Estimated Ice Thickness Slider */}
+                <div className="p-3.5 rounded-[14px] bg-[#fafafc] border border-[#e0e0e0] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#1d1d1f] font-semibold flex items-center gap-1.5">
+                      <Snowflake className="w-3.5 h-3.5 text-[#0066cc]" />
+                      Model Ice Thickness
+                    </span>
+                    <span className="font-mono font-bold text-[#0066cc]">
+                      {thicknessOverride.toFixed(2)} m
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.4}
+                    max={3.0}
+                    step={0.05}
+                    value={thicknessOverride}
+                    onChange={(e) => setThicknessOverride(Number(e.target.value))}
+                    className="w-full h-1.5 bg-[#e0e0e0] rounded-full appearance-none cursor-pointer accent-[#0066cc]"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-neutral-400">
+                    <span>0.4 m (Grease)</span>
+                    <span>3.0 m (Multi-Year)</span>
+                  </div>
+                </div>
+
+                {/* NSIDC Drift Velocity Slider */}
+                <div className="p-3.5 rounded-[14px] bg-[#fafafc] border border-[#e0e0e0] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#1d1d1f] font-semibold flex items-center gap-1.5">
+                      <Wind className="w-3.5 h-3.5 text-emerald-600" />
+                      Katabatic Drift Velocity
+                    </span>
+                    <span className="font-mono font-bold text-emerald-700">
+                      {driftVelocityOverride.toFixed(1)} kts
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.0}
+                    max={4.0}
+                    step={0.1}
+                    value={driftVelocityOverride}
+                    onChange={(e) => setDriftVelocityOverride(Number(e.target.value))}
+                    className="w-full h-1.5 bg-[#e0e0e0] rounded-full appearance-none cursor-pointer accent-emerald-600"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-neutral-400">
+                    <span>0.0 kts (Calm)</span>
+                    <span>4.0 kts (Gale Drift)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Critical Compression Alert Card */}
+            <div className="p-5 rounded-[18px] bg-rose-50/80 border border-rose-200 text-[#1d1d1f] space-y-2.5">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span className="text-[12px] uppercase tracking-wider font-semibold text-rose-800">
+                  Critical Ice Compression Advisory
+                </span>
+              </div>
+              <p className="text-[14px] font-semibold text-rose-950 font-mono">
+                {activeHorizon === '+72h' || activeHorizon === '+7 Days'
+                  ? 'Severe Convergence in Sector Bravo'
+                  : 'Moderate Lead Closure in Eastern Approach'}
+              </p>
+              <p className="text-[12px] text-neutral-600 leading-relaxed font-normal">
+                {currentSummary.insight}
+              </p>
+              <div className="pt-2 border-t border-rose-200/60 flex items-center justify-between text-[11px] font-mono">
+                <span className="text-rose-700 font-semibold">Recommended Speed: &le; 10 kts</span>
+                <span className="text-neutral-500">PC3 Operational</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Bottom Row: 72H Deep Spatiotemporal Chart & AI Insight Matrix */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left: Sea-Ice 72H Forecast Chart (7 cols) */}
+          <div className="lg:col-span-7">
+            <SeaIceForecastChart />
+          </div>
+
+          {/* Right: AI Forecast Model Architecture & Inputs (5 cols) */}
+          <div className="lg:col-span-5">
+            <AIForecastInsightCard activeHorizon={activeHorizon} />
+          </div>
+        </div>
+
+        {/* 4. Polar Code PC1–PC7 Operability Matrix */}
+        <PolarCodeMatrix activeHorizon={activeHorizon} />
       </div>
-      <DataFooter />
-    </div>
+    </PageContainer>
   );
 };
 
