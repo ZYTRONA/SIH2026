@@ -16,7 +16,6 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
-  SlidersHorizontal,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapLayerVisibility } from '@/types/map';
