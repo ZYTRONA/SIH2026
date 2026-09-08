@@ -3,7 +3,14 @@ import {
   DetailedIceberg,
   DETAILED_ICEBERGS_CATALOG,
 } from '@/data/icebergIntelligenceData';
-import { Mountain, Search, ArrowRight } from 'lucide-react';
+import { Mountain, Search, ArrowRight, Filter } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface IcebergCatalogTableProps {
   selectedId: string;
@@ -30,15 +37,15 @@ export const IcebergCatalogTable: React.FC<IcebergCatalogTableProps> = ({
   });
 
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 space-y-4">
+    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-2xl p-5 space-y-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900">
             <Mountain className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-zinc-950">
+            <h3 className="text-sm font-bold font-sans text-zinc-950 tracking-tight">
               Antarctic Iceberg Catalog
             </h3>
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider font-bold">
@@ -47,21 +54,24 @@ export const IcebergCatalogTable: React.FC<IcebergCatalogTableProps> = ({
           </div>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1 flex-wrap">
-          {['ALL', 'HIGH_THREAT', 'CRITICAL', 'HIGH', 'WARNING', 'SAFE'].map((tier) => (
-            <button
-              key={tier}
-              onClick={() => setFilterRisk(tier)}
-              className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold transition-colors ${
-                filterRisk === tier
-                  ? 'bg-black text-white shadow-xs'
-                  : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200'
-              }`}
-            >
-              {tier}
-            </button>
-          ))}
+        {/* Radix UI Select Dropdown for Filtering */}
+        <div className="w-full sm:w-44">
+          <Select value={filterRisk} onValueChange={setFilterRisk}>
+            <SelectTrigger className="h-8 text-xs font-mono font-bold bg-zinc-50 border-zinc-200">
+              <div className="flex items-center gap-1.5">
+                <Filter className="w-3 h-3 text-zinc-500" />
+                <SelectValue placeholder="Filter Threat" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Objects ({DETAILED_ICEBERGS_CATALOG.length})</SelectItem>
+              <SelectItem value="HIGH_THREAT">Critical & High (7)</SelectItem>
+              <SelectItem value="CRITICAL">Critical Only</SelectItem>
+              <SelectItem value="HIGH">High Only</SelectItem>
+              <SelectItem value="WARNING">Warning</SelectItem>
+              <SelectItem value="SAFE">Safe / Distant</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -73,7 +83,7 @@ export const IcebergCatalogTable: React.FC<IcebergCatalogTableProps> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by code (e.g. IB-023), name, or sector..."
-          className="w-full bg-zinc-50 border border-zinc-200 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all shadow-xs"
+          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-9 pr-3 py-2 text-xs font-mono text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all shadow-2xs"
         />
       </div>
 
@@ -89,17 +99,17 @@ export const IcebergCatalogTable: React.FC<IcebergCatalogTableProps> = ({
             <div
               key={ib.id}
               onClick={() => onSelectIceberg(ib)}
-              className={`p-2.5 rounded-xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
+              className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
                 isSelected
                   ? 'bg-zinc-50 border-black shadow-xs ring-1 ring-black'
-                  : 'bg-white hover:bg-zinc-50/70 border-zinc-200'
+                  : 'bg-white hover:bg-zinc-50/80 border-zinc-200'
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div
                   className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
                     isCritical
-                      ? 'bg-rose-500 animate-ping'
+                      ? 'bg-rose-500 ring-2 ring-rose-200 animate-pulse'
                       : isHigh
                       ? 'bg-orange-500'
                       : isWarning
@@ -118,7 +128,7 @@ export const IcebergCatalogTable: React.FC<IcebergCatalogTableProps> = ({
                     </span>
                   </div>
                   <div className="text-[10px] font-mono text-zinc-500 truncate">
-                    Drift: {ib.velocityMs} m/s @ {ib.directionCompass} | Route Dist: {ib.routeDistanceKm} km
+                    Drift: {ib.velocityMs} m/s @ {ib.directionCompass} | Route Dist: <strong className="text-zinc-900 font-bold">{ib.routeDistanceKm} km</strong>
                   </div>
                 </div>
               </div>
@@ -146,3 +156,4 @@ export const IcebergCatalogTable: React.FC<IcebergCatalogTableProps> = ({
     </div>
   );
 };
+

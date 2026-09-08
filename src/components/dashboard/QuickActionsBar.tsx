@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Compass, Snowflake, Mountain, Route, ArrowUpRight } from 'lucide-react';
 
-
 export const QuickActionsBar: React.FC = () => {
   const navigate = useNavigate();
 
@@ -38,7 +37,7 @@ export const QuickActionsBar: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white border border-zinc-200/90 rounded-xl p-5 space-y-3 shadow-xs">
+    <div className="rounded-2xl border border-zinc-200 bg-white p-5 space-y-3 shadow-xs">
       <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
         <h3 className="text-sm font-bold font-sans text-zinc-950">
           Command Quick Actions

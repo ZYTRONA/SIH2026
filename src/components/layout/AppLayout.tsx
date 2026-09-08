@@ -15,11 +15,19 @@ export const AppLayout: React.FC = () => {
       {/* Fixed Left Sidebar */}
       <Sidebar />
 
-      {/* Main App Canvas */}
-      <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-200 ease-in-out ${
-          sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-[270px]'
-        }`}
+      {/* Main App Canvas with synchronized spring transition */}
+      <motion.div
+        initial={false}
+        animate={{
+          paddingLeft: sidebarCollapsed ? 72 : 256,
+          transition: {
+            type: 'spring',
+            stiffness: 350,
+            damping: 32,
+            mass: 0.8,
+          },
+        }}
+        className="flex-1 flex flex-col min-w-0"
       >
         {/* Top Header */}
         <Header />
@@ -64,8 +72,7 @@ export const AppLayout: React.FC = () => {
             </div>
           </div>
         </footer>
-      </div>
+      </motion.div>
     </div>
   );
 };
-

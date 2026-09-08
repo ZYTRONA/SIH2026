@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AlertTriangle,
   AlertCircle,
@@ -8,18 +8,26 @@ import {
 } from 'lucide-react';
 import { ACTIVE_ALERTS_DATA } from '@/data/dashboardData';
 import { Link } from 'react-router-dom';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const ActiveAlertsPanel: React.FC = () => {
+  const [filterSeverity, setFilterSeverity] = useState<'ALL' | 'HIGH' | 'WARNING'>('ALL');
+
+  const filteredAlerts = ACTIVE_ALERTS_DATA.filter((alert) => {
+    if (filterSeverity === 'ALL') return true;
+    return alert.severity === filterSeverity;
+  });
+
   return (
-    <div className="bg-white border border-zinc-200/90 rounded-xl p-5 flex flex-col justify-between space-y-4 shadow-xs">
+    <div className="rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <div className="p-1.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-600">
             <ShieldAlert className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-zinc-950">
+            <h3 className="text-sm font-bold font-sans text-zinc-950 tracking-tight">
               Active Alerts & Incursions
             </h3>
             <span className="text-[10px] font-mono text-rose-900 font-bold uppercase tracking-wider">
@@ -37,9 +45,28 @@ export const ActiveAlertsPanel: React.FC = () => {
         </Link>
       </div>
 
+      {/* Filter Tabs */}
+      <Tabs
+        value={filterSeverity}
+        onValueChange={(val) => setFilterSeverity(val as 'ALL' | 'HIGH' | 'WARNING')}
+        className="w-full"
+      >
+        <TabsList className="w-full grid grid-cols-3 h-8 p-0.5 bg-zinc-100 border border-zinc-200 rounded-lg">
+          <TabsTrigger value="ALL" className="h-7 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+            All ({ACTIVE_ALERTS_DATA.length})
+          </TabsTrigger>
+          <TabsTrigger value="HIGH" className="h-7 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+            High Threat ({ACTIVE_ALERTS_DATA.filter((a) => a.severity === 'HIGH').length})
+          </TabsTrigger>
+          <TabsTrigger value="WARNING" className="h-7 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+            Advisory ({ACTIVE_ALERTS_DATA.filter((a) => a.severity === 'WARNING').length})
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       {/* Alert List */}
       <div className="space-y-2.5">
-        {ACTIVE_ALERTS_DATA.map((alert) => {
+        {filteredAlerts.map((alert) => {
           const isHigh = alert.severity === 'HIGH';
           const isWarning = alert.severity === 'WARNING';
 
@@ -48,10 +75,10 @@ export const ActiveAlertsPanel: React.FC = () => {
               key={alert.id}
               className={`p-3.5 rounded-xl border transition-all ${
                 isHigh
-                  ? 'bg-rose-50/60 border-rose-200'
+                  ? 'bg-rose-50/50 border-rose-200 hover:border-rose-300'
                   : isWarning
-                  ? 'bg-amber-50/60 border-amber-200'
-                  : 'bg-zinc-50 border-zinc-200'
+                  ? 'bg-amber-50/50 border-amber-200 hover:border-amber-300'
+                  : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'
               }`}
             >
               <div className="flex items-start justify-between gap-2 mb-1">
@@ -65,12 +92,12 @@ export const ActiveAlertsPanel: React.FC = () => {
                         : 'bg-zinc-200 text-zinc-900 border border-zinc-300'
                     }`}
                   >
-                    {isHigh && <AlertCircle className="w-3 h-3 text-rose-600" />}
-                    {isWarning && <AlertTriangle className="w-3 h-3 text-amber-600" />}
-                    {!isHigh && !isWarning && <Info className="w-3 h-3 text-zinc-700" />}
+                    {isHigh && <AlertCircle className="w-3 h-3 text-rose-600 shrink-0" />}
+                    {isWarning && <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />}
+                    {!isHigh && !isWarning && <Info className="w-3 h-3 text-zinc-700 shrink-0" />}
                     {alert.severity}
                   </span>
-                  <span className="text-xs font-bold text-zinc-950 font-sans">
+                  <span className="text-xs font-bold text-zinc-950 font-sans tracking-tight">
                     {alert.title}
                   </span>
                 </div>
@@ -99,3 +126,4 @@ export const ActiveAlertsPanel: React.FC = () => {
     </div>
   );
 };
+

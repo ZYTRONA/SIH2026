@@ -37,7 +37,7 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  sidebarCollapsed: false,
+  sidebarCollapsed: true, // Default collapsed as requested
   mobileSidebarOpen: false,
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),

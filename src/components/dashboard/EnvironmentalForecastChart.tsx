@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -12,7 +12,8 @@ import {
   Legend,
 } from 'recharts';
 import { ENVIRONMENTAL_FORECAST_72H } from '@/data/dashboardData';
-import { Activity, Snowflake, Wind, ShieldAlert } from 'lucide-react';
+import { Activity, Snowflake, Wind, ShieldAlert, Layers } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -41,7 +42,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
               />
               {entry.name}:
             </span>
-            <span className="text-zinc-950 font-bold">
+            <span className="text-zinc-950 font-bold tabular-nums">
               {entry.value}
               {entry.name.includes('Sea-Ice')
                 ? '%'
@@ -58,16 +59,18 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
 };
 
 export const EnvironmentalForecastChart: React.FC = () => {
+  const [activeSeriesTab, setActiveSeriesTab] = useState<'all' | 'ice' | 'wind' | 'risk'>('all');
+
   return (
-    <div className="bg-white border border-zinc-200/90 rounded-xl p-5 space-y-4 shadow-xs">
+    <div className="bg-white border border-zinc-200/90 rounded-2xl p-5 space-y-4 shadow-xs">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
+        <div className="flex items-center gap-2.5">
           <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900">
             <Activity className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-zinc-950">
+            <h3 className="text-sm font-bold font-sans text-zinc-950 tracking-tight">
               72-Hour Environmental Dynamics & Risk Forecast
             </h3>
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider font-semibold">
@@ -76,21 +79,31 @@ export const EnvironmentalForecastChart: React.FC = () => {
           </div>
         </div>
 
-        {/* Legend pills */}
-        <div className="flex items-center gap-3 text-[11px] font-mono font-bold">
-          <span className="flex items-center gap-1.5 text-zinc-900">
-            <Snowflake className="w-3.5 h-3.5 text-black" />
-            Sea-Ice %
-          </span>
-          <span className="flex items-center gap-1.5 text-amber-900">
-            <Wind className="w-3.5 h-3.5 text-amber-600" />
-            Wind (kts)
-          </span>
-          <span className="flex items-center gap-1.5 text-rose-900">
-            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
-            Risk Index
-          </span>
-        </div>
+        {/* Radix UI Tabs for Series Focus */}
+        <Tabs
+          value={activeSeriesTab}
+          onValueChange={(val) => setActiveSeriesTab(val as 'all' | 'ice' | 'wind' | 'risk')}
+          className="w-auto"
+        >
+          <TabsList className="h-8 p-0.5 bg-zinc-100 border border-zinc-200 rounded-lg">
+            <TabsTrigger value="all" className="h-7 px-2.5 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+              <Layers className="w-3 h-3 mr-1" />
+              All Series
+            </TabsTrigger>
+            <TabsTrigger value="ice" className="h-7 px-2.5 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+              <Snowflake className="w-3 h-3 mr-1" />
+              Sea-Ice
+            </TabsTrigger>
+            <TabsTrigger value="wind" className="h-7 px-2.5 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+              <Wind className="w-3 h-3 mr-1 text-amber-500" />
+              Wind
+            </TabsTrigger>
+            <TabsTrigger value="risk" className="h-7 px-2.5 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+              <ShieldAlert className="w-3 h-3 mr-1 text-rose-500" />
+              Risk
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Chart Canvas */}
@@ -102,7 +115,7 @@ export const EnvironmentalForecastChart: React.FC = () => {
           >
             <defs>
               <linearGradient id="iceAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#18181B" stopOpacity={0.15} />
+                <stop offset="5%" stopColor="#18181B" stopOpacity={0.18} />
                 <stop offset="95%" stopColor="#18181B" stopOpacity={0.0} />
               </linearGradient>
             </defs>
@@ -149,49 +162,53 @@ export const EnvironmentalForecastChart: React.FC = () => {
             <Tooltip content={<CustomTooltip />} />
 
             {/* Sea-Ice Concentration Area */}
-            <Area
-              yAxisId="left"
-              type="monotone"
-              dataKey="seaIceConcentration"
-              name="Sea-Ice Concentration"
-              stroke="#09090B"
-              strokeWidth={2.5}
-              fillOpacity={1}
-              fill="url(#iceAreaGradient)"
-            />
+            {(activeSeriesTab === 'all' || activeSeriesTab === 'ice') && (
+              <Area
+                yAxisId="left"
+                type="monotone"
+                dataKey="seaIceConcentration"
+                name="Sea-Ice Concentration"
+                stroke="#09090B"
+                strokeWidth={2.5}
+                fillOpacity={1}
+                fill="url(#iceAreaGradient)"
+              />
+            )}
 
             {/* Wind Speed Bars */}
-            <Bar
-              yAxisId="right"
-              dataKey="windSpeed"
-              name="Wind Speed"
-              fill="#F59E0B"
-              opacity={0.85}
-              barSize={12}
-              radius={[3, 3, 0, 0]}
-            />
+            {(activeSeriesTab === 'all' || activeSeriesTab === 'wind') && (
+              <Bar
+                yAxisId="right"
+                dataKey="windSpeed"
+                name="Wind Speed"
+                fill="#F59E0B"
+                opacity={0.85}
+                barSize={14}
+                radius={[3, 3, 0, 0]}
+              />
+            )}
 
             {/* Risk Score Line */}
-            <Line
-              yAxisId="left"
-              type="monotone"
-              dataKey="riskScore"
-              name="Navigation Risk"
-              stroke="#E11D48"
-              strokeWidth={2.5}
-              dot={{ r: 3, fill: '#E11D48', strokeWidth: 0 }}
-              activeDot={{ r: 5, fill: '#E11D48' }}
-            />
+            {(activeSeriesTab === 'all' || activeSeriesTab === 'risk') && (
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="riskScore"
+                name="Navigation Risk"
+                stroke="#E11D48"
+                strokeWidth={2.5}
+                dot={{ r: 3.5, fill: '#E11D48', strokeWidth: 0 }}
+                activeDot={{ r: 5, fill: '#E11D48' }}
+              />
+            )}
 
-            <Legend
-              wrapperStyle={{ display: 'none' }}
-            />
+            <Legend wrapperStyle={{ display: 'none' }} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
 
       {/* Summary Forecast Caption */}
-      <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-zinc-500 gap-2">
+      <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-zinc-600 gap-2">
         <span className="text-zinc-800 font-medium">
           PROJECTION WINDOW: T+00h to T+72h (Updated 14 min ago via ECMWF-HRES)
         </span>
@@ -202,3 +219,4 @@ export const EnvironmentalForecastChart: React.FC = () => {
     </div>
   );
 };
+

@@ -29,6 +29,7 @@ import {
   Gauge,
   Award,
 } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface RouteComparisonViewProps {
   selectedRouteKey: RouteKey;
@@ -74,15 +75,15 @@ export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
   ];
 
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 space-y-4">
-      {/* Header with Visualization Mode Tabs */}
+    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-2xl p-5 space-y-4">
+      {/* Header with Radix UI Visualization Mode Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <div className="p-1.5 rounded-lg bg-black text-white">
             <BarChart3 className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-zinc-950">
+            <h3 className="text-sm font-bold font-sans text-zinc-950 tracking-tight">
               Multi-Objective Route Trade-Off Analysis
             </h3>
             <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-wider font-semibold">
@@ -91,44 +92,26 @@ export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
           </div>
         </div>
 
-        {/* Tab Controls */}
-        <div className="flex items-center gap-1 bg-zinc-100 p-1 rounded-xl border border-zinc-200 text-xs font-mono">
-          <button
-            onClick={() => setActiveTab('metrics')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all select-none cursor-pointer ${
-              activeTab === 'metrics'
-                ? 'bg-black text-white font-bold shadow-xs'
-                : 'text-zinc-700 hover:text-zinc-950 hover:bg-zinc-200/80 font-medium'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>Metrics Chart</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('radar')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all select-none cursor-pointer ${
-              activeTab === 'radar'
-                ? 'bg-black text-white font-bold shadow-xs'
-                : 'text-zinc-700 hover:text-zinc-950 hover:bg-zinc-200/80 font-medium'
-            }`}
-          >
-            <RadarIcon className="w-3.5 h-3.5" />
-            <span>Pareto Radar</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('table')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all select-none cursor-pointer ${
-              activeTab === 'table'
-                ? 'bg-black text-white font-bold shadow-xs'
-                : 'text-zinc-700 hover:text-zinc-950 hover:bg-zinc-200/80 font-medium'
-            }`}
-          >
-            <TableProperties className="w-3.5 h-3.5" />
-            <span>Comparison Matrix</span>
-          </button>
-        </div>
+        {/* Tab Controls using Radix UI Tabs */}
+        <Tabs
+          value={activeTab}
+          onValueChange={(val) => setActiveTab(val as 'metrics' | 'radar' | 'table')}
+        >
+          <TabsList className="h-8 p-0.5 bg-zinc-100 border border-zinc-200 rounded-lg">
+            <TabsTrigger value="metrics" className="h-7 px-2.5 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+              <BarChart3 className="w-3.5 h-3.5 mr-1" />
+              Metrics Chart
+            </TabsTrigger>
+            <TabsTrigger value="radar" className="h-7 px-2.5 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+              <RadarIcon className="w-3.5 h-3.5 mr-1" />
+              Pareto Radar
+            </TabsTrigger>
+            <TabsTrigger value="table" className="h-7 px-2.5 text-[11px] font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white">
+              <TableProperties className="w-3.5 h-3.5 mr-1" />
+              Comparison Matrix
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* 1. Bar Chart View */}
