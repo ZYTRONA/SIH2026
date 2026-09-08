@@ -1,9 +1,10 @@
 # 🧭 POLARIS AI — Polar Adaptive Route Intelligence System
-### Autonomous Antarctic Maritime Navigation & Decision Support System
+### Next-Generation Autonomous Antarctic Maritime Navigation & Decision Support Platform
 
 [![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.4.3-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Leaflet ECDIS](https://img.shields.io/badge/Leaflet-1.9.4_ECDIS-199900?style=flat-square&logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4.17-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Apple Design System](https://img.shields.io/badge/Apple_HIG-SF_Pro_Design_System-0066CC?style=flat-square&logo=apple&logoColor=white)](https://developer.apple.com/design/)
 [![Figma Motion](https://img.shields.io/badge/Figma_Motion-Spring_Dynamics-F24E1E?style=flat-square&logo=figma&logoColor=white)](https://www.figma.com/)
@@ -14,15 +15,87 @@
 
 ## 📌 Executive Overview
 
-**POLARIS AI** is an enterprise-grade polar maritime intelligence platform designed to ensure the safe, fuel-optimized, and regulatory-compliant transit of research and supply vessels across Antarctic waters (including corridors between Cape Town, Southern Ocean passage routes, and Maitri / Bharati Antarctic Research Stations).
+**POLARIS AI** is an enterprise-grade tactical maritime intelligence platform designed to guarantee safe, fuel-optimized, and regulatory-compliant transit for research vessels and heavy icebreakers across extreme Antarctic waters — including expedition corridors between Cape Town Maritime Terminal, Southern Ocean passage routes, and Maitri / Bharati Antarctic Research Stations in Prydz Bay.
 
-By fusing **spaceborne Synthetic Aperture Radar (SAR) data**, **ResUNet v3.2 spatiotemporal sea-ice forecasting**, **Lagrangian iceberg trajectory models**, and **multi-objective evolutionary pathfinding (A* + NSGA-II)**, POLARIS AI provides bridge navigators with explainable, real-time tactical decision support under extreme polar operating conditions.
+By fusing **spaceborne Synthetic Aperture Radar (SAR)** imagery, **ResUNet v3.2 spatiotemporal sea-ice neural forecasts**, **Lagrangian iceberg drift models**, **real-time Electronic Chart Display and Information System (ECDIS)** mapping, and **multi-objective evolutionary pathfinding (A* + NSGA-II)**, POLARIS AI provides bridge navigators and maritime fleet operations with explainable, mission-critical tactical decision support under extreme polar weather and cryospheric compression.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    POLARIS AI POLAR MARITIME ARCHITECTURE                    │
+├───────────────────────────────┬─────────────────────────────────────────────┤
+│ 🛰️ Cryospheric Observation     │ • Sentinel-1 C-Band SAR & RADARSAT-2 Const. │
+│                               │ • AMSR2 Passive Microwave Radiometry (89GHz)│
+│                               │ • ECMWF Ocean Wave, Swell & 10m Wind Fields │
+├───────────────────────────────┼─────────────────────────────────────────────┤
+│ 🧠 Predictive Intelligence     │ • ResUNet v3.2 Spatiotemporal SIC Forecast  │
+│                               │ • 72h Lagrangian + XGBoost Iceberg Drift    │
+│                               │ • IMO POLARIS Risk Index Outcome (RIO) Math │
+├───────────────────────────────┼─────────────────────────────────────────────┤
+│ 🧭 Tactical Navigation Engine  │ • Pareto Multi-Objective Routing (NSGA-II)  │
+│                               │ • Full-Featured Tactical Nautical ECDIS Map │
+│                               │ • Real-Time Voyage Simulation & DR Vectors  │
+│                               │ • Interactive Geodesic Distance Ruler Tool  │
+├───────────────────────────────┼─────────────────────────────────────────────┤
+│ 🖥️ Dual-Edge Deployment       │ • Shipboard NVIDIA Jetson AGX Orin 64GB     │
+│                               │ • Starlink LEO Satellite Mesh & Offline Sync│
+└───────────────────────────────┴─────────────────────────────────────────────┘
+```
+
+---
+
+## 🗺️ Real-Time Tactical ECDIS Nautical Map Engine
+
+POLARIS AI features a high-fidelity Electronic Chart Display and Information System (ECDIS) built for mission-critical polar navigation across all platform views.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         10 TACTICAL OVERLAY LAYERS                          │
+├────────────────────────────────┬────────────────────────────────────────────┤
+│ ❄️ Sea Ice Concentration       │ Multi-tier polygons with WMO Egg Codes,     │
+│                                │ ice thickness (0.25m - 3.2m), floe sizes   │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ ⛰️ Iceberg Radar Targets (37)   │ Tracked targets with drift velocity vectors,│
+│                                │ 72h trajectory projections & 5 NM halos    │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ 🛡️ POLARIS Risk Corridors      │ Severity polygons with RIO limit math &    │
+│                                │ multi-year pressure ridge heights (h>3.8m) │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ 🛣️ Pareto Navigation Paths     │ Balanced, Safety Detour & Fast corridors   │
+│                                │ with waypoint-level speed/thrust limits    │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ 🚢 AIS Marine Traffic (6 Ships)│ Nearby polar ships (Maitri Express,        │
+│                                │ Attenborough, Xue Long 2, Agulhas II, etc.)│
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ 📍 Antarctic Stations (12 Bases│ Bharati (Dest), Maitri, Zhongshan, Davis,  │
+│                                │ Mawson, Casey, Palmer, McMurdo, Cape Town  │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ ⚓ Polar Navigational Aids      │ Prydz Bay Fairway Buoy, Cardinal marks,    │
+│                                │ virtual AIS AtoNs, acoustic flashers       │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ 🌊 Ocean Currents & Gyres      │ Antarctic Circumpolar Current & Prydz Bay   │
+│                                │ gyres with water velocity (kts) and temps  │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ 🧭 Seabed Bathymetry Isobaths  │ Depth soundings (-100m coastal shoals to   │
+│                                │ -3000m abyssal plain contours)             │
+├────────────────────────────────┼────────────────────────────────────────────┤
+│ 💨 Wind & Weather Grid         │ ECMWF observations, wind barbs (18-34 kts),│
+│                                │ wave swells, and katabatic storm warnings  │
+└────────────────────────────────┴────────────────────────────────────────────┘
+```
+
+### Advanced Map Navigation Features
+- **Top-Down Polar Ship Silhouettes**: Realistic icebreaker hull shapes with pointed ice-breaking bows, wheelhouses, helipads (`H`), active radar beacons, red/green navigation lights, and live heading rotation.
+- **Dead-Reckoning & Radar Range Rings**: Dynamic 1-hour dead-reckoning projected course line alongside 12, 24, 36, and 48 NM radar circles with rotating sweep animation.
+- **Live Voyage Simulation Engine**: Interactive simulation controls with Play/Pause, $1\times/5\times/20\times$ speed multipliers, and instant origin reset.
+- **Geodesic Distance & Bearing Ruler**: Click any two points on the chart to measure geodesic distance (NM), initial true bearing ($^\circ\text{T}$), and transit duration at current speed.
+- **Multi-Basemap Switcher**: Instant switching between **OpenSeaMap Nautical Charts**, **ESRI Ocean Floor Depth Topography**, **OpenStreetMap Marine**, and **Polar Stereographic HUD (EPSG:3031)**.
+- **Non-Blocking Glassmorphic Apple Flyout Inspectors**: Entity cards anchored cleanly at `bottom-12 right-14` with sticky headers, explicit close buttons, `Escape` key dismissal, and background-click dismissal.
 
 ---
 
 ## 🎨 Design System Architecture (Apple HIG & Figma Motion)
 
-POLARIS AI is built on the **Apple Design System** combined with **Figma Fluid Motion Physics**, ensuring that high-density telemetry recedes cleanly so mission data and radar charts remain the focal point.
+POLARIS AI is crafted around Apple's **Human Interface Guidelines (HIG)** combined with **Figma Fluid Motion Dynamics**, ensuring high-density scientific telemetry recedes cleanly so charts and decision triggers remain prominent.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -41,30 +114,14 @@ POLARIS AI is built on the **Apple Design System** combined with **Figma Fluid M
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1. Typography & Hierarchy (San Francisco)
-- **Font Stack**: Fully standardized on Apple's San Francisco family (`SF Pro Display`, `SF Pro Text`, `SF Mono`, `-apple-system`, `BlinkMacSystemFont`).
-- **Forbidden Weights Eliminated**: Strict adherence to the HIG weight ladder (**300 / 400 Normal** and **600 Semibold**; weight 500 is prohibited).
-- **Spatial Tracking**:
+### Typography & Hierarchy (San Francisco)
+- **Standardized Font Stack**: Standardized on Apple's San Francisco family (`SF Pro Display`, `SF Pro Text`, `SF Mono`, `-apple-system`, `BlinkMacSystemFont`).
+- **Strict HIG Weight Ladder**: 300 Light, 400 Regular, and 600 Semibold (Weight 500 eliminated).
+- **Refined Tracking Scale**:
   - Display Titles: `tracking-[-0.28px]` to `tracking-[-0.374px]`
   - Standard Body: 17px (`line-height: 1.47`, `-0.374px` tracking)
   - Secondary Captions: 14px (`line-height: 1.43`, `-0.224px` tracking)
   - Monospace Telemetry: 11px / 12px uppercase tracking-wider
-
-### 2. Apple Color System Tokens
-- **Interactive Action Blue**: `#0066cc` (Primary interactive color on light surfaces)
-- **Focus Ring Blue**: `#0071e3` (High-visibility accessibility focus states)
-- **Dark Surface Accent**: `#2997ff` (Sky Blue links on OLED dark tiles)
-- **Parchment Canvas**: `#f5f5f7` (Signature Apple off-white dashboard canvas)
-- **Pearl Surface**: `#fafafc` (Secondary card and table header fills)
-- **OLED Dark Tiles**: `#1d1d1f` and `#272729` (Near-black tactical modules)
-- **Hairlines**: `#e0e0e0` / `#f0f0f0` (Crisp 1px borders; zero drop shadows)
-
-### 3. Unified Frosted Glass Navigation Bar
-- **Unified 56px Header**: Translucent frosted glass (`backdrop-blur-xl bg-white/90 border-b border-[#e0e0e0]`).
-- **Telemetry Capsule**: Live mission identifier (`ANT-2417 • RV Polar Sentinel`) with pulsing emerald beacon.
-- **Search Command Palette**: Apple-styled search capsule with instant `⌘K` command drawer.
-- **Clock & Uplink Telemetry**: UTC synchronized clock chip, alongside interactive Starlink satellite and offline Jetson AGX Orin Edge toggle.
-- **Spring Sidebar**: Smooth sliding background indicator pill (`layoutId="sidebarActiveBackground"`) and dedicated manual expand/collapse toggle.
 
 ---
 
@@ -72,16 +129,16 @@ POLARIS AI is built on the **Apple Design System** combined with **Figma Fluid M
 
 ```
 POLARIS AI Platform Deck
-├── 🛰️ Mission Control Dashboard     (/dashboard)      → 5-Tier Telemetry Architecture
-├── 🗺️ Voyage & Mission Planner       (/mission-planner) → Multi-Stage Polar Pipeline
-├── ❄️ Sea-Ice Forecast Center        (/sea-ice)        → 72h ResUNet Spatiotemporal Engine
-├── 🧊 Iceberg Intelligence & Drift   (/icebergs)       → Polar Stereographic Radar HUD
-├── ⚠️ Antarctic Risk Intelligence     (/risk)           → IMO POLARIS RIO Calibration
-├── 🧭 Route Optimization Center       (/routes)         → Pareto A* + NSGA-II Solver
-├── 🧠 Explainable AI (XAI)           (/explainability) → SHAP Feature Attribution
-├── 🌐 Antarctic Digital Twin         (/digital-twin)   → Dynamic Physics & Recalculation
-├── 🖥️ System Status & Edge Sync      (/system)         → Jetson AGX Orin & Starlink Uplink
-└── 🏛️ Public Product Showcase        (/)               → Apple Editorial Landing Page
+├── 🛰️ Mission Control Dashboard     (/dashboard)        → 5-Tier Telemetry Architecture & Live Map
+├── 🗺️ Voyage & Mission Planner       (/mission-planner)  → Multi-Stage Polar Pipeline & Ice-Class Config
+├── ❄️ Sea-Ice Forecast Center        (/sea-ice-forecast) → 72h ResUNet Spatiotemporal Cryospheric Model
+├── 🧊 Iceberg Intelligence Center    (/icebergs)         → 37+ Radar Targets, 72h Drift Trajectory Engine
+├── ⚠️ Antarctic Risk Intelligence     (/risk)             → IMO POLARIS RIO Calibration & Hazard Layers
+├── 🧭 Route Optimization Center       (/routes)           → Pareto A* + NSGA-II Multi-Objective Solver
+├── 🧠 Explainable AI (XAI)           (/explainability)   → SHAP Feature Attribution & Decision Synthesis
+├── 🌐 Antarctic Digital Twin         (/digital-twin)     → Real-Time Hydrodynamic Physics & Recalculation
+├── 🖥️ System Status & Edge Sync      (/system)           → NVIDIA Jetson AGX Orin & Starlink Uplink
+└── 🏛️ Product Showcase & Specs       (/)                 → Apple Editorial Landing & Capabilities Overview
 ```
 
 ### 1. Mission Control Dashboard (`/dashboard`)
@@ -95,22 +152,22 @@ POLARIS AI Platform Deck
   - **72-Hour Environmental Forecast Chart**: Interactive Recharts chart tracking sea ice concentration (%), significant wave height (m), and surface wind speed (kts).
 - **Tier 5 — Live Risk Feed & Quick Actions**:
   - **Active Tactical Alerts**: Sector-tagged safety notices with real-time risk level color codes.
-  - **Apple Quick Actions Bar**: 4-column direct route triggers with spring hover lifts.
+  - **Apple Quick Actions Bar**: Direct route and layer inspection triggers.
 
-### 2. Mission & Voyage Planner (`/mission-planner`)
+### 2. Voyage & Mission Planner (`/mission-planner`)
 - **Vessel & Capability Configurator**: Supports *Polar Research Vessel (R/V Sentinel)*, *Research Vessel Alpha*, and *Ice-Class Supply Vessel* across **PC1 to PC7** polar ice classes.
 - **Coordinate Presets & Custom Waypoints**: Fast-fill coordinates for Cape Town, Hobart, Bharati Station, Maitri Station, and McMurdo.
-- **4-Stage Computation Pipeline**: Real-time visualization from SAR data ingestion to Pareto-optimal waypoint solution.
+- **4-Stage Computation Pipeline**: Real-time progress tracker from SAR data ingestion to Pareto-optimal waypoint solution.
 
-### 3. Sea-Ice Forecast Center (`/sea-ice`)
-- **Temporal Forecast Scrubber**: Instant timeline navigation across `Current`, `+24h`, `+48h`, `+72h`, and `+7 Days`.
+### 3. Sea-Ice Forecast Center (`/sea-ice-forecast`)
+- **Temporal Forecast Scrubber**: Timeline navigation across `Current`, `+24h`, `+48h`, `+72h`, and `+7 Days`.
 - **ResUNet v3.2 SAR Cryospheric Model**: Predicts sea-ice concentration (SIC %), ice thickness, and drift convergence.
-- **Uncertainty Bounds**: Recharts line chart with 90% confidence interval bands.
+- **Uncertainty Bounds**: Recharts line chart with 90% confidence interval bands and Polar Code Matrix evaluation.
 
-### 4. Iceberg Intelligence & Radar HUD (`/icebergs`)
-- **Dual-Mode Polar Radar Display**: Interactive polar stereographic projection (EPSG:3031) with radar sweep animation.
-- **32+ Tracked Iceberg Catalog**: Filterable table with classification tags (Growler, Bergy Bit, Medium, Very Large, Giant).
+### 4. Iceberg Intelligence & Radar Center (`/icebergs`)
+- **37+ Tracked Iceberg Targets**: Filterable catalog table with classification tags (Growler, Bergy Bit, Medium, Very Large, Giant).
 - **Lagrangian + XGBoost Trajectory Modeling**: 72-hour drift projections accounting for wind shear, ocean currents, and Coriolis drift.
+- **Radar Lock & Target Inspector**: Detailed dimensions ($L \times W \times H$), mass (MT), draft depth, and CPA/TCPA calculations.
 
 ### 5. Antarctic Risk Intelligence (`/risk`)
 - **IMO POLARIS Regulatory Calculation**:
@@ -124,7 +181,7 @@ POLARIS AI Platform Deck
   - ⚡ **FASTEST ROUTE**: High-speed direct transit corridor.
   - ⛽ **FUEL EFFICIENT ROUTE**: Optimized against hydrodynamic resistance.
   - 🎯 **BALANCED (AI Recommended)**: Multi-objective Pareto optimal path.
-- **Comparison Views**: Side-by-side metric matrix, telemetry cards, and radar clearance profiles.
+- **Comparison Views**: Side-by-side metric matrix, telemetry cards, and waypoint clearance profiles.
 
 ### 7. Explainable AI & Decision Transparency (`/explainability`)
 - **Natural Language Decision Synthesis**: Clear rationale detailing why the recommended route was selected over alternatives.
@@ -137,7 +194,7 @@ POLARIS AI Platform Deck
 - **Dynamic In-Transit Recalculation**: Automated real-time deviation upon detecting a simulated iceberg collision vector.
 
 ### 9. System Status & Edge Telemetry (`/system`)
-- **Dual-Engine Architecture**: Dual status cards for Cloud Intelligence and Shipboard Edge Engine.
+- **Dual-Engine Architecture**: Status cards for Cloud Intelligence and Shipboard Edge Engine.
 - **Offline Edge Mode Simulation**: Simulates vessel disconnection from Starlink satellite uplink to local NVIDIA Jetson AGX Orin (64GB) inference.
 - **Data Source Health Grid**: Real-time status monitors for Sentinel-1 SAR, AMSR2, ECMWF, and AIS feeds.
 
@@ -147,16 +204,16 @@ POLARIS AI Platform Deck
 
 | Layer | Framework / Technology | Version | Purpose |
 | :--- | :--- | :--- | :--- |
-| **Frontend Framework** | React | 18.3.1 | Component architecture |
-| **Language** | TypeScript | 5.7.2 | Strict type safety & interfaces |
-| **Build Tooling** | Vite | 6.4.3 | High-performance bundling & HMR |
+| **Frontend Framework** | React | 18.3.1 | Component architecture & state synchronization |
+| **Language** | TypeScript | 5.7.2 | Strict type safety & nautical data models |
+| **Build Tooling** | Vite | 6.4.3 | High-performance bundling & instant HMR |
+| **ECDIS Mapping Engine** | Leaflet + OpenSeaMap | 1.9.4 | Marine navigational tiles, seamarks, & overlays |
 | **Design System** | Tailwind CSS | 3.4.17 | Apple Design System token utilities |
 | **Motion Physics** | Framer Motion | 12.4.7 | Figma/Apple spring dynamics & layout transitions |
 | **State Management** | Zustand | 5.0.3 | Global reactive store & telemetry sync |
-| **Data Charts** | Recharts | 2.15.1 | Environmental forecasts, sparklines, & SHAP |
+| **Data Visualization** | Recharts | 2.15.1 | Environmental forecasts, sparklines, & SHAP |
 | **Iconography** | Lucide React | 0.475.0 | Clean monochrome vector glyphs |
-| **UI Primitives** | Radix UI | 1.x | Accessible dialog, dropdown, tooltip, & tabs |
-| **Mapping Engine** | Polar SVG + Mapbox GL | 3.10.0 | EPSG:3031 polar projection & OpenSeaMap |
+| **UI Primitives** | Radix UI | 1.x | Accessible dialog, dropdown, tooltip, & select |
 
 ---
 
@@ -164,7 +221,7 @@ POLARIS AI Platform Deck
 
 ```
 SIH2026/
-├── public/                       # Static public assets
+├── public/                       # Static assets and seamark tiles
 ├── src/
 │   ├── assets/                   # Shared logos and vector assets
 │   ├── components/
@@ -174,23 +231,28 @@ SIH2026/
 │   │   ├── forecast/             # Sea-ice forecast controls & chart panels
 │   │   ├── iceberg/              # Iceberg radar HUD, catalog table & telemetry
 │   │   ├── layout/               # Header, Sidebar, AppLayout, PageContainer
-│   │   ├── map/                  # AntarcticMap, MapControls, MapLegend, ArcticMap
+│   │   ├── map/                  # AntarcticMap, MapControls, VesselMarker, MapLegend
 │   │   ├── mission/              # MissionForm, MissionProgressPipeline, ResultCard
 │   │   ├── risk/                 # RiskBreakdown, RiskTimeline, HazardList
 │   │   ├── routes/               # RouteCards, RouteComparison, Telemetry
 │   │   ├── system/               # Cloud/Edge status cards & offline mode toggle
 │   │   └── ui/                   # Apple UI primitives (card, button, switch, etc.)
 │   ├── data/                     # Realistic Antarctic telemetry datasets & mocks
+│   │   ├── mapData.ts            # Stations, AIS vessels, aids, currents, isobaths, bergs
+│   │   ├── dashboardData.ts      # KPI metrics, tactical alerts & forecast datasets
+│   │   └── index.ts              # Dataset barrel export
 │   ├── pages/                    # 10 application page views
 │   ├── store/                    # Zustand application store (useAppStore.ts)
-│   ├── types/                    # TypeScript data models and interfaces
+│   ├── types/                    # TypeScript data models and nautical interfaces
+│   │   ├── map.ts                # ECDIS layers, AIS vessels, stations, simulation
+│   │   └── index.ts              # Core polar telemetry types
 │   ├── App.tsx                   # Route provider & layout orchestration
 │   ├── index.css                 # Apple HIG typography & Figma motion utilities
 │   └── main.tsx                  # React application entry point
 ├── tailwind.config.js            # Apple HIG colors, typography scale & animation easings
 ├── tsconfig.json                 # TypeScript strict compiler configuration
 ├── vite.config.ts                # Vite configuration with chunking optimization
-└── README.md                     # Documentation & architectural guide
+└── README.md                     # Comprehensive documentation & architectural guide
 ```
 
 ---
@@ -229,12 +291,13 @@ npm run build
 
 > [!IMPORTANT]
 > **MARITIME REGULATORY NOTICE**:  
-> POLARIS AI provides automated tactical decision support based on available satellite imagery, numerical weather predictions, and vessel sensor telemetry. Final navigational authority remains exclusively with the vessel's Master and qualified Ice Navigators in accordance with the **IMO Polar Code (Resolution MSC.385(94))** and the **SOLAS Convention**.
+> POLARIS AI provides automated tactical decision support based on spaceborne Synthetic Aperture Radar (SAR), numerical weather predictions, and shipboard sensor telemetry. Final navigational authority remains exclusively with the vessel's Master and certified Ice Navigators in accordance with the **IMO Polar Code (Resolution MSC.385(94))** and the **SOLAS Convention**.
 
 ---
 
 ## 🌐 Mission & System Mandate
 
 - **System**: POLARIS AI (Polar Adaptive Route Intelligence System)
-- **Target Operations**: Antarctic Research Expedition Logistics, Marine Safety & Cryospheric Fuel Optimization
-- **Standards**: IMO Polar Code Compliant (PC1 through PC7)
+- **Target Operations**: Antarctic Research Expeditions, Polar Shipping Safety & Cryospheric Fuel Optimization
+- **Standards**: IMO Polar Code Compliant (Polar Classes PC1 through PC7)
+- **License**: MIT
