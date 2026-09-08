@@ -68,7 +68,6 @@ const routeTitleMap: Record<string, { title: string; category: string }> = {
 export const Header: React.FC = () => {
   const location = useLocation();
   const {
-    sidebarCollapsed,
     missionName,
     vesselName,
     vesselClass,
