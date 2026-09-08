@@ -27,21 +27,21 @@ interface CustomTooltipProps {
 const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="p-3 rounded-xl bg-white border border-slate-200 shadow-xl backdrop-blur-md text-xs font-mono space-y-1.5">
-        <div className="text-slate-800 font-bold border-b border-slate-100 pb-1 flex items-center justify-between gap-4">
+      <div className="p-3.5 rounded-xl bg-white border border-zinc-200 shadow-xl text-xs font-mono space-y-1.5">
+        <div className="text-zinc-950 font-bold border-b border-zinc-100 pb-1.5 flex items-center justify-between gap-4">
           <span>FORECAST TIMELINE</span>
-          <span className="text-sky-700">+{label}</span>
+          <span className="text-black font-extrabold">+{label}</span>
         </div>
         {payload.map((entry, index) => (
           <div key={`item-${index}`} className="flex items-center justify-between gap-4">
-            <span className="flex items-center gap-1.5 text-slate-500 font-medium">
+            <span className="flex items-center gap-1.5 text-zinc-600 font-medium">
               <span
                 className="w-2 h-2 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
               {entry.name}:
             </span>
-            <span className="text-slate-900 font-bold">
+            <span className="text-zinc-950 font-bold">
               {entry.value}
               {entry.name.includes('Sea-Ice')
                 ? '%'
@@ -59,35 +59,35 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
 
 export const EnvironmentalForecastChart: React.FC = () => {
   return (
-    <div className="bg-white border border-slate-200/90 rounded-xl p-5 space-y-4 shadow-xs">
+    <div className="bg-white border border-zinc-200/90 rounded-xl p-5 space-y-4 shadow-xs">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-600">
+          <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900">
             <Activity className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-slate-900">
+            <h3 className="text-sm font-bold font-sans text-zinc-950">
               72-Hour Environmental Dynamics & Risk Forecast
             </h3>
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider font-semibold">
               Copernicus Marine & ECMWF Spatiotemporal Ensemble Model
             </span>
           </div>
         </div>
 
         {/* Legend pills */}
-        <div className="flex items-center gap-3 text-[11px] font-mono font-semibold">
-          <span className="flex items-center gap-1.5 text-sky-700">
-            <Snowflake className="w-3 h-3 text-sky-600" />
+        <div className="flex items-center gap-3 text-[11px] font-mono font-bold">
+          <span className="flex items-center gap-1.5 text-zinc-900">
+            <Snowflake className="w-3.5 h-3.5 text-black" />
             Sea-Ice %
           </span>
-          <span className="flex items-center gap-1.5 text-amber-700">
-            <Wind className="w-3 h-3 text-amber-600" />
+          <span className="flex items-center gap-1.5 text-amber-900">
+            <Wind className="w-3.5 h-3.5 text-amber-600" />
             Wind (kts)
           </span>
-          <span className="flex items-center gap-1.5 text-rose-700">
-            <ShieldAlert className="w-3 h-3 text-rose-600" />
+          <span className="flex items-center gap-1.5 text-rose-900">
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
             Risk Index
           </span>
         </div>
@@ -102,24 +102,24 @@ export const EnvironmentalForecastChart: React.FC = () => {
           >
             <defs>
               <linearGradient id="iceAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0284C7" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#0284C7" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#18181B" stopOpacity={0.15} />
+                <stop offset="95%" stopColor="#18181B" stopOpacity={0.0} />
               </linearGradient>
             </defs>
 
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#E2E8F0"
-              strokeOpacity={0.8}
+              stroke="#E4E4E7"
+              strokeOpacity={0.9}
               vertical={false}
             />
 
             <XAxis
               dataKey="hour"
-              stroke="#64748B"
+              stroke="#71717A"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#CBD5E1' }}
+              axisLine={{ stroke: '#E4E4E7' }}
               fontFamily="monospace"
             />
 
@@ -127,10 +127,10 @@ export const EnvironmentalForecastChart: React.FC = () => {
             <YAxis
               yAxisId="left"
               domain={[0, 100]}
-              stroke="#64748B"
+              stroke="#71717A"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#CBD5E1' }}
+              axisLine={{ stroke: '#E4E4E7' }}
               fontFamily="monospace"
             />
 
@@ -154,8 +154,8 @@ export const EnvironmentalForecastChart: React.FC = () => {
               type="monotone"
               dataKey="seaIceConcentration"
               name="Sea-Ice Concentration"
-              stroke="#0284C7"
-              strokeWidth={2}
+              stroke="#09090B"
+              strokeWidth={2.5}
               fillOpacity={1}
               fill="url(#iceAreaGradient)"
             />
@@ -166,7 +166,7 @@ export const EnvironmentalForecastChart: React.FC = () => {
               dataKey="windSpeed"
               name="Wind Speed"
               fill="#F59E0B"
-              opacity={0.8}
+              opacity={0.85}
               barSize={12}
               radius={[3, 3, 0, 0]}
             />
@@ -191,11 +191,11 @@ export const EnvironmentalForecastChart: React.FC = () => {
       </div>
 
       {/* Summary Forecast Caption */}
-      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-500 gap-2">
-        <span className="text-slate-700">
+      <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-zinc-500 gap-2">
+        <span className="text-zinc-800 font-medium">
           PROJECTION WINDOW: T+00h to T+72h (Updated 14 min ago via ECMWF-HRES)
         </span>
-        <span className="text-amber-700 font-semibold">
+        <span className="text-amber-900 font-bold">
           CRITICAL WINDOW: T+24h to T+36h (Peak pack convergence)
         </span>
       </div>

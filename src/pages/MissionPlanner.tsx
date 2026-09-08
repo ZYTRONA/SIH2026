@@ -52,21 +52,21 @@ export const MissionPlanner: React.FC = () => {
       actions={
         <div className="flex items-center gap-2">
           {/* Simulation Label */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-xs font-mono text-sky-700 font-semibold shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black text-white text-xs font-mono font-bold shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
             <span>Prototype AI Simulation</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700 shadow-xs">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-700 shadow-xs">
             {pipelineState === 'completed' ? (
               <>
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-emerald-700 font-bold">PLAN READY</span>
+                <CheckCircle className="w-3.5 h-3.5 text-black" />
+                <span className="text-zinc-950 font-bold">PLAN READY</span>
               </>
             ) : (
               <>
-                <Radio className="w-3.5 h-3.5 text-sky-600 animate-pulse" />
-                <span className="font-semibold text-slate-700">SOLVER STANDBY</span>
+                <Radio className="w-3.5 h-3.5 text-black animate-pulse" />
+                <span className="font-bold text-zinc-800">SOLVER STANDBY</span>
               </>
             )}
           </div>

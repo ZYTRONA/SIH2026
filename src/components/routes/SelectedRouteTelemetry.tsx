@@ -23,9 +23,9 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
     ROUTE_CANDIDATES.find((r) => r.key === selectedRouteKey) || ROUTE_CANDIDATES[3];
 
   return (
-    <div className="bg-white border border-slate-200/90 shadow-xs rounded-xl p-5 space-y-4">
+    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
         <div className="flex items-center gap-2">
           <div
             className="p-1.5 rounded-lg border"
@@ -39,16 +39,16 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold font-sans text-slate-900">
+              <h3 className="text-sm font-bold font-sans text-zinc-950">
                 {route.name} Telemetry & Waypoints
               </h3>
               {route.isRecommended && (
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-50 text-sky-700 border border-sky-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-black text-white border border-black">
                   AI RECOMMENDED
                 </span>
               )}
             </div>
-            <span className="text-[10px] font-mono text-slate-500">
+            <span className="text-[10px] font-mono text-zinc-500">
               Corridor ID: {route.id} • Color Signature:{' '}
               <span className="font-bold" style={{ color: route.color }}>
                 {route.key}
@@ -58,49 +58,49 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
         </div>
 
         <div className="flex items-center gap-2 text-xs font-mono">
-          <span className="text-slate-500">Average Transit Speed:</span>
-          <span className="font-bold text-slate-900">{route.averageSpeedKts} kts</span>
+          <span className="text-zinc-500">Average Transit Speed:</span>
+          <span className="font-bold text-zinc-950">{route.averageSpeedKts} kts</span>
         </div>
       </div>
 
       {/* 4 Summary Stat Pills */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
-        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-          <span className="text-[10px] text-slate-500 flex items-center gap-1 font-semibold">
-            <Gauge className="w-3 h-3 text-slate-400" />
+        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
+            <Gauge className="w-3 h-3 text-zinc-400" />
             Distance
           </span>
-          <span className="text-sm font-bold text-slate-900">{route.distanceFormatted}</span>
+          <span className="text-sm font-bold text-zinc-950">{route.distanceFormatted}</span>
         </div>
 
-        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-          <span className="text-[10px] text-slate-500 flex items-center gap-1 font-semibold">
-            <Clock className="w-3 h-3 text-slate-400" />
+        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
+            <Clock className="w-3 h-3 text-zinc-400" />
             ETA Window
           </span>
-          <span className="text-sm font-bold text-slate-900">{route.etaFormatted}</span>
+          <span className="text-sm font-bold text-zinc-950">{route.etaFormatted}</span>
         </div>
 
-        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-          <span className="text-[10px] text-slate-500 flex items-center gap-1 font-semibold">
-            <Fuel className="w-3 h-3 text-sky-600" />
+        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
+            <Fuel className="w-3 h-3 text-zinc-500" />
             Fuel Burn
           </span>
-          <span className="text-sm font-bold text-sky-700">{route.fuelFormatted}</span>
+          <span className="text-sm font-bold text-zinc-950">{route.fuelFormatted}</span>
         </div>
 
-        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-          <span className="text-[10px] text-slate-500 flex items-center gap-1 font-semibold">
-            <Shield className="w-3 h-3 text-amber-600" />
+        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
+            <Shield className="w-3 h-3 text-zinc-500" />
             Risk Index
           </span>
           <span
             className={`text-sm font-bold ${
               route.riskTier === 'SAFE'
-                ? 'text-emerald-700'
+                ? 'text-emerald-800'
                 : route.riskTier === 'LOW'
-                ? 'text-sky-700'
-                : 'text-amber-700'
+                ? 'text-zinc-900'
+                : 'text-amber-800'
             }`}
           >
             {route.riskFormatted}
@@ -110,7 +110,7 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
 
       {/* Waypoints Trajectory List */}
       <div className="space-y-2">
-        <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold px-1 block">
+        <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-600 font-bold px-1 block">
           Sequential Navigation Waypoints
         </span>
 
@@ -122,12 +122,12 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
             return (
               <div
                 key={wp.id}
-                className={`p-2.5 rounded-lg border text-xs font-mono flex items-center justify-between gap-3 ${
+                className={`p-2.5 rounded-xl border text-xs font-mono flex items-center justify-between gap-3 ${
                   isStart
-                    ? 'bg-sky-50/70 border-sky-300'
+                    ? 'bg-zinc-100 border-zinc-300'
                     : isDest
                     ? 'bg-emerald-50/70 border-emerald-300'
-                    : 'bg-slate-50 border-slate-200'
+                    : 'bg-zinc-50 border-zinc-200'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -142,28 +142,28 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
                     {isStart ? 'S' : isDest ? 'D' : index}
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900">{wp.name}</span>
-                    <span className="text-[10px] text-slate-500 block font-normal">
+                    <span className="font-bold text-zinc-950">{wp.name}</span>
+                    <span className="text-[10px] text-zinc-500 block font-normal">
                       Coords: {Math.abs(wp.lat).toFixed(2)}°S, {wp.lng.toFixed(2)}°E
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 text-[11px] flex-shrink-0">
-                  <span className="text-slate-600 flex items-center gap-1 font-medium">
-                    <Snowflake className="w-3.5 h-3.5 text-sky-600" />
+                  <span className="text-zinc-700 flex items-center gap-1 font-medium">
+                    <Snowflake className="w-3.5 h-3.5 text-zinc-500" />
                     Ice: {wp.iceConcentrationPct}%
                   </span>
                   {isDest ? (
-                    <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px] border border-emerald-300">
+                    <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-bold text-[10px] border border-emerald-300">
                       DESTINATION
                     </span>
                   ) : isStart ? (
-                    <span className="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px] border border-sky-300">
+                    <span className="px-2 py-0.5 rounded bg-black text-white font-bold text-[10px] border border-black">
                       START BEACON
                     </span>
                   ) : (
-                    <span className="text-slate-400 font-medium">WAYPOINT</span>
+                    <span className="text-zinc-400 font-medium">WAYPOINT</span>
                   )}
                 </div>
               </div>
@@ -174,3 +174,4 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
     </div>
   );
 };
+

@@ -23,43 +23,43 @@ const statusConfig: Record<
   }
 > = {
   safe: {
-    dotColor: 'bg-emerald-500',
+    dotColor: 'bg-emerald-600',
     pulseColor: 'bg-emerald-400/50',
     badgeBg: 'bg-emerald-50',
-    badgeBorder: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    badgeBorder: 'border-emerald-300',
+    textColor: 'text-emerald-900',
     defaultLabel: 'Operational',
   },
   warning: {
-    dotColor: 'bg-amber-500',
+    dotColor: 'bg-amber-600',
     pulseColor: 'bg-amber-400/50',
     badgeBg: 'bg-amber-50',
-    badgeBorder: 'border-amber-200',
-    textColor: 'text-amber-700',
+    badgeBorder: 'border-amber-300',
+    textColor: 'text-amber-900',
     defaultLabel: 'Caution',
   },
   critical: {
-    dotColor: 'bg-rose-500',
+    dotColor: 'bg-rose-600',
     pulseColor: 'bg-rose-400/50',
     badgeBg: 'bg-rose-50',
-    badgeBorder: 'border-rose-200',
-    textColor: 'text-rose-700',
+    badgeBorder: 'border-rose-300',
+    textColor: 'text-rose-900',
     defaultLabel: 'Hazard',
   },
   info: {
-    dotColor: 'bg-sky-500',
-    pulseColor: 'bg-sky-400/50',
-    badgeBg: 'bg-sky-50',
-    badgeBorder: 'border-sky-200',
-    textColor: 'text-sky-700',
+    dotColor: 'bg-zinc-700',
+    pulseColor: 'bg-zinc-400/50',
+    badgeBg: 'bg-zinc-100',
+    badgeBorder: 'border-zinc-300',
+    textColor: 'text-zinc-900',
     defaultLabel: 'Info',
   },
   active: {
-    dotColor: 'bg-sky-600',
-    pulseColor: 'bg-sky-400/50',
-    badgeBg: 'bg-sky-50',
-    badgeBorder: 'border-sky-200',
-    textColor: 'text-sky-800',
+    dotColor: 'bg-black',
+    pulseColor: 'bg-zinc-400/50',
+    badgeBg: 'bg-black',
+    badgeBorder: 'border-black',
+    textColor: 'text-white',
     defaultLabel: 'Active',
   },
 };
@@ -94,7 +94,7 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   if (variant === 'pill') {
     return (
       <span
-        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-mono font-medium ${config.badgeBg} ${config.badgeBorder} border ${config.textColor} ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold ${config.badgeBg} ${config.badgeBorder} border ${config.textColor} ${className}`}
       >
         <span className={`relative inline-flex items-center`}>
           {pulse && (
@@ -111,7 +111,7 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-mono font-medium ${config.badgeBg} ${config.badgeBorder} border ${config.textColor} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-mono font-bold ${config.badgeBg} ${config.badgeBorder} border ${config.textColor} ${className}`}
     >
       <span className={`relative inline-flex items-center`}>
         {pulse && (

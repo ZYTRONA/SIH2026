@@ -17,14 +17,14 @@ export const Dashboard: React.FC = () => {
       actions={
         <div className="flex items-center gap-2">
           {/* Small Status Indicator */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-xs font-mono text-sky-700 font-semibold shadow-2xs">
-            <Radio className="w-3.5 h-3.5 text-sky-600 animate-pulse" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black text-white text-xs font-mono font-bold shadow-xs">
+            <Radio className="w-3.5 h-3.5 text-white animate-pulse" />
             <span>LIVE SIMULATION / ACTIVE</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-700 shadow-2xs">
-            <ShieldAlert className="w-3.5 h-3.5 text-emerald-600" />
-            <span>RIO MARGIN: <strong className="text-emerald-700">+18 NOMINAL</strong></span>
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-700 shadow-xs">
+            <ShieldAlert className="w-3.5 h-3.5 text-black" />
+            <span>RIO MARGIN: <strong className="text-zinc-950 font-bold">+18 NOMINAL</strong></span>
           </div>
         </div>
       }

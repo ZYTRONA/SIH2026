@@ -22,22 +22,19 @@ export const RiskLayerToggleBar: React.FC<RiskLayerToggleBarProps> = ({
     key: keyof RiskLayersState;
     label: string;
     icon: React.ElementType;
-    color: string;
-    activeBg: string;
-    activeBorder: string;
   }> = [
-    { key: 'seaIceRisk', label: 'Sea-Ice Risk', icon: Snowflake, color: 'text-sky-700', activeBg: 'bg-sky-50', activeBorder: 'border-sky-300' },
-    { key: 'icebergRisk', label: 'Iceberg Risk', icon: Mountain, color: 'text-amber-700', activeBg: 'bg-amber-50', activeBorder: 'border-amber-300' },
-    { key: 'weatherRisk', label: 'Weather Risk', icon: Wind, color: 'text-orange-700', activeBg: 'bg-orange-50', activeBorder: 'border-orange-300' },
-    { key: 'oceanRisk', label: 'Ocean Risk', icon: Compass, color: 'text-emerald-700', activeBg: 'bg-emerald-50', activeBorder: 'border-emerald-300' },
-    { key: 'bathymetryRisk', label: 'Bathymetry Risk', icon: Anchor, color: 'text-indigo-700', activeBg: 'bg-indigo-50', activeBorder: 'border-indigo-300' },
+    { key: 'seaIceRisk', label: 'Sea-Ice Risk', icon: Snowflake },
+    { key: 'icebergRisk', label: 'Iceberg Risk', icon: Mountain },
+    { key: 'weatherRisk', label: 'Weather Risk', icon: Wind },
+    { key: 'oceanRisk', label: 'Ocean Risk', icon: Compass },
+    { key: 'bathymetryRisk', label: 'Bathymetry Risk', icon: Anchor },
   ];
 
   return (
-    <div className="bg-white border border-slate-200/90 shadow-xs rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800">
-        <Layers className="w-4 h-4 text-sky-600" />
-        <span>RISK HEATMAP LAYERS:</span>
+    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-950">
+        <Layers className="w-4 h-4 text-black" />
+        <span className="tracking-wider">RISK HEATMAP LAYERS:</span>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap justify-center">
@@ -49,20 +46,20 @@ export const RiskLayerToggleBar: React.FC<RiskLayerToggleBarProps> = ({
             <button
               key={it.key}
               onClick={() => onToggle(it.key)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
                 isActive
-                  ? `${it.activeBg} ${it.color} ${it.activeBorder} border font-bold shadow-xs`
-                  : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'
+                  ? 'bg-black text-white border border-black font-bold shadow-xs'
+                  : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-zinc-200 font-medium'
               }`}
             >
-              <Icon className="w-3.5 h-3.5" />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-zinc-200' : 'text-zinc-500'}`} />
               <span>{it.label}</span>
               <span
                 className={`w-3.5 h-3.5 rounded flex items-center justify-center border text-[9px] ml-1 ${
-                  isActive ? 'border-current bg-white' : 'border-slate-300 opacity-40'
+                  isActive ? 'border-zinc-500 bg-zinc-800 text-white' : 'border-zinc-300 bg-white text-transparent'
                 }`}
               >
-                {isActive && <Check className="w-2.5 h-2.5" />}
+                {isActive && <Check className="w-2.5 h-2.5 stroke-[3]" />}
               </span>
             </button>
           );
@@ -71,3 +68,4 @@ export const RiskLayerToggleBar: React.FC<RiskLayerToggleBarProps> = ({
     </div>
   );
 };
+

@@ -11,7 +11,7 @@ export const AppLayout: React.FC = () => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+    <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 flex flex-col antialiased selection:bg-black selection:text-white">
       {/* Fixed Left Sidebar */}
       <Sidebar />
 
@@ -25,7 +25,7 @@ export const AppLayout: React.FC = () => {
         <Header />
 
         {/* Dynamic Page Content with Subtle Smooth Transition */}
-        <main className="flex-1 bg-slate-50 overflow-x-hidden">
+        <main className="flex-1 bg-[#FAFAFA] overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -41,26 +41,26 @@ export const AppLayout: React.FC = () => {
         </main>
 
         {/* Persistent Global Safety Disclaimer Footer */}
-        <footer className="bg-white border-t border-slate-200 px-4 sm:px-6 py-3">
-          <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs font-mono text-slate-500">
-            <div className="flex items-start sm:items-center gap-2 text-slate-700">
+        <footer className="bg-white border-t border-zinc-200 px-4 sm:px-6 py-3">
+          <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs font-mono text-zinc-500">
+            <div className="flex items-start sm:items-center gap-2 text-zinc-700">
               <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5 sm:mt-0" />
-              <p className="text-[11px] leading-relaxed text-slate-600 font-sans">
-                <span className="text-slate-900 font-semibold uppercase tracking-wider mr-1.5 font-mono text-[10px]">
+              <p className="text-[11px] leading-relaxed text-zinc-600 font-sans">
+                <span className="text-black font-bold uppercase tracking-wider mr-1.5 font-mono text-[10px]">
                   Safety Disclaimer:
                 </span>
                 POLARIS AI provides decision-support recommendations based on available environmental and vessel data. Final navigation decisions remain with the vessel&apos;s qualified master.
               </p>
             </div>
-            <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-slate-400 flex-shrink-0">
-              <span className="flex items-center gap-1 text-emerald-700 font-medium">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-zinc-400 flex-shrink-0">
+              <span className="flex items-center gap-1 text-zinc-900 font-bold">
+                <ShieldCheck className="w-3.5 h-3.5 text-zinc-900" />
                 IMO POLAR CODE PC1–PC7
               </span>
-              <span className="text-slate-300">|</span>
-              <span className="text-slate-500">SMART INDIA HACKATHON 2026</span>
-              <span className="text-slate-300">|</span>
-              <span className="text-sky-700 font-bold">POLARIS v1.0</span>
+              <span className="text-zinc-300">|</span>
+              <span className="text-zinc-500 font-medium">SMART INDIA HACKATHON 2026</span>
+              <span className="text-zinc-300">|</span>
+              <span className="text-black font-extrabold bg-zinc-100 px-1.5 py-0.5 rounded border border-zinc-200">POLARIS v1.0</span>
             </div>
           </div>
         </footer>

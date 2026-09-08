@@ -88,7 +88,7 @@ export const DigitalTwin: React.FC = () => {
           ...currentState.activeRoute,
           id: 'ghost-old-route',
           name: 'OLD CORRIDOR [INCURSION]',
-          color: '#EF4444',
+          color: '#DC2626',
           dashArray: '4,4',
           strokeWidth: 2,
           isRecommended: false,
@@ -101,7 +101,7 @@ export const DigitalTwin: React.FC = () => {
       return [
         {
           ...currentState.activeRoute,
-          color: '#F59E0B',
+          color: '#D97706',
           strokeWidth: 3.5,
         },
       ];
@@ -119,10 +119,10 @@ export const DigitalTwin: React.FC = () => {
       return (
         <g className="animate-pulse">
           {/* Pulsing red hazard incursion cone */}
-          <circle cx={hx} cy={hy} r="32" fill="rgba(239, 68, 68, 0.2)" stroke="#DC2626" strokeWidth="2" strokeDasharray="4,4" />
-          <circle cx={hx} cy={hy} r="18" fill="rgba(239, 68, 68, 0.35)" stroke="#DC2626" strokeWidth="1.5" />
+          <circle cx={hx} cy={hy} r="32" fill="rgba(220, 38, 38, 0.2)" stroke="#DC2626" strokeWidth="2" strokeDasharray="4,4" />
+          <circle cx={hx} cy={hy} r="18" fill="rgba(220, 38, 38, 0.35)" stroke="#DC2626" strokeWidth="1.5" />
           <circle cx={hx} cy={hy} r="4" fill="#DC2626" />
-          <text x={hx + 12} y={hy - 10} fill="#B91C1C" fontSize="10" fontFamily="monospace" fontWeight="bold">
+          <text x={hx + 12} y={hy - 10} fill="#991B1B" fontSize="10" fontFamily="monospace" fontWeight="bold">
             HAZARD INCURSION: IB-023
           </text>
         </g>
@@ -139,7 +139,7 @@ export const DigitalTwin: React.FC = () => {
           <circle cx={wx} cy={wy} r="20" fill="rgba(16, 185, 129, 0.2)" stroke="#059669" strokeWidth="1.5" strokeDasharray="3,3" />
           <circle cx={wx} cy={wy} r="6" fill="#FFFFFF" stroke="#059669" strokeWidth="2" />
           <circle cx={wx} cy={wy} r="2.5" fill="#059669" />
-          <text x={wx + 10} y={wy + 4} fill="#047857" fontSize="10" fontFamily="monospace" fontWeight="bold">
+          <text x={wx + 10} y={wy + 4} fill="#065F46" fontSize="10" fontFamily="monospace" fontWeight="bold">
             WP-BRAVO-ALT [AVOIDANCE]
           </text>
         </g>
@@ -154,7 +154,7 @@ export const DigitalTwin: React.FC = () => {
       title="Antarctic Digital Twin"
       subtitle="Interactive dynamic multi-day simulation of Antarctic ice, iceberg kinematics, vessel telemetry, and route adaptation"
       badge="SIMULATION MODE"
-      badgeType="info"
+      badgeType="active"
     >
       <div className="space-y-6">
         {/* 1. Mandatory Notice Banner: SIMULATION / DECISION-SUPPORT PROTOTYPE */}
@@ -176,16 +176,16 @@ export const DigitalTwin: React.FC = () => {
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-sky-600" />
-              <h3 className="text-sm font-bold font-sans text-slate-800 uppercase tracking-wider">
+              <Compass className="w-4 h-4 text-black" />
+              <h3 className="text-sm font-bold font-sans text-zinc-950 uppercase tracking-wider">
                 Dynamic Antarctic Simulation Chart (Polar Stereographic EPSG:3031)
               </h3>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-              <Activity className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="flex items-center gap-2 text-xs font-mono text-zinc-600">
+              <Activity className="w-3.5 h-3.5 text-black" />
               <span>
-                Status: <strong className="text-slate-700">{currentState.phaseName}</strong>
+                Status: <strong className="text-zinc-950">{currentState.phaseName}</strong>
               </span>
             </div>
           </div>
@@ -217,3 +217,4 @@ export const DigitalTwin: React.FC = () => {
     </PageContainer>
   );
 };
+

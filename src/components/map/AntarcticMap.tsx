@@ -135,30 +135,30 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   const icebergs = customIcebergs || ICEBERGS_DATA;
 
   return (
-    <div className={`relative flex flex-col ${heightClass} overflow-hidden rounded-xl border border-slate-200/90 bg-[#EBF5FB] shadow-xs`}>
+    <div className={`relative flex flex-col ${heightClass} overflow-hidden rounded-xl border border-zinc-200/90 bg-[#F4F8FA] shadow-xs`}>
       {/* 1. Tactical HUD Header */}
-      <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-4 py-2.5 bg-white/95 border-b border-slate-200 backdrop-blur-md shadow-2xs">
+      <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-4 py-2.5 bg-white/95 border-b border-zinc-200 backdrop-blur-md shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-900">
-            <Compass className="w-4 h-4 text-sky-600" />
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-950">
+            <Compass className="w-4 h-4 text-black" />
             <span>ANTARCTIC HIGH-LATITUDE MARITIME CHART</span>
           </div>
-          <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-mono bg-sky-50 text-sky-700 border border-sky-200 font-semibold">
+          <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-100 text-zinc-900 border border-zinc-200 font-bold">
             PROJECTION: POLAR STEREOGRAPHIC EPSG:3031
           </span>
         </div>
 
         {/* Telemetry Status Right */}
         <div className="flex items-center gap-2 sm:gap-3 text-[11px] font-mono">
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-slate-50 border border-slate-200 text-slate-700 shadow-2xs">
-            <Crosshair className="w-3.5 h-3.5 text-sky-600" />
-            <span className="font-medium">
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-50 border border-zinc-200 text-zinc-800 shadow-xs">
+            <Crosshair className="w-3.5 h-3.5 text-zinc-900" />
+            <span className="font-bold">
               POS: {Math.abs(vessel.lat).toFixed(2)}°S, {vessel.lng.toFixed(2)}°E
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold shadow-2xs">
-            <Radio className="w-3 h-3 text-emerald-600 animate-pulse" />
+          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-black text-white font-bold shadow-xs">
+            <Radio className="w-3 h-3 text-white animate-pulse" />
             <span>RADAR: 48 NM ACTIVE</span>
           </div>
         </div>
@@ -458,14 +458,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
       {/* 5. HUD Interactive Notification Bar */}
       {hudMessage && (
-        <div className="absolute top-14 right-4 z-20 px-3 py-2 rounded-lg bg-white/95 border border-slate-200 text-xs font-mono text-slate-800 shadow-xl flex items-center justify-between gap-3 backdrop-blur-md">
+        <div className="absolute top-14 right-4 z-20 px-3.5 py-2 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-900 shadow-xl flex items-center justify-between gap-3 backdrop-blur-md">
           <div className="flex items-center gap-2">
-            <Crosshair className="w-3.5 h-3.5 text-sky-600" />
-            <span className="font-semibold">{hudMessage}</span>
+            <Crosshair className="w-3.5 h-3.5 text-black" />
+            <span className="font-bold">{hudMessage}</span>
           </div>
           <button
             onClick={() => setHudMessage(null)}
-            className="text-slate-400 hover:text-slate-800 font-bold text-xs"
+            className="text-zinc-400 hover:text-black font-bold text-xs"
           >
             ✕
           </button>
@@ -474,17 +474,17 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
       {/* 6. Selected Iceberg Inspection Flyout Modal */}
       {selectedIceberg && (
-        <div className="absolute top-14 right-4 z-30 w-80 sm:w-96 rounded-xl bg-white border border-slate-200 shadow-2xl p-4 backdrop-blur-md space-y-3">
-          <div className="flex items-start justify-between pb-2 border-b border-slate-100">
+        <div className="absolute top-14 right-4 z-30 w-80 sm:w-96 rounded-xl bg-white border border-zinc-200 shadow-2xl p-4 backdrop-blur-md space-y-3">
+          <div className="flex items-start justify-between pb-2 border-b border-zinc-100">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-600">
+              <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900">
                 <Mountain className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900 font-mono">
+                <h4 className="text-xs font-bold text-zinc-950 font-mono">
                   {selectedIceberg.name}
                 </h4>
-                <span className="text-[10px] text-slate-500 font-mono">
+                <span className="text-[10px] text-zinc-500 font-mono font-medium">
                   CODE: {selectedIceberg.code} | {selectedIceberg.detectionSource}
                 </span>
               </div>
@@ -492,79 +492,79 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
             <button
               onClick={() => setSelectedIceberg(null)}
-              className="p-1 text-slate-400 hover:text-slate-700 rounded hover:bg-slate-100"
+              className="p-1 text-zinc-400 hover:text-zinc-900 rounded hover:bg-zinc-100"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
-            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-slate-500 text-[10px] block">POSITION</span>
-              <span className="text-slate-900 font-bold">
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200">
+              <span className="text-zinc-500 text-[10px] block font-medium">POSITION</span>
+              <span className="text-zinc-950 font-bold">
                 {Math.abs(selectedIceberg.lat).toFixed(2)}°S, {selectedIceberg.lng.toFixed(2)}°E
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-slate-500 text-[10px] block">THREAT LEVEL</span>
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200">
+              <span className="text-zinc-500 text-[10px] block font-medium">THREAT LEVEL</span>
               <span
                 className={`font-bold uppercase ${
                   selectedIceberg.riskLevel === 'critical'
-                    ? 'text-rose-700'
+                    ? 'text-rose-900'
                     : selectedIceberg.riskLevel === 'warning' || selectedIceberg.riskLevel === 'high'
-                    ? 'text-amber-700'
-                    : 'text-emerald-700'
+                    ? 'text-amber-900'
+                    : 'text-emerald-900'
                 }`}
               >
                 {selectedIceberg.riskLevel}
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-slate-500 text-[10px] block">SIZE & AREA</span>
-              <span className="text-slate-900 font-bold">
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200">
+              <span className="text-zinc-500 text-[10px] block font-medium">SIZE & AREA</span>
+              <span className="text-zinc-950 font-bold">
                 {selectedIceberg.sizeClass} ({selectedIceberg.areaKm2} km²)
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-slate-500 text-[10px] block">THICKNESS / DRAFT</span>
-              <span className="text-slate-900 font-bold">
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200">
+              <span className="text-zinc-500 text-[10px] block font-medium">THICKNESS / DRAFT</span>
+              <span className="text-zinc-950 font-bold">
                 {selectedIceberg.thicknessM} m
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-slate-500 text-[10px] block">DRIFT VECTOR</span>
-              <span className="text-sky-700 font-bold">
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200">
+              <span className="text-zinc-500 text-[10px] block font-medium">DRIFT VECTOR</span>
+              <span className="text-zinc-950 font-bold">
                 {selectedIceberg.driftSpeedKts} kts @ {selectedIceberg.driftDirectionDeg}°
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-slate-500 text-[10px] block">CLOSEST APPROACH</span>
-              <span className="text-amber-700 font-bold">
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200">
+              <span className="text-zinc-500 text-[10px] block font-medium">CLOSEST APPROACH</span>
+              <span className="text-amber-900 font-bold">
                 {selectedIceberg.closestApproachNm} NM
               </span>
             </div>
           </div>
 
           {selectedIceberg.nearestStation && (
-            <div className="text-[10px] font-mono text-slate-500 px-1">
-              Nearest Station: <span className="text-slate-800 font-medium">{selectedIceberg.nearestStation}</span>
+            <div className="text-[10px] font-mono text-zinc-500 px-1">
+              Nearest Station: <span className="text-zinc-900 font-bold">{selectedIceberg.nearestStation}</span>
             </div>
           )}
 
-          <div className="flex items-center gap-2 pt-1 border-t border-slate-100">
+          <div className="flex items-center gap-2 pt-1 border-t border-zinc-100">
             <button
               onClick={() => {
                 setHudMessage(`Proximity radar tracker locked on ${selectedIceberg.code}`);
                 setSelectedIceberg(null);
               }}
-              className="flex-1 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-sky-800 border border-slate-200 text-[10px] font-mono flex items-center justify-center gap-1.5 font-semibold"
+              className="flex-1 py-2 rounded-xl bg-black hover:bg-zinc-800 text-white border border-black text-[10px] font-mono flex items-center justify-center gap-1.5 font-bold shadow-xs transition-colors"
             >
-              <Radar className="w-3 h-3 text-sky-600" />
+              <Radar className="w-3.5 h-3.5 text-white" />
               Lock Collision Radar
             </button>
           </div>
@@ -573,17 +573,17 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
       {/* 7. Selected Risk Zone Inspection Modal */}
       {selectedZone && (
-        <div className="absolute top-14 right-4 z-30 w-80 rounded-xl bg-white border border-slate-200 shadow-2xl p-4 backdrop-blur-md space-y-2.5">
-          <div className="flex items-start justify-between pb-2 border-b border-slate-100">
+        <div className="absolute top-14 right-4 z-30 w-80 rounded-xl bg-white border border-zinc-200 shadow-2xl p-4 backdrop-blur-md space-y-2.5">
+          <div className="flex items-start justify-between pb-2 border-b border-zinc-100">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-rose-600" />
-              <h4 className="text-xs font-bold text-slate-900 font-mono">
+              <h4 className="text-xs font-bold text-zinc-950 font-mono">
                 {selectedZone.name}
               </h4>
             </div>
             <button
               onClick={() => setSelectedZone(null)}
-              className="p-1 text-slate-400 hover:text-slate-700"
+              className="p-1 text-zinc-400 hover:text-zinc-900"
             >
               <X className="w-4 h-4" />
             </button>
@@ -591,14 +591,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
           <div className="space-y-1.5 text-xs font-mono">
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Risk Severity:</span>
-              <span className="font-bold text-rose-700">{selectedZone.tier}</span>
+              <span className="text-zinc-500 font-medium">Risk Severity:</span>
+              <span className="font-bold text-rose-900">{selectedZone.tier}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Calculated RIO:</span>
-              <span className="font-bold text-slate-900">{selectedZone.riskScore} / 100</span>
+              <span className="text-zinc-500 font-medium">Calculated RIO:</span>
+              <span className="font-bold text-zinc-950">{selectedZone.riskScore} / 100</span>
             </div>
-            <p className="text-[11px] text-slate-600 font-sans leading-relaxed pt-1">
+            <p className="text-[11px] text-zinc-700 font-sans leading-relaxed pt-1 font-normal">
               {selectedZone.description}
             </p>
           </div>
@@ -606,20 +606,20 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       )}
 
       {/* 8. Bottom Map HUD Footer Bar */}
-      <div className="absolute bottom-0 inset-x-0 z-20 flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-white/95 border-t border-slate-200 backdrop-blur-md text-[11px] font-mono text-slate-600 shadow-2xs">
+      <div className="absolute bottom-0 inset-x-0 z-20 flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-white/95 border-t border-zinc-200 backdrop-blur-md text-[11px] font-mono text-zinc-600 shadow-xs">
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="font-semibold text-slate-800">IMO POLAR CODE: PC3 CERTIFIED</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-black" />
+            <span className="font-bold text-zinc-950">IMO POLAR CODE: PC3 CERTIFIED</span>
           </div>
-          <div className="hidden md:flex items-center gap-1.5 text-slate-400">
+          <div className="hidden md:flex items-center gap-1.5 text-zinc-400">
             <span>|</span>
-            <Zap className="w-3 h-3 text-sky-600" />
-            <span className="text-slate-600">AI WAYPOINT RE-EVALUATION: NOMINAL</span>
+            <Zap className="w-3 h-3 text-black" />
+            <span className="text-zinc-700 font-medium">AI WAYPOINT RE-EVALUATION: NOMINAL</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-slate-500 text-[10px]">
+        <div className="flex items-center gap-2 text-zinc-500 text-[10px] font-medium">
           <span>SCALE: 1:2,500,000</span>
           <span>|</span>
           <span>DATUM: WGS84</span>

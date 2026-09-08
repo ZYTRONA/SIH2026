@@ -21,19 +21,19 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
   onReset,
 }) => {
   return (
-    <div className="bg-white border border-slate-200/90 rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+    <div className="bg-white border border-zinc-200/90 rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
       {/* Label */}
-      <div className="flex items-center gap-2.5 text-xs font-mono text-slate-700">
-        <div className="p-1.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-600">
+      <div className="flex items-center gap-2.5 text-xs font-mono text-zinc-700">
+        <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900">
           <Clock className="w-3.5 h-3.5" />
         </div>
-        <span className="font-bold uppercase tracking-wider text-slate-900">
+        <span className="font-bold uppercase tracking-wider text-zinc-950">
           FORECAST TIMELINE HORIZON:
         </span>
       </div>
 
       {/* Modern Segmented Control Pills */}
-      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 shadow-2xs flex-wrap justify-center">
+      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-100 border border-zinc-200 shadow-2xs flex-wrap justify-center">
         {horizons.map((horizon) => {
           const isActive = activeHorizon === horizon;
 
@@ -43,8 +43,8 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
               onClick={() => onSelectHorizon(horizon)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all duration-200 select-none ${
                 isActive
-                  ? 'bg-sky-600 text-white shadow-xs border border-sky-600 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
+                  ? 'bg-black text-white shadow-xs border border-black font-bold'
+                  : 'text-zinc-600 hover:text-black hover:bg-zinc-200/70'
               }`}
             >
               {horizon}
@@ -60,7 +60,7 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
             onClick={onTogglePlay}
             variant={isPlaying ? 'destructive' : 'secondary'}
             size="sm"
-            className="font-mono gap-1.5 font-semibold"
+            className="font-mono gap-1.5 font-bold rounded-xl"
             title={isPlaying ? 'Pause timeline progression' : 'Auto-play forecast sequence'}
           >
             {isPlaying ? (
@@ -70,7 +70,7 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
               </>
             ) : (
               <>
-                <Play className="w-3.5 h-3.5 text-emerald-600" />
+                <Play className="w-3.5 h-3.5 text-black" />
                 <span>Animate</span>
               </>
             )}
@@ -82,7 +82,7 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
             onClick={onReset}
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-slate-500 hover:text-slate-800"
+            className="h-8 w-8 text-zinc-500 hover:text-black hover:bg-zinc-100"
             title="Reset to Current observation"
           >
             <RotateCcw className="w-3.5 h-3.5" />

@@ -26,16 +26,16 @@ const iconMap = {
 const getTierColor = (tier: RiskTier) => {
   switch (tier) {
     case 'CRITICAL':
-      return { bar: 'bg-rose-500', text: 'text-rose-700', badge: 'bg-rose-50 text-rose-700 border-rose-200' };
+      return { bar: 'bg-rose-600', text: 'text-rose-900', badge: 'bg-rose-100 text-rose-900 border-rose-300' };
     case 'HIGH':
-      return { bar: 'bg-orange-500', text: 'text-orange-700', badge: 'bg-orange-50 text-orange-700 border-orange-200' };
+      return { bar: 'bg-orange-600', text: 'text-orange-900', badge: 'bg-orange-100 text-orange-900 border-orange-300' };
     case 'MODERATE':
-      return { bar: 'bg-amber-500', text: 'text-amber-700', badge: 'bg-amber-50 text-amber-700 border-amber-200' };
+      return { bar: 'bg-amber-600', text: 'text-amber-900', badge: 'bg-amber-100 text-amber-900 border-amber-300' };
     case 'LOW':
-      return { bar: 'bg-sky-600', text: 'text-sky-700', badge: 'bg-sky-50 text-sky-700 border-sky-200' };
+      return { bar: 'bg-zinc-800', text: 'text-zinc-900', badge: 'bg-zinc-100 text-zinc-900 border-zinc-300' };
     case 'SAFE':
     default:
-      return { bar: 'bg-emerald-600', text: 'text-emerald-700', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+      return { bar: 'bg-emerald-600', text: 'text-emerald-900', badge: 'bg-emerald-100 text-emerald-900 border-emerald-300' };
   }
 };
 
@@ -46,16 +46,16 @@ export const RiskScoreBreakdown: React.FC = () => {
   const overallColors = getTierColor(overallTier);
 
   return (
-    <div className="bg-white border border-slate-200/90 shadow-xs rounded-xl p-5 space-y-5">
+    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 space-y-5">
       {/* 1. Overall Composite Risk Header Block */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-100">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-sky-50 border border-sky-200 text-sky-700">
+          <div className="p-2.5 rounded-xl bg-black text-white">
             <Shield className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold font-sans text-slate-900">
+              <h3 className="text-base font-bold font-sans text-zinc-950">
                 Mission Risk Summary
               </h3>
               <span
@@ -64,24 +64,24 @@ export const RiskScoreBreakdown: React.FC = () => {
                 {overallTier} RISK
               </span>
             </div>
-            <span className="text-[11px] font-mono text-slate-500">
+            <span className="text-[11px] font-mono text-zinc-600">
               Vessel: {vesselCapability} | Margin: {rioMargin}
             </span>
           </div>
         </div>
 
         {/* Big Score Readout */}
-        <div className="flex items-baseline gap-1.5 self-start sm:self-auto bg-slate-50 px-3.5 py-1.5 rounded-lg border border-slate-200">
-          <span className="text-2xl font-bold font-sans text-slate-900">
+        <div className="flex items-baseline gap-1.5 self-start sm:self-auto bg-zinc-50 px-3.5 py-1.5 rounded-xl border border-zinc-200">
+          <span className="text-2xl font-black font-sans text-zinc-950">
             {overallScore}
           </span>
-          <span className="text-xs font-mono text-slate-500">/ 100</span>
+          <span className="text-xs font-mono text-zinc-600">/ 100</span>
         </div>
       </div>
 
       {/* 2. Subsystem Clean Horizontal Visualizations */}
       <div className="space-y-3.5">
-        <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold px-1 block">
+        <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-600 font-bold px-1 block">
           Composite Risk Breakdown by Hazard Subsystem
         </span>
 
@@ -93,43 +93,43 @@ export const RiskScoreBreakdown: React.FC = () => {
             return (
               <div
                 key={sub.id}
-                className="p-3 rounded-lg bg-slate-50/80 border border-slate-200 space-y-2 transition-all hover:border-slate-300"
+                className="p-3.5 rounded-xl bg-zinc-50/90 border border-zinc-200 space-y-2.5 transition-all hover:border-zinc-300"
               >
                 {/* Metric Label and Score */}
                 <div className="flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center gap-2">
-                    <Icon className={`w-3.5 h-3.5 ${colors.text}`} />
-                    <span className="text-slate-800 font-semibold">{sub.name}</span>
-                    <span className="text-[10px] text-slate-500">({sub.weightPct}% weight)</span>
+                    <Icon className="w-3.5 h-3.5 text-zinc-700" />
+                    <span className="text-zinc-950 font-bold">{sub.name}</span>
+                    <span className="text-[10px] text-zinc-600 font-medium">({sub.weightPct}% weight)</span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-slate-500 flex items-center gap-1">
+                    <span className="text-[10px] text-zinc-600 flex items-center gap-1 font-medium">
                       {sub.trend === 'increasing' ? (
-                        <TrendingUp className="w-3 h-3 text-amber-600" />
+                        <TrendingUp className="w-3 h-3 text-amber-700" />
                       ) : (
-                        <Minus className="w-3 h-3 text-slate-400" />
+                        <Minus className="w-3 h-3 text-zinc-400" />
                       )}
                       {sub.trendDelta}
                     </span>
-                    <span className="text-sm font-bold text-slate-900 font-sans">
+                    <span className="text-sm font-black text-zinc-950 font-sans">
                       {sub.score}
                     </span>
                   </div>
                 </div>
 
                 {/* Horizontal Progress Bar */}
-                <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden border border-slate-300 relative">
+                <div className="w-full h-2 rounded-full bg-zinc-200 overflow-hidden border border-zinc-300 relative">
                   <div
                     className={`h-full rounded-full ${colors.bar} transition-all duration-500`}
                     style={{ width: `${sub.score}%` }}
                   />
                   {/* Subtle threshold marker at 50% */}
-                  <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-slate-400" />
+                  <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-zinc-400" />
                 </div>
 
                 {/* Detail text */}
-                <div className="text-[10px] font-mono text-slate-500 flex items-center justify-between">
+                <div className="text-[10px] font-mono text-zinc-600 flex items-center justify-between">
                   <span className="truncate">{sub.description}</span>
                   <span className={`font-bold ${colors.text}`}>{sub.tier}</span>
                 </div>
@@ -141,3 +141,4 @@ export const RiskScoreBreakdown: React.FC = () => {
     </div>
   );
 };
+

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Shield, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface PageContainerProps {
   title: string;
   subtitle?: string;
   badge?: string;
-  badgeType?: 'safe' | 'warning' | 'critical' | 'info';
+  badgeType?: 'safe' | 'warning' | 'critical' | 'info' | 'active';
   children: React.ReactNode;
   actions?: React.ReactNode;
 }
@@ -19,67 +19,49 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   actions,
 }) => {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1920px] mx-auto min-h-[calc(100vh-4rem)] flex flex-col justify-between">
-      <div className="space-y-6">
-        {/* Standard Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-slate-200">
-          <div className="space-y-1 min-w-0">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 font-sans">
-                {title}
-              </h2>
-              {badge && (
-                <span
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-semibold border ${
-                    badgeType === 'warning'
-                      ? 'bg-amber-50 border-amber-200 text-amber-700'
-                      : badgeType === 'critical'
-                      ? 'bg-rose-50 border-rose-200 text-rose-700'
-                      : badgeType === 'safe'
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                      : 'bg-sky-50 border-sky-200 text-sky-700'
-                  }`}
-                >
-                  <Sparkles className="w-3 h-3 text-sky-600" />
-                  {badge}
-                </span>
-              )}
-            </div>
-            {subtitle && (
-              <p className="text-xs sm:text-sm text-slate-600 max-w-3xl leading-relaxed">
-                {subtitle}
-              </p>
+    <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Standardized Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-950 font-sans">
+              {title}
+            </h2>
+            {badge && (
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold border ${
+                  badgeType === 'warning'
+                    ? 'bg-amber-50 border-amber-300 text-amber-900'
+                    : badgeType === 'critical'
+                    ? 'bg-rose-50 border-rose-300 text-rose-900'
+                    : badgeType === 'safe'
+                    ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                    : badgeType === 'active'
+                    ? 'bg-black border-black text-white'
+                    : 'bg-zinc-100 border-zinc-300 text-zinc-900'
+                }`}
+              >
+                <Sparkles className="w-3 h-3" />
+                {badge}
+              </span>
             )}
           </div>
-
-          {actions && (
-            <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
-              {actions}
-            </div>
+          {subtitle && (
+            <p className="text-xs sm:text-sm text-zinc-600 max-w-4xl leading-relaxed font-normal">
+              {subtitle}
+            </p>
           )}
         </div>
 
-        {/* Page Content Body */}
-        <div className="w-full">{children}</div>
+        {actions && (
+          <div className="flex items-center gap-2 flex-wrap shrink-0 self-start md:self-auto">
+            {actions}
+          </div>
+        )}
       </div>
 
-      {/* Subtle Operational Footer Indicator */}
-      <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-slate-500 gap-2">
-        <div className="flex items-center gap-2">
-          <Shield className="w-3.5 h-3.5 text-sky-600" />
-          <span className="font-semibold text-slate-700">POLARIS DECISION PLATFORM</span>
-          <span className="text-slate-300">|</span>
-          <span>ANTARCTIC HIGH-LATITUDE OPERATIONS</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span>IMO POLAR CODE PC4 COMPLIANT</span>
-          <span className="text-slate-300">|</span>
-          <span className="text-emerald-700 font-semibold flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            OPERATIONAL
-          </span>
-        </div>
-      </div>
+      {/* Page Content Body */}
+      <div className="w-full">{children}</div>
     </div>
   );
 };

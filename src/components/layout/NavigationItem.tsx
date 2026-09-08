@@ -27,11 +27,11 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `relative group flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 select-none ${
+        `relative group flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 select-none ${
           isActive
-            ? 'bg-sky-50 text-sky-900 font-semibold border-l-2 border-sky-600 pl-[11px] shadow-xs'
-            : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 border-l-2 border-transparent pl-[11px]'
-        } ${collapsed ? 'justify-center !px-0 !pl-0 !border-l-0' : ''}`
+            ? 'bg-black text-white font-bold shadow-xs'
+            : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
+        } ${collapsed ? 'justify-center !px-0' : ''}`
       }
       title={collapsed ? label : undefined}
     >
@@ -41,7 +41,7 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
           {isActive && (
             <motion.div
               layoutId="activeNavBackground"
-              className="absolute inset-0 bg-sky-50 rounded-lg border border-sky-200/80 -z-10"
+              className="absolute inset-0 bg-black rounded-xl -z-10 shadow-xs"
               transition={{ type: 'spring', stiffness: 450, damping: 35 }}
             />
           )}
@@ -49,23 +49,25 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
           <Icon
             className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
               isActive
-                ? 'text-sky-600'
-                : 'text-slate-400 group-hover:text-slate-700'
+                ? 'text-white'
+                : 'text-zinc-500 group-hover:text-black'
             }`}
           />
 
           {!collapsed && (
-            <span className="flex-1 truncate tracking-tight font-sans">{label}</span>
+            <span className="flex-1 truncate tracking-tight font-sans font-medium">{label}</span>
           )}
 
           {!collapsed && badge && (
             <span
-              className={`px-1.5 py-0.5 text-[9px] font-mono rounded-md border font-semibold tracking-wider ${
-                badgeType === 'warning'
-                  ? 'bg-amber-50 border-amber-200 text-amber-700'
+              className={`px-1.5 py-0.5 text-[9px] font-mono rounded-md border font-bold tracking-wider ${
+                isActive
+                  ? 'bg-white text-black border-white'
+                  : badgeType === 'warning'
+                  ? 'bg-amber-50 border-amber-200 text-amber-800'
                   : badgeType === 'safe'
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                  : 'bg-sky-50 border-sky-200 text-sky-700'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                  : 'bg-zinc-100 border-zinc-200 text-zinc-900'
               }`}
             >
               {badge}
@@ -74,7 +76,7 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
 
           {/* Active dot beacon when collapsed */}
           {collapsed && isActive && (
-            <span className="absolute right-2 top-2 w-1.5 h-1.5 rounded-full bg-sky-600 animate-pulse" />
+            <span className="absolute right-2 top-2 w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
           )}
         </>
       )}

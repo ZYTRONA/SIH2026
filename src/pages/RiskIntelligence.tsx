@@ -70,12 +70,12 @@ export const RiskIntelligence: React.FC = () => {
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-rose-600" />
-              <h2 className="text-sm font-bold font-sans uppercase tracking-wider text-slate-900">
+              <Activity className="w-4 h-4 text-black" />
+              <h2 className="text-sm font-bold font-sans uppercase tracking-wider text-zinc-950">
                 Combined Antarctic Risk Heatmap & Transit Corridor
               </h2>
             </div>
-            <div className="flex items-center gap-2 text-[11px] font-mono text-slate-600">
+            <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-600">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>IMO Polar Code Calibrated: PC3 Structural Limit</span>
             </div>
@@ -117,16 +117,16 @@ export const RiskIntelligence: React.FC = () => {
         </div>
 
         {/* 4. Bottom Footer Security & Compliance Notice */}
-        <div className="p-3.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-600 gap-2">
+        <div className="p-3.5 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-zinc-600 gap-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-sky-600" />
-            <span className="text-slate-800 font-semibold">
+            <Sparkles className="w-4 h-4 text-black" />
+            <span className="text-zinc-950 font-bold">
               POLARIS AI Risk Decision Engine
             </span>
             <span>—</span>
             <span>Deterministic RIO structural calculations updated continuous live feed</span>
           </div>
-          <span className="text-emerald-700 font-bold">
+          <span className="text-emerald-800 font-black">
             CURRENT VOYAGE STATUS: PERMITTED TRANSIT (RIO &gt; 0)
           </span>
         </div>
@@ -134,3 +134,4 @@ export const RiskIntelligence: React.FC = () => {
     </PageContainer>
   );
 };
+

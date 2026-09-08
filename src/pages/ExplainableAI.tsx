@@ -16,7 +16,7 @@ export const ExplainableAI: React.FC = () => {
       title="Explainable Navigation Intelligence"
       subtitle="Transparent AI decision rationales, SHAP feature attributions, and uncertainty margins"
       badge="TRANSPARENCY 91%"
-      badgeType="safe"
+      badgeType="active"
     >
       <div className="space-y-6">
         {/* 1. Header Banner, Decision Question & 5 Core Reasoning Points */}
@@ -41,15 +41,15 @@ export const ExplainableAI: React.FC = () => {
         <ModelArchitectureCard />
 
         {/* 6. Footer Compliance Banner */}
-        <div className="p-3.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-600 gap-2">
+        <div className="p-3.5 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-zinc-600 gap-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-sky-600" />
-            <span className="text-slate-900 font-bold">POLARIS Explainable AI (XAI) Framework</span>
+            <Sparkles className="w-4 h-4 text-black" />
+            <span className="text-zinc-950 font-bold">POLARIS Explainable AI (XAI) Framework</span>
             <span>—</span>
             <span>Local additive feature attribution & Pareto frontier transparency</span>
           </div>
-          <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
-            <ShieldCheck className="w-4 h-4" />
+          <div className="flex items-center gap-1.5 text-emerald-800 font-bold">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span>IMO CODE OF SAFETY COMPLIANT</span>
           </div>
         </div>
@@ -57,3 +57,4 @@ export const ExplainableAI: React.FC = () => {
     </PageContainer>
   );
 };
+
