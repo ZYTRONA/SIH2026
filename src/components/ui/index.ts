@@ -9,3 +9,5 @@ export * from './switch';
 export * from './progress';
 export * from './select';
 export * from './slider';
+export * from './sidebar';
+export * from './sidebar-demo';

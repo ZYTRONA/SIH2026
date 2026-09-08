@@ -19,7 +19,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      'flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none focus:bg-zinc-100 data-[state=open]:bg-zinc-100 text-zinc-800 font-sans font-medium',
+      'flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none focus:bg-zinc-100 data-[state=open]:bg-zinc-100 text-zinc-800 font-sans font-semibold',
       inset && 'pl-8',
       className
     )}

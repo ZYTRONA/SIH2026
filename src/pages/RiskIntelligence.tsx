@@ -14,7 +14,6 @@ import { MapLayerVisibility } from '@/types/map';
 import { ShieldCheck, Sparkles, Activity } from 'lucide-react';
 
 export const RiskIntelligence: React.FC = () => {
-  // 5 Layer state requested by prompt: Sea-Ice Risk, Iceberg Risk, Weather Risk, Ocean Risk, Bathymetry Risk
   const [riskLayers, setRiskLayers] = useState<RiskLayersState>({
     seaIceRisk: true,
     icebergRisk: true,
@@ -30,7 +29,6 @@ export const RiskIntelligence: React.FC = () => {
     }));
   };
 
-  // Synchronize riskLayers with the AntarcticMap layer visibility
   const mapLayers: MapLayerVisibility = {
     seaIce: riskLayers.seaIceRisk,
     icebergs: riskLayers.icebergRisk,
@@ -58,24 +56,24 @@ export const RiskIntelligence: React.FC = () => {
   return (
     <PageContainer
       title="Antarctic Risk Intelligence"
-      subtitle="Multi-factor environmental hazard aggregation, POLARIS RIO structural limit indexing, and active transit threat tracking"
+      subtitle="Multi-factor environmental hazard aggregation, POLARIS RIO structural limit indexing, and active transit threat tracking."
       badge="IMO POLARIS COMPLIANT"
       badgeType="safe"
     >
       <div className="space-y-6">
-        {/* 1. Risk Scale Reference Banner (0-20 to 80-100) */}
+        {/* 1. Risk Scale Reference Banner */}
         <RiskScaleLegend currentScore={24} />
 
         {/* 2. Combined Risk Heatmap & Main Antarctic Map Section */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-black" />
-              <h2 className="text-sm font-bold font-sans uppercase tracking-wider text-zinc-950">
+              <Activity className="w-4 h-4 text-[#0066cc]" />
+              <h2 className="text-[14px] font-semibold text-[#1d1d1f]">
                 Combined Antarctic Risk Heatmap & Transit Corridor
               </h2>
             </div>
-            <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-600">
+            <div className="flex items-center gap-2 text-[12px] text-neutral-500 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>IMO Polar Code Calibrated: PC3 Structural Limit</span>
             </div>
@@ -99,35 +97,29 @@ export const RiskIntelligence: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column: Mission Risk Summary & Risk Engine Specs */}
           <div className="space-y-6">
-            {/* Mission Risk Summary with clean horizontal visualizations */}
             <RiskScoreBreakdown />
-
-            {/* Risk Engine Specifications & 6 Inputs Breakdown */}
             <RiskEngineSpecCard />
           </div>
 
           {/* Right Column: Active Hazards & 72-Hour Risk Dynamics */}
           <div className="space-y-6">
-            {/* Active Hazards List */}
             <ActiveHazardsList />
-
-            {/* 72-Hour Risk Dynamics Timeline Chart */}
             <RiskTimelineChart />
           </div>
         </div>
 
         {/* 4. Bottom Footer Security & Compliance Notice */}
-        <div className="p-3.5 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-zinc-600 gap-2">
+        <div className="p-5 rounded-[18px] bg-white border border-[#e0e0e0] flex flex-col sm:flex-row sm:items-center justify-between text-[13px] text-[#1d1d1f] gap-3">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-black" />
-            <span className="text-zinc-950 font-bold">
+            <Sparkles className="w-4 h-4 text-[#0066cc]" />
+            <span className="font-semibold">
               POLARIS AI Risk Decision Engine
             </span>
-            <span>—</span>
-            <span>Deterministic RIO structural calculations updated continuous live feed</span>
+            <span className="text-neutral-300">&bull;</span>
+            <span className="text-neutral-600">Deterministic RIO structural calculations updated continuous live feed</span>
           </div>
-          <span className="text-emerald-800 font-black">
-            CURRENT VOYAGE STATUS: PERMITTED TRANSIT (RIO &gt; 0)
+          <span className="px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200 text-[12px]">
+            TRANSIT PERMITTED: RIO +18 &gt; 0
           </span>
         </div>
       </div>
@@ -135,3 +127,4 @@ export const RiskIntelligence: React.FC = () => {
   );
 };
 
+export default RiskIntelligence;

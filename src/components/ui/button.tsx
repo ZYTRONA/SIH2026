@@ -3,30 +3,32 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-xs font-mono font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.98]',
+  'relative inline-flex items-center justify-center gap-2 whitespace-nowrap text-[14px] sm:text-[17px] font-normal tracking-[-0.374px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 select-none active:scale-95',
   {
     variants: {
       variant: {
         default:
-          'bg-black hover:bg-zinc-800 text-white shadow-xs border border-black font-semibold',
+          'rounded-full bg-[#0066cc] text-white hover:bg-[#0071e3] shadow-none',
         secondary:
-          'bg-white hover:bg-zinc-50 text-zinc-900 border border-zinc-200 shadow-xs hover:border-zinc-300',
+          'rounded-full bg-transparent text-[#0066cc] border border-[#0066cc] hover:bg-[#0066cc]/5 shadow-none',
         outline:
-          'border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-800 shadow-xs',
+          'rounded-full border border-[#e0e0e0] bg-white text-[#1d1d1f] hover:bg-[#f5f5f7] shadow-none',
         ghost:
-          'hover:bg-zinc-100 hover:text-black text-zinc-600',
+          'rounded-full hover:bg-[#f5f5f7] text-[#1d1d1f]',
         destructive:
-          'bg-rose-600 hover:bg-rose-700 text-white border border-rose-600 shadow-xs font-semibold',
+          'rounded-full bg-rose-600 hover:bg-rose-700 text-white shadow-none',
         tactical:
-          'bg-zinc-100 hover:bg-zinc-200 text-zinc-950 border border-zinc-300 font-semibold tracking-wider uppercase shadow-xs',
+          'rounded-[8px] bg-[#1d1d1f] hover:bg-neutral-800 text-white text-[14px] tracking-[-0.224px] shadow-none',
+        pearl:
+          'rounded-[11px] bg-[#fafafc] hover:bg-neutral-100 text-[#333333] border border-[#f0f0f0] text-[14px] tracking-[-0.224px] shadow-none',
         success:
-          'bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-600 shadow-xs font-semibold',
+          'rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-none',
       },
       size: {
-        default: 'h-9 px-4 py-2',
-        sm: 'h-7 rounded-lg px-2.5 text-[11px]',
-        lg: 'h-10 rounded-xl px-6 text-sm',
-        icon: 'h-8 w-8 p-0',
+        default: 'min-h-[44px] px-5 py-2.5',
+        sm: 'min-h-[34px] h-[34px] rounded-full px-3.5 text-[12px]',
+        lg: 'min-h-[50px] px-7 py-3 text-[17px]',
+        icon: 'h-11 w-11 min-h-[44px] min-w-[44px] rounded-full p-0 bg-[#d2d2d7]/60 hover:bg-[#d2d2d7]/80 text-[#1d1d1f]',
       },
     },
     defaultVariants: {

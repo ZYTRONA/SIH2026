@@ -73,22 +73,22 @@ export const MissionProgressPipeline: React.FC<MissionProgressPipelineProps> = (
   };
 
   return (
-    <div className="bg-white border border-zinc-200/90 rounded-xl p-6 space-y-6 shadow-xs animate-fade-in">
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-6 space-y-6 animate-fade-in">
       {/* Title & Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#f0f0f0]">
         <div className="flex items-center gap-3">
-          <Loader2 className="w-5 h-5 text-black animate-spin" />
+          <Loader2 className="w-5 h-5 text-[#0066cc] animate-spin shrink-0" />
           <div>
-            <h3 className="text-sm font-bold text-zinc-950 font-sans">
-              Processing Antarctic Environmental Intelligence...
+            <h3 className="text-[16px] font-semibold text-[#1d1d1f] tracking-[-0.28px]">
+              Processing Antarctic Environmental Intelligence
             </h3>
-            <span className="text-[10px] font-mono text-zinc-500 font-bold uppercase tracking-wider">
-              Autonomous Multi-Factor Solver Active
+            <span className="text-[12px] text-neutral-500 font-normal">
+              Autonomous Multi-Factor Ensemble Solver Active
             </span>
           </div>
         </div>
 
-        <span className="text-xs font-mono font-bold text-zinc-950 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
+        <span className="text-[12px] font-semibold text-[#0066cc] bg-[#f0f7ff] border border-[#d0e6ff] px-3 py-1 rounded-full">
           {progressPct}% COMPLETED
         </span>
       </div>
@@ -102,22 +102,22 @@ export const MissionProgressPipeline: React.FC<MissionProgressPipelineProps> = (
           return (
             <div
               key={st.key}
-              className={`p-3 rounded-xl border transition-all ${
+              className={`p-4 rounded-[14px] border transition-all ${
                 status === 'completed'
-                  ? 'bg-zinc-50 border-zinc-300 text-zinc-900 font-medium'
+                  ? 'bg-[#fafafc] border-[#e0e0e0] text-[#1d1d1f]'
                   : status === 'active'
-                  ? 'bg-black border-black text-white shadow-md'
-                  : 'bg-zinc-50/50 border-zinc-200 text-zinc-400 opacity-60'
+                  ? 'bg-[#272729] border-[#272729] text-white'
+                  : 'bg-[#f5f5f7] border-[#e0e0e0] text-neutral-400 opacity-70'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
                 <div
-                  className={`p-1.5 rounded-lg ${
+                  className={`p-2 rounded-full ${
                     status === 'completed'
-                      ? 'bg-zinc-200 text-zinc-900'
+                      ? 'bg-[#f0f0f2] text-[#1d1d1f]'
                       : status === 'active'
-                      ? 'bg-zinc-800 text-white'
-                      : 'bg-zinc-200 text-zinc-400'
+                      ? 'bg-neutral-700 text-white'
+                      : 'bg-neutral-200 text-neutral-400'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -131,10 +131,10 @@ export const MissionProgressPipeline: React.FC<MissionProgressPipelineProps> = (
                 )}
               </div>
 
-              <div className={`text-xs font-bold font-sans ${status === 'active' ? 'text-white' : 'text-zinc-950'}`}>
+              <div className={`text-[13px] font-semibold tracking-[-0.2px] ${status === 'active' ? 'text-white' : 'text-[#1d1d1f]'}`}>
                 {st.label}
               </div>
-              <div className={`text-[10px] font-mono mt-0.5 ${status === 'active' ? 'text-zinc-300' : 'text-zinc-500'}`}>
+              <div className={`text-[11px] font-normal mt-0.5 ${status === 'active' ? 'text-neutral-300' : 'text-neutral-500'}`}>
                 {st.sublabel}
               </div>
             </div>
@@ -144,14 +144,14 @@ export const MissionProgressPipeline: React.FC<MissionProgressPipelineProps> = (
 
       {/* Progress Bar & Subtext */}
       <div className="space-y-2">
-        <div className="w-full h-2 rounded-full bg-zinc-100 overflow-hidden border border-zinc-200">
+        <div className="w-full h-2 rounded-full bg-[#f5f5f7] overflow-hidden border border-[#e0e0e0]">
           <div
-            className="h-full bg-black rounded-full transition-all duration-300 ease-out"
+            className="h-full bg-[#0066cc] rounded-full transition-all duration-300 ease-out"
             style={{ width: `${progressPct}%` }}
           />
         </div>
 
-        <p className="text-xs font-mono text-zinc-600 text-center font-semibold">
+        <p className="text-[12px] font-normal text-neutral-600 text-center tracking-[-0.2px]">
           {message}
         </p>
       </div>

@@ -69,25 +69,25 @@ export const CommandSearch: React.FC<CommandSearchProps> = ({ open, onOpenChange
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white border border-zinc-200 shadow-2xl rounded-2xl">
+      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white border border-[#e0e0e0] rounded-[18px]">
         <DialogHeader className="p-4 pb-0 border-none">
           <DialogTitle className="sr-only">Quick Command Navigator</DialogTitle>
           <DialogDescription className="sr-only">Search modules, waypoints, and tools</DialogDescription>
           
-          <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 focus-within:border-black focus-within:ring-2 focus-within:ring-black/10 transition-all">
-            <Search className="w-4 h-4 text-zinc-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] focus-within:border-[#0066cc] focus-within:ring-2 focus-within:ring-[#0071e3] transition-all">
+            <Search className="w-4 h-4 text-neutral-400 flex-shrink-0" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search Antarctic modules, waypoints, sensors (e.g. 'iceberg', 'routes', 'risk')..."
-              className="w-full bg-transparent text-xs font-mono text-zinc-900 placeholder:text-zinc-400 focus:outline-none font-medium"
+              className="w-full bg-transparent text-[14px] text-[#1d1d1f] placeholder:text-neutral-400 focus:outline-none font-normal tracking-[-0.224px]"
               autoFocus
             />
             {query && (
               <button
                 onClick={() => setQuery('')}
-                className="text-[10px] font-mono text-zinc-400 hover:text-black font-bold"
+                className="text-[12px] text-neutral-400 hover:text-[#1d1d1f] font-normal"
               >
                 Clear
               </button>
@@ -96,13 +96,13 @@ export const CommandSearch: React.FC<CommandSearchProps> = ({ open, onOpenChange
         </DialogHeader>
 
         <div className="p-4 pt-2 max-h-80 overflow-y-auto space-y-1">
-          <div className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-widest text-zinc-400 font-bold flex items-center justify-between">
+          <div className="px-2 py-1.5 text-[11px] uppercase tracking-wider text-neutral-400 font-semibold flex items-center justify-between">
             <span>Navigation Modules</span>
-            <span className="text-[9px] text-zinc-400 font-bold">↑↓ to navigate</span>
+            <span className="text-[10px] text-neutral-400 font-normal">↑↓ to navigate</span>
           </div>
 
           {filtered.length === 0 ? (
-            <div className="p-6 text-center text-xs font-mono text-zinc-500">
+            <div className="p-6 text-center text-[14px] text-neutral-500 font-normal">
               No matching modules found for &quot;{query}&quot;
             </div>
           ) : (
@@ -112,35 +112,35 @@ export const CommandSearch: React.FC<CommandSearchProps> = ({ open, onOpenChange
                 <button
                   key={item.path}
                   onClick={() => handleSelect(item.path)}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl text-left hover:bg-zinc-100 border border-transparent hover:border-zinc-300 transition-all group"
+                  className="w-full flex items-center justify-between p-3 rounded-[12px] text-left hover:bg-[#f5f5f7] border border-transparent hover:border-[#e0e0e0] transition-all group active:scale-95 cursor-pointer"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-2 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-800 group-hover:text-white group-hover:bg-black group-hover:border-black transition-colors shadow-2xs">
+                    <div className="p-2 rounded-[8px] bg-[#f5f5f7] border border-[#e0e0e0] text-[#1d1d1f] group-hover:text-white group-hover:bg-[#0066cc] group-hover:border-[#0066cc] transition-colors shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-bold text-zinc-950 group-hover:text-black font-sans truncate">
+                      <div className="text-[14px] font-semibold text-[#1d1d1f] group-hover:text-[#0066cc] truncate tracking-[-0.224px]">
                         {item.label}
                       </div>
-                      <div className="text-[10px] font-mono text-zinc-500 truncate">
-                        {item.category} • <span className="text-zinc-900 font-bold">{item.path}</span>
+                      <div className="text-[12px] text-neutral-500 font-normal truncate">
+                        {item.category} &bull; <span className="text-neutral-700 font-mono">{item.path}</span>
                       </div>
                     </div>
                   </div>
 
-                  <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:text-black group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-neutral-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                 </button>
               );
             })
           )}
         </div>
 
-        <div className="px-4 py-2.5 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between text-[10px] font-mono text-zinc-500">
-          <span className="flex items-center gap-1.5 font-bold text-zinc-700">
-            <Terminal className="w-3.5 h-3.5 text-black" />
+        <div className="px-5 py-3 bg-[#fafafc] border-t border-[#f0f0f0] flex items-center justify-between text-[12px] text-neutral-500">
+          <span className="flex items-center gap-1.5 text-neutral-700 font-normal">
+            <Terminal className="w-3.5 h-3.5 text-[#0066cc]" />
             POLARIS AI Quick Launch Console
           </span>
-          <span className="font-semibold">Press ESC to exit</span>
+          <span>Press ESC to exit</span>
         </div>
       </DialogContent>
     </Dialog>

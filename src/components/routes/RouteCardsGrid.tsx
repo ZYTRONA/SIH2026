@@ -32,16 +32,16 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 select-none">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
         <div className="flex items-center gap-2">
-          <Compass className="w-4 h-4 text-black" />
-          <h3 className="text-sm font-bold font-sans text-zinc-950 uppercase tracking-wider">
+          <Compass className="w-4 h-4 text-[#0066cc]" />
+          <h3 className="text-[14px] font-semibold text-[#1d1d1f] tracking-tight">
             Candidate Polar Navigation Routes (Pareto Frontier)
           </h3>
         </div>
-        <span className="text-[11px] font-mono text-zinc-500">
-          Select a candidate to view trajectory, waypoints, and comparative metrics
+        <span className="text-[12px] font-mono text-[#86868b] font-normal">
+          Select a corridor to view waypoints, ice encounters, and SHAP feasibility
         </span>
       </div>
 
@@ -54,10 +54,10 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
             <div
               key={route.id}
               onClick={() => onSelectRoute(route.key)}
-              className={`relative p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 rounded-xl ${
+              className={`relative p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 rounded-[18px] ${
                 isSelected
-                  ? 'border-2 border-black bg-white shadow-md ring-2 ring-black/10'
-                  : 'border border-zinc-200/90 bg-white hover:border-zinc-400 shadow-xs hover:shadow-sm'
+                  ? 'border-2 border-[#0066cc] bg-white ring-2 ring-[#0066cc]/10'
+                  : 'border border-[#e0e0e0] bg-white hover:border-[#0066cc]/40'
               }`}
             >
               {/* Top Row: Route Title, Badge & Selector Dot */}
@@ -65,30 +65,30 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-base font-bold font-sans text-zinc-950 truncate">
+                      <h4 className="text-[16px] font-semibold text-[#1d1d1f] truncate">
                         {route.name}
                       </h4>
                       {/* Selection radio mark */}
                       {isSelected ? (
-                        <CheckCircle2 className="w-4 h-4 text-black flex-shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-[#0066cc] shrink-0" />
                       ) : (
-                        <div className="w-3.5 h-3.5 rounded-full border border-zinc-300 flex-shrink-0" />
+                        <div className="w-4 h-4 rounded-full border border-[#e0e0e0] shrink-0" />
                       )}
                     </div>
-                    <p className="text-[11px] font-mono text-zinc-500 line-clamp-1">
+                    <p className="text-[12px] font-mono text-[#86868b] line-clamp-1 font-normal">
                       {route.subtitle}
                     </p>
                   </div>
 
                   {/* AI Recommended or Trait Badge */}
                   {isRecommended ? (
-                    <Badge variant="default" className="gap-1 flex-shrink-0 font-bold bg-black text-white border-black">
-                      <Sparkles className="w-3 h-3 text-zinc-300" />
+                    <Badge variant="default" className="gap-1 shrink-0 font-semibold bg-[#0066cc] text-white border-transparent">
+                      <Sparkles className="w-3 h-3 text-amber-300" />
                       {route.badgeLabel}
                     </Badge>
                   ) : (
                     <span
-                      className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border flex-shrink-0"
+                      className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold border shrink-0"
                       style={{
                         color: route.color,
                         borderColor: `${route.color}40`,
@@ -100,60 +100,60 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
                   )}
                 </div>
 
-                {/* 4 Core Metrics requested by Prompt */}
+                {/* 4 Core Metrics requested by Prompt with Apple Typography */}
                 <div className="grid grid-cols-2 gap-2 pt-1 font-mono">
                   {/* Distance */}
-                  <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
-                      <Gauge className="w-3 h-3 text-zinc-400" />
+                  <div className="p-2.5 rounded-xl bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+                    <span className="text-[10px] text-[#86868b] uppercase tracking-wider flex items-center gap-1 font-semibold">
+                      <Gauge className="w-3 h-3 text-[#86868b]" />
                       Distance
                     </span>
-                    <span className="text-sm font-bold text-zinc-950 block tabular-nums">
+                    <span className="text-[14px] font-semibold text-[#1d1d1f] block tabular-nums">
                       {route.distanceFormatted}
                     </span>
                   </div>
 
                   {/* ETA */}
-                  <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
-                      <Clock className="w-3 h-3 text-zinc-400" />
+                  <div className="p-2.5 rounded-xl bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+                    <span className="text-[10px] text-[#86868b] uppercase tracking-wider flex items-center gap-1 font-semibold">
+                      <Clock className="w-3 h-3 text-[#86868b]" />
                       ETA
                     </span>
-                    <span className="text-sm font-bold text-zinc-950 block tabular-nums">
+                    <span className="text-[14px] font-semibold text-[#1d1d1f] block tabular-nums">
                       {route.etaFormatted}
                     </span>
                   </div>
 
                   {/* Fuel */}
-                  <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
-                      <Fuel className="w-3 h-3 text-zinc-500" />
+                  <div className="p-2.5 rounded-xl bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+                    <span className="text-[10px] text-[#86868b] uppercase tracking-wider flex items-center gap-1 font-semibold">
+                      <Fuel className="w-3 h-3 text-[#86868b]" />
                       Fuel
                     </span>
-                    <span className="text-sm font-bold text-zinc-950 block tabular-nums">
+                    <span className="text-[14px] font-semibold text-[#1d1d1f] block tabular-nums">
                       {route.fuelFormatted}
                     </span>
                   </div>
 
                   {/* Risk */}
-                  <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1 font-semibold">
-                      <Shield className="w-3 h-3 text-zinc-500" />
+                  <div className="p-2.5 rounded-xl bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+                    <span className="text-[10px] text-[#86868b] uppercase tracking-wider flex items-center gap-1 font-semibold">
+                      <Shield className="w-3 h-3 text-[#86868b]" />
                       Risk
                     </span>
                     <div className="flex items-baseline gap-1">
                       <span
-                        className={`text-sm font-bold tabular-nums ${
+                        className={`text-[14px] font-semibold tabular-nums ${
                           route.riskTier === 'SAFE'
-                            ? 'text-emerald-800'
+                            ? 'text-emerald-700'
                             : route.riskTier === 'LOW'
-                            ? 'text-zinc-900'
-                            : 'text-amber-800'
+                            ? 'text-[#1d1d1f]'
+                            : 'text-amber-700'
                         }`}
                       >
                         {route.riskScore}
                       </span>
-                      <span className="text-[10px] text-zinc-500">/ 100</span>
+                      <span className="text-[10px] text-[#86868b] font-normal">/ 100</span>
                     </div>
                   </div>
                 </div>
@@ -163,10 +163,10 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
                   {route.characteristics.slice(0, 2).map((trait, idx) => (
                     <div
                       key={idx}
-                      className="text-[11px] font-mono text-zinc-600 flex items-start gap-1.5"
+                      className="text-[11px] font-mono text-[#424245] flex items-start gap-2 font-normal"
                     >
                       <span
-                        className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
+                        className="w-2 h-2 rounded-full mt-1 shrink-0"
                         style={{ backgroundColor: route.color }}
                       />
                       <span className="line-clamp-1">{trait}</span>
@@ -177,18 +177,18 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
 
               {/* Bottom Section for AI Recommended Route: Reason & "Why this route?" button */}
               {isRecommended && (
-                <div className="mt-4 pt-3 border-t border-zinc-200 space-y-2.5 bg-zinc-50 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 rounded-b-xl">
+                <div className="mt-4 pt-3.5 border-t border-[#f0f0f0] space-y-2.5 bg-[#fafafc] -mx-5 -mb-5 p-4 rounded-b-[18px]">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-mono font-bold text-zinc-900 uppercase tracking-wider flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-black" />
+                    <span className="text-[11px] font-mono font-semibold text-[#1d1d1f] uppercase tracking-wider flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-[#0066cc]" />
                       AI Recommendation Rationale
                     </span>
-                    <p className="text-xs text-zinc-700 font-sans leading-relaxed italic font-medium">
+                    <p className="text-[12px] text-[#424245] leading-relaxed italic font-normal">
                       &quot;{route.recommendationReason}&quot;
                     </p>
                   </div>
 
-                  {/* Why this route? Button */}
+                  {/* Why this route? Button — 44px Touch Target */}
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -196,29 +196,29 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
                     }}
                     variant="default"
                     size="sm"
-                    className="w-full gap-2 bg-black hover:bg-zinc-800 text-white font-bold justify-between shadow-xs cursor-pointer"
+                    className="w-full gap-2 min-h-[44px] bg-[#0066cc] hover:bg-[#0071e3] text-white font-semibold justify-between rounded-full cursor-pointer active:scale-95 transition-all"
                   >
-                    <span className="flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5" />
-                      Why this route?
+                    <span className="flex items-center gap-2">
+                      <HelpCircle className="w-4 h-4" />
+                      Why this route? (XAI)
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
               )}
 
               {/* Footer for non-recommended cards */}
               {!isRecommended && (
-                <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-                  <span>Max Ice: {route.maxIceConcentrationPct}%</span>
+                <div className="mt-3 pt-2.5 border-t border-[#f0f0f0] flex items-center justify-between text-[11px] font-mono text-[#86868b]">
+                  <span>Max Ice: <strong className="text-[#1d1d1f] font-semibold">{route.maxIceConcentrationPct}%</strong></span>
                   {route.icebreakerAssistance ? (
-                    <Badge variant="warning" className="text-[9px]">
-                      <AlertTriangle className="w-3 h-3 mr-0.5" />
+                    <Badge variant="warning" className="text-[10px] font-semibold">
+                      <AlertTriangle className="w-3 h-3 mr-1" />
                       Escort Advised
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="text-[9px] bg-zinc-100 border-zinc-300 text-zinc-800">
-                      Autonomous Transit
+                    <Badge variant="outline" className="text-[10px] bg-[#fafafc] border-[#e0e0e0] text-[#1d1d1f] font-semibold">
+                      Autonomous
                     </Badge>
                   )}
                 </div>
@@ -230,4 +230,3 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
     </div>
   );
 };
-

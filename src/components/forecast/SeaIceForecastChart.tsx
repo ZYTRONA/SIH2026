@@ -35,33 +35,33 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
     const predicted = payload.find((p) => p.name === 'Predicted SIC')?.value;
 
     return (
-      <div className="p-3.5 rounded-xl bg-white border border-zinc-200 shadow-xl text-xs font-mono space-y-2">
-        <div className="text-zinc-950 font-bold border-b border-zinc-100 pb-1.5 flex items-center justify-between gap-4">
-          <span className="text-zinc-500 font-semibold">FORECAST TIMELINE</span>
-          <span className="text-black font-extrabold">{label}</span>
+      <div className="p-3.5 rounded-[14px] bg-white border border-[#e0e0e0] shadow-xl text-[12px] space-y-2">
+        <div className="text-[#1d1d1f] font-semibold border-b border-[#f0f0f0] pb-1.5 flex items-center justify-between gap-4">
+          <span className="text-neutral-500 font-normal">TIMELINE</span>
+          <span className="text-[#1d1d1f] font-semibold">{label}</span>
         </div>
 
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-700 font-medium">Predicted Concentration:</span>
-            <span className="text-zinc-950 font-extrabold">{predicted}%</span>
+            <span className="text-neutral-600 font-normal">Predicted SIC:</span>
+            <span className="text-[#0066cc] font-semibold">{predicted}%</span>
           </div>
 
           {data && (
             <>
-              <div className="flex items-center justify-between gap-4 text-zinc-500 text-[11px]">
-                <span>Uncertainty Range (95% CI):</span>
-                <span className="text-zinc-800 font-semibold">
+              <div className="flex items-center justify-between gap-4 text-neutral-500 text-[11px]">
+                <span>Uncertainty (95% CI):</span>
+                <span className="text-[#1d1d1f] font-normal">
                   {data.sicLower}% – {data.sicUpper}%
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-4 text-zinc-500 text-[11px]">
-                <span>Estimated Ice Thickness:</span>
-                <span className="text-zinc-800 font-medium">{data.thicknessM} m</span>
+              <div className="flex items-center justify-between gap-4 text-neutral-500 text-[11px]">
+                <span>Ice Thickness:</span>
+                <span className="text-[#1d1d1f] font-normal">{data.thicknessM} m</span>
               </div>
-              <div className="flex items-center justify-between gap-4 text-zinc-500 text-[11px]">
-                <span>Drift Vector Velocity:</span>
-                <span className="text-zinc-800 font-medium">{data.driftVelocityKts} kts</span>
+              <div className="flex items-center justify-between gap-4 text-neutral-500 text-[11px]">
+                <span>Drift Velocity:</span>
+                <span className="text-[#1d1d1f] font-normal">{data.driftVelocityKts} kts</span>
               </div>
             </>
           )}
@@ -74,31 +74,31 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
 
 export const SeaIceForecastChart: React.FC = () => {
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 space-y-4">
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-5 space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#f0f0f0]">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[#0066cc]">
             <Snowflake className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-sans text-zinc-950">
+            <h3 className="text-[15px] font-semibold text-[#1d1d1f] tracking-[-0.2px]">
               Sea-Ice Concentration Forecast
             </h3>
-            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider font-semibold">
+            <span className="text-[11px] text-neutral-500 font-normal">
               ResUNet Spatiotemporal Projection with Uncertainty Bounds
             </span>
           </div>
         </div>
 
         {/* Legend Indicators */}
-        <div className="flex items-center gap-3 text-[11px] font-mono font-bold">
-          <div className="flex items-center gap-1.5 text-zinc-950">
-            <span className="w-3 h-1 bg-black rounded-full inline-block" />
+        <div className="flex items-center gap-3 text-[11px]">
+          <div className="flex items-center gap-1.5 text-[#1d1d1f] font-semibold">
+            <span className="w-3 h-1 bg-[#0066cc] rounded-full inline-block" />
             <span>Predicted SIC %</span>
           </div>
-          <div className="flex items-center gap-1.5 text-zinc-600 font-medium">
-            <span className="w-3 h-2 bg-zinc-200 border border-zinc-300 rounded-xs inline-block" />
+          <div className="flex items-center gap-1.5 text-neutral-500 font-normal">
+            <span className="w-3 h-2 bg-[#e0f0ff] border border-[#d0e6ff] rounded-[3px] inline-block" />
             <span>95% Uncertainty Range</span>
           </div>
         </div>
@@ -113,34 +113,32 @@ export const SeaIceForecastChart: React.FC = () => {
           >
             <defs>
               <linearGradient id="uncertaintyGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#18181B" stopOpacity={0.15} />
-                <stop offset="95%" stopColor="#18181B" stopOpacity={0.03} />
+                <stop offset="5%" stopColor="#0066cc" stopOpacity={0.18} />
+                <stop offset="95%" stopColor="#0066cc" stopOpacity={0.03} />
               </linearGradient>
             </defs>
 
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#E4E4E7"
-              strokeOpacity={0.9}
+              stroke="#e0e0e0"
+              strokeOpacity={0.7}
               vertical={false}
             />
 
             <XAxis
               dataKey="timeLabel"
-              stroke="#71717A"
-              fontSize={10}
+              stroke="#888888"
+              fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#E4E4E7' }}
-              fontFamily="monospace"
+              axisLine={{ stroke: '#e0e0e0' }}
             />
 
             <YAxis
               domain={[50, 100]}
-              stroke="#71717A"
+              stroke="#888888"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#E4E4E7' }}
-              fontFamily="monospace"
+              axisLine={{ stroke: '#e0e0e0' }}
               unit="%"
             />
 
@@ -169,10 +167,10 @@ export const SeaIceForecastChart: React.FC = () => {
               type="monotone"
               dataKey="sicPredicted"
               name="Predicted SIC"
-              stroke="#09090B"
+              stroke="#0066cc"
               strokeWidth={2.5}
-              dot={{ r: 3, fill: '#09090B', strokeWidth: 0 }}
-              activeDot={{ r: 5, fill: '#09090B', stroke: '#FFFFFF', strokeWidth: 2 }}
+              dot={{ r: 3, fill: '#0066cc', strokeWidth: 0 }}
+              activeDot={{ r: 5, fill: '#0066cc', stroke: '#FFFFFF', strokeWidth: 2 }}
             />
 
             <Legend wrapperStyle={{ display: 'none' }} />
@@ -181,12 +179,12 @@ export const SeaIceForecastChart: React.FC = () => {
       </div>
 
       {/* Footer Insight Note */}
-      <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono text-zinc-600 gap-2">
-        <div className="flex items-center gap-1.5 text-zinc-800">
-          <Info className="w-3.5 h-3.5 text-black" />
+      <div className="p-3.5 rounded-[14px] bg-[#fafafc] border border-[#e0e0e0] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-neutral-600 gap-2">
+        <div className="flex items-center gap-1.5 text-[#1d1d1f]">
+          <Info className="w-3.5 h-3.5 text-[#0066cc]" />
           <span>UNCERTAINTY SPREAD: Widens after T+48h due to Katabatic pressure gradient shifts</span>
         </div>
-        <div className="flex items-center gap-1.5 text-amber-900 font-bold">
+        <div className="flex items-center gap-1.5 text-amber-700 font-semibold">
           <ShieldAlert className="w-3.5 h-3.5" />
           <span>CRITICAL THRESHOLD (80%) REACHED AT T+5 DAYS</span>
         </div>

@@ -17,7 +17,6 @@ import { RoutePath } from '@/types/map';
 import { Activity, Compass } from 'lucide-react';
 
 export const DigitalTwin: React.FC = () => {
-  // Default to Day 3 as specified by prompt for the initial KPI snapshot (72% Sea Ice, 24 kts Wind, 31/100 Risk, 4 Icebergs)
   const [currentDayIndex, setCurrentDayIndex] = useState<number>(3);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
@@ -25,7 +24,6 @@ export const DigitalTwin: React.FC = () => {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-play timeline simulation loop
   useEffect(() => {
     if (isPlaying) {
       const intervalMs = Math.max(500, 1800 / playbackSpeed);
@@ -59,17 +57,13 @@ export const DigitalTwin: React.FC = () => {
     setPlaybackSpeed(speed);
   };
 
-  // Route Recalculation Stepper Handler
   const handleTriggerRecalculate = () => {
     setIsPlaying(false);
-    // 1. Hazard Detected
     setRecalcStage('hazard_detected');
 
-    // 2. Transition to Recalculating
     setTimeout(() => {
       setRecalcStage('recalculating');
 
-      // 3. Transition to Safer Route
       setTimeout(() => {
         setRecalcStage('safer_route');
       }, 2000);
@@ -80,7 +74,6 @@ export const DigitalTwin: React.FC = () => {
     setRecalcStage('idle');
   };
 
-  // Determine active route to render on map based on recalculation state
   const getMapRoutes = (): RoutePath[] => {
     if (recalcStage === 'safer_route') {
       return [
@@ -110,7 +103,6 @@ export const DigitalTwin: React.FC = () => {
     return [currentState.activeRoute];
   };
 
-  // Custom SVG Overlay for hazard incursion and new avoidance waypoint
   const renderCustomOverlay = () => {
     if (recalcStage === 'hazard_detected') {
       const hx = HAZARD_SCENARIO_SPEC.hazardX * 10;
@@ -118,7 +110,6 @@ export const DigitalTwin: React.FC = () => {
 
       return (
         <g className="animate-pulse">
-          {/* Pulsing red hazard incursion cone */}
           <circle cx={hx} cy={hy} r="32" fill="rgba(220, 38, 38, 0.2)" stroke="#DC2626" strokeWidth="2" strokeDasharray="4,4" />
           <circle cx={hx} cy={hy} r="18" fill="rgba(220, 38, 38, 0.35)" stroke="#DC2626" strokeWidth="1.5" />
           <circle cx={hx} cy={hy} r="4" fill="#DC2626" />
@@ -135,7 +126,6 @@ export const DigitalTwin: React.FC = () => {
 
       return (
         <g>
-          {/* Green waypoint beacon WP-Bravo-Alt */}
           <circle cx={wx} cy={wy} r="20" fill="rgba(16, 185, 129, 0.2)" stroke="#059669" strokeWidth="1.5" strokeDasharray="3,3" />
           <circle cx={wx} cy={wy} r="6" fill="#FFFFFF" stroke="#059669" strokeWidth="2" />
           <circle cx={wx} cy={wy} r="2.5" fill="#059669" />
@@ -152,15 +142,15 @@ export const DigitalTwin: React.FC = () => {
   return (
     <PageContainer
       title="Antarctic Digital Twin"
-      subtitle="Interactive dynamic multi-day simulation of Antarctic ice, iceberg kinematics, vessel telemetry, and route adaptation"
-      badge="SIMULATION MODE"
+      subtitle="Interactive dynamic multi-day simulation of Antarctic ice, iceberg kinematics, vessel telemetry, and route adaptation."
+      badge="SIMULATION ACTIVE"
       badgeType="active"
     >
       <div className="space-y-6">
-        {/* 1. Mandatory Notice Banner: SIMULATION / DECISION-SUPPORT PROTOTYPE */}
+        {/* 1. Mandatory Notice Banner */}
         <PrototypeNoticeBanner />
 
-        {/* 2. Timeline Controls (Day 0 to Day 7, Play/Pause/Reset, Speed) */}
+        {/* 2. Timeline Controls */}
         <TimelineControls
           currentDayIndex={currentDayIndex}
           isPlaying={isPlaying}
@@ -176,16 +166,16 @@ export const DigitalTwin: React.FC = () => {
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-black" />
-              <h3 className="text-sm font-bold font-sans text-zinc-950 uppercase tracking-wider">
-                Dynamic Antarctic Simulation Chart (Polar Stereographic EPSG:3031)
+              <Compass className="w-4 h-4 text-[#0066cc]" />
+              <h3 className="text-[14px] font-semibold text-[#1d1d1f]">
+                Dynamic Antarctic Simulation Chart (EPSG:3031)
               </h3>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-zinc-600">
-              <Activity className="w-3.5 h-3.5 text-black" />
+            <div className="flex items-center gap-2 text-[12px] text-[#86868b] font-mono">
+              <Activity className="w-3.5 h-3.5 text-[#0066cc]" />
               <span>
-                Status: <strong className="text-zinc-950">{currentState.phaseName}</strong>
+                Status: <strong className="text-[#1d1d1f] font-semibold">{currentState.phaseName}</strong>
               </span>
             </div>
           </div>
@@ -197,7 +187,7 @@ export const DigitalTwin: React.FC = () => {
             customRiskZones={currentState.riskZones}
             customRoutes={getMapRoutes()}
             customOverlay={renderCustomOverlay()}
-            heightClass="h-[540px] sm:h-[600px] lg:h-[680px]"
+            heightClass="h-[520px] sm:h-[600px] lg:h-[680px]"
           />
         </div>
 
@@ -218,3 +208,4 @@ export const DigitalTwin: React.FC = () => {
   );
 };
 
+export default DigitalTwin;

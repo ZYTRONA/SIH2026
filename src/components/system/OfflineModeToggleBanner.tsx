@@ -8,101 +8,151 @@ import {
   Cpu,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { useAppStore } from '@/store/useAppStore';
 
 interface OfflineModeToggleBannerProps {
-  isOffline: boolean;
-  onToggle: (offline: boolean) => void;
+  isOffline?: boolean;
+  onToggle?: (offline: boolean) => void;
   lastSyncFormatted?: string;
 }
 
 export const OfflineModeToggleBanner: React.FC<OfflineModeToggleBannerProps> = ({
-  isOffline,
-  onToggle,
-  lastSyncFormatted = '2 min ago',
+  isOffline: propIsOffline,
+  onToggle: propOnToggle,
+  lastSyncFormatted,
 }) => {
+  const {
+    isOffline: storeIsOffline,
+    toggleOfflineMode,
+    offlineCache,
+    syncOfflineCache,
+  } = useAppStore();
+
+  const isOffline = propIsOffline !== undefined ? propIsOffline : storeIsOffline;
+  const handleToggle = (checked: boolean) => {
+    if (propOnToggle) {
+      propOnToggle(checked);
+    } else {
+      toggleOfflineMode();
+    }
+  };
+
+  const displaySync = lastSyncFormatted || offlineCache.lastSyncTimestamp;
+
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-2xl p-5 space-y-4">
+    <div className="apple-card p-6 space-y-4">
       {/* Top Toggle Switch Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
-        <div className="flex items-center gap-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#f0f0f0]">
+        <div className="flex items-center gap-3">
           <div
-            className={`p-2 rounded-xl border transition-all ${
+            className={`p-3 rounded-full border transition-all ${
               isOffline
-                ? 'bg-amber-50 text-amber-900 border-amber-300'
-                : 'bg-emerald-50 text-emerald-900 border-emerald-300'
+                ? 'bg-amber-50 border-amber-200 text-amber-900'
+                : 'bg-emerald-50 border-emerald-200 text-emerald-900'
             }`}
           >
-            {isOffline ? <WifiOff className="w-5 h-5 text-amber-700" /> : <Wifi className="w-5 h-5 text-emerald-700" />}
+            {isOffline ? (
+              <WifiOff className="w-5 h-5 text-amber-600" />
+            ) : (
+              <Wifi className="w-5 h-5 text-emerald-600" />
+            )}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold font-sans text-zinc-950 tracking-tight">
-                Network Connectivity & Edge Mode:
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">
+                Network Telemetry & Edge Mode:
               </h3>
               <span
-                className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
+                className={`px-3 py-0.5 rounded-full text-[11px] font-semibold border ${
                   isOffline
-                    ? 'bg-amber-50 text-amber-900 border-amber-300'
-                    : 'bg-emerald-50 text-emerald-900 border-emerald-300'
+                    ? 'bg-amber-50 text-amber-900 border-amber-200'
+                    : 'bg-emerald-50 text-emerald-900 border-emerald-200'
                 }`}
               >
-                {isOffline ? 'OFFLINE (AUTONOMOUS EDGE)' : 'ONLINE (CLOUD SYNCED)'}
+                {isOffline ? 'Offline Edge Active' : 'Cloud Satellite Synced'}
               </span>
             </div>
-            <span className="text-[11px] font-mono text-zinc-500 font-medium">
+            <p className="text-[12px] text-neutral-500 font-normal mt-0.5">
               {isOffline
-                ? 'Shipboard Jetson AGX running autonomous local inference'
-                : 'Live Starlink polar satellite uplink active (98.4% uptime)'}
-            </span>
+                ? 'Shipboard Jetson AGX Orin (64GB) executing autonomous local inference'
+                : 'Live Starlink polar constellation satellite uplink active (98.4% uptime)'}
+            </p>
           </div>
         </div>
 
-        {/* Interactive Radix UI Switch */}
-        <div className="flex items-center gap-3 bg-zinc-50 px-3.5 py-2 rounded-xl border border-zinc-200 text-xs font-mono self-start sm:self-auto">
-          <span className={`font-bold ${!isOffline ? 'text-zinc-950' : 'text-zinc-400'}`}>Online</span>
+        {/* Interactive Switch */}
+        <div className="flex items-center gap-3 bg-[#f5f5f7] px-4 py-2 rounded-full border border-[#e0e0e0] text-[13px] self-start sm:self-auto min-h-[44px]">
+          <span className={`font-normal ${!isOffline ? 'text-[#1d1d1f]' : 'text-neutral-400'}`}>
+            Online
+          </span>
           <Switch
             checked={isOffline}
-            onCheckedChange={(checked) => onToggle(checked)}
-            aria-label="Toggle offline edge mode"
+            onCheckedChange={handleToggle}
+            aria-label="Toggle autonomous offline edge mode"
           />
-          <span className={`font-bold ${isOffline ? 'text-amber-900' : 'text-zinc-400'}`}>Offline Edge</span>
+          <span
+            className={`font-semibold ${
+              isOffline ? 'text-amber-800' : 'text-neutral-400'
+            }`}
+          >
+            Offline Edge
+          </span>
         </div>
       </div>
 
-      {/* When Offline: Display the 3 Required Sentences requested by Prompt */}
+      {/* When Offline: Display Required Sentences + Real Cache Telemetry */}
       {isOffline && (
-        <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-300 shadow-xs space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
-              <HardDrive className="w-3.5 h-3.5 text-amber-800" />
-              Autonomous Offline Operation Mode
+        <div className="p-4 rounded-[14px] bg-amber-50/50 border border-amber-200 space-y-3">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <span className="text-[12px] font-semibold text-amber-900 uppercase tracking-wider flex items-center gap-2">
+              <HardDrive className="w-4 h-4 text-amber-700" />
+              Autonomous Offline Cryo-Cache Telemetry ({offlineCache.cacheSize})
             </span>
-            <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-950 text-[9px] font-mono font-bold border border-amber-300">
-              CACHE ACTIVE
-            </span>
+            <button
+              onClick={syncOfflineCache}
+              className="btn-apple-secondary !min-h-[32px] !h-[32px] !py-0.5 !px-3 !text-[12px]"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Verify Local Cache</span>
+            </button>
           </div>
 
-          {/* 3 Required Exact Prompts */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 font-mono text-xs">
-            <div className="p-3 rounded-xl bg-white border border-amber-200 shadow-xs flex items-center gap-2.5">
-              <Database className="w-4 h-4 text-amber-700 shrink-0" />
-              <span className="text-zinc-900 font-bold text-xs">
-                Using cached environmental data
-              </span>
+          {/* 3 Core Prompts formatted in Apple card style */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-[12px]">
+            <div className="p-3.5 rounded-[12px] bg-white border border-[#e0e0e0] flex items-center gap-3">
+              <Database className="w-4.5 h-4.5 text-amber-600 shrink-0" />
+              <div>
+                <span className="text-[#1d1d1f] font-semibold block">
+                  Using cached environmental data
+                </span>
+                <span className="text-[11px] text-neutral-500">
+                  SAR Pass #443 &bull; {offlineCache.icebergsTracked} Targets Preloaded
+                </span>
+              </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-white border border-amber-200 shadow-xs flex items-center gap-2.5">
-              <Cpu className="w-4 h-4 text-zinc-900 shrink-0" />
-              <span className="text-zinc-900 font-bold text-xs">
-                Local route calculation enabled
-              </span>
+            <div className="p-3.5 rounded-[12px] bg-white border border-[#e0e0e0] flex items-center gap-3">
+              <Cpu className="w-4.5 h-4.5 text-[#0066cc] shrink-0" />
+              <div>
+                <span className="text-[#1d1d1f] font-semibold block">
+                  Local route calculation enabled
+                </span>
+                <span className="text-[11px] text-neutral-500">
+                  Shipboard A* + NSGA-II Solver active
+                </span>
+              </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-white border border-amber-200 shadow-xs flex items-center gap-2.5">
-              <RefreshCw className="w-4 h-4 text-emerald-700 shrink-0" />
-              <span className="text-zinc-900 font-bold text-xs">
-                Last synchronization: {lastSyncFormatted}
-              </span>
+            <div className="p-3.5 rounded-[12px] bg-white border border-[#e0e0e0] flex items-center gap-3">
+              <RefreshCw className="w-4.5 h-4.5 text-emerald-600 shrink-0" />
+              <div>
+                <span className="text-[#1d1d1f] font-semibold block">
+                  Last synchronization: {displaySync}
+                </span>
+                <span className="text-[11px] text-emerald-700">
+                  Storage Quota: {offlineCache.storageQuotaUsedPercent}% Used
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -110,4 +160,3 @@ export const OfflineModeToggleBanner: React.FC<OfflineModeToggleBannerProps> = (
     </div>
   );
 };
-

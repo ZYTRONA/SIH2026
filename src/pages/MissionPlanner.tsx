@@ -48,34 +48,51 @@ export const MissionPlanner: React.FC = () => {
   return (
     <PageContainer
       title="Mission & Voyage Planner"
-      subtitle="Configure expedition waypoints, vessel ice-class capability, and multi-objective routing priorities"
+      subtitle="Configure expedition waypoints, vessel ice-class capability, and multi-objective routing priorities."
       actions={
-        <div className="flex items-center gap-2">
-          {/* Simulation Label */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black text-white text-xs font-mono font-bold shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-            <span>Prototype AI Simulation</span>
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1d1d1f] text-white text-[12px] font-normal">
+            <Sparkles className="w-3.5 h-3.5 text-[#2997ff]" />
+            <span>A* + D* Lite AI Engine</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-700 shadow-xs">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e0e0e0] text-[12px] text-[#1d1d1f]">
             {pipelineState === 'completed' ? (
               <>
-                <CheckCircle className="w-3.5 h-3.5 text-black" />
-                <span className="text-zinc-950 font-bold">PLAN READY</span>
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="font-semibold">Plan Optimized</span>
               </>
             ) : (
               <>
-                <Radio className="w-3.5 h-3.5 text-black animate-pulse" />
-                <span className="font-bold text-zinc-800">SOLVER STANDBY</span>
+                <Radio className="w-3.5 h-3.5 text-[#0066cc] animate-pulse" />
+                <span className="text-neutral-600">Solver Standby</span>
               </>
             )}
           </div>
         </div>
       }
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Form / Progress Pipeline / Result Card */}
         <div className="lg:col-span-6 space-y-6">
+          {/* Mission Parameter Briefing Card */}
+          <div className="apple-card p-6 space-y-2 bg-[#f5f5f7]">
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] uppercase tracking-wider text-neutral-500 font-semibold">
+                Voyage Configuration Protocol
+              </span>
+              <span className="text-[11px] font-normal bg-white px-2.5 py-0.5 rounded-full border border-[#e0e0e0] text-[#1d1d1f]">
+                IMO Polar Code
+              </span>
+            </div>
+            <h3 className="text-[21px] font-semibold tracking-tight text-[#1d1d1f]">
+              Autonomous Multimodal Route Optimization
+            </h3>
+            <p className="text-[14px] text-neutral-600 leading-relaxed font-normal">
+              Select departing port, destination research station, icebreaker class (PC1–PC7), and multi-criteria balance between bunker fuel burn, ice risk index, and ETA.
+            </p>
+          </div>
+
           {pipelineState === 'idle' && (
             <MissionForm onSubmit={handleGeneratePlan} isLoading={false} />
           )}
@@ -94,8 +111,16 @@ export const MissionPlanner: React.FC = () => {
         </div>
 
         {/* Right Column: Interactive Antarctic Tactical Map */}
-        <div className="lg:col-span-6 space-y-4">
-          <AntarcticMap />
+        <div className="lg:col-span-6 space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-[14px] font-semibold text-[#1d1d1f]">
+              Antarctic Expedition Geodesic Chart
+            </h2>
+            <span className="text-[12px] font-mono text-neutral-500">
+              Live AIS Waypoint Synchronization
+            </span>
+          </div>
+          <AntarcticMap heightClass="h-[520px] sm:h-[600px] lg:h-[680px]" />
         </div>
       </div>
     </PageContainer>

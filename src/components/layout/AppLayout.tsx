@@ -4,74 +4,52 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { useAppStore } from '@/store/useAppStore';
-import { AlertTriangle, ShieldCheck } from 'lucide-react';
 
 export const AppLayout: React.FC = () => {
   const { sidebarCollapsed } = useAppStore();
   const location = useLocation();
+  const [isDesktop, setIsDesktop] = React.useState<boolean>(
+    typeof window !== 'undefined' ? window.innerWidth >= 1024 : true
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 flex flex-col antialiased selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f] antialiased">
       {/* Fixed Left Sidebar */}
       <Sidebar />
 
-      {/* Main App Canvas with synchronized spring transition */}
+      {/* Main Content Area */}
       <motion.div
         initial={false}
         animate={{
-          paddingLeft: sidebarCollapsed ? 72 : 256,
-          transition: {
-            type: 'spring',
-            stiffness: 350,
-            damping: 32,
-            mass: 0.8,
-          },
+          marginLeft: isDesktop ? (sidebarCollapsed ? 72 : 240) : 0,
         }}
-        className="flex-1 flex flex-col min-w-0"
+        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+        className="min-h-screen flex flex-col"
       >
-        {/* Top Header */}
+        {/* Apple 2-Tier Sticky Header */}
         <Header />
 
-        {/* Dynamic Page Content with Subtle Smooth Transition */}
-        <main className="flex-1 bg-[#FAFAFA] overflow-x-hidden">
+        {/* Page Content */}
+        <main className="flex-1 overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 4 }}
+              initial={{ opacity: 0, y: 2 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
+              exit={{ opacity: 0, y: -2 }}
+              transition={{ duration: 0.12 }}
               className="w-full"
             >
               <Outlet />
             </motion.div>
           </AnimatePresence>
         </main>
-
-        {/* Persistent Global Safety Disclaimer Footer */}
-        <footer className="bg-white border-t border-zinc-200 px-4 sm:px-6 py-3">
-          <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs font-mono text-zinc-500">
-            <div className="flex items-start sm:items-center gap-2 text-zinc-700">
-              <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5 sm:mt-0" />
-              <p className="text-[11px] leading-relaxed text-zinc-600 font-sans">
-                <span className="text-black font-bold uppercase tracking-wider mr-1.5 font-mono text-[10px]">
-                  Safety Disclaimer:
-                </span>
-                POLARIS AI provides decision-support recommendations based on available environmental and vessel data. Final navigation decisions remain with the vessel&apos;s qualified master.
-              </p>
-            </div>
-            <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-zinc-400 flex-shrink-0">
-              <span className="flex items-center gap-1 text-zinc-900 font-bold">
-                <ShieldCheck className="w-3.5 h-3.5 text-zinc-900" />
-                IMO POLAR CODE PC1–PC7
-              </span>
-              <span className="text-zinc-300">|</span>
-              <span className="text-zinc-500 font-medium">SMART INDIA HACKATHON 2026</span>
-              <span className="text-zinc-300">|</span>
-              <span className="text-black font-extrabold bg-zinc-100 px-1.5 py-0.5 rounded border border-zinc-200">POLARIS v1.0</span>
-            </div>
-          </div>
-        </footer>
       </motion.div>
     </div>
   );

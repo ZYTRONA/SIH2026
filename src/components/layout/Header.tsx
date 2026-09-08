@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Menu,
-  Ship,
   Clock,
   Wifi,
   Bell,
@@ -10,9 +9,13 @@ import {
   CheckCheck,
   Search,
   ChevronDown,
+  Database,
+  Radio,
+  Compass,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
-import { StatusIndicator } from './StatusIndicator';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { CommandSearch } from '@/components/ui/command-search';
 import {
   DropdownMenu,
@@ -22,24 +25,52 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { StatusIndicator } from './StatusIndicator';
+import { cn } from '@/lib/utils';
+
+const PAGE_TITLES: Record<string, { title: string; ctaText: string; ctaPath: string; coordinates?: string }> = {
+  '/dashboard': { title: 'Mission Control', ctaText: 'Plan Route', ctaPath: '/mission-planner', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/mission-planner': { title: 'Mission Planner', ctaText: 'Launch Simulation', ctaPath: '/digital-twin', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/sea-ice': { title: 'Sea-Ice Forecast', ctaText: 'Risk Analysis', ctaPath: '/risk', coordinates: "LAT 70°15'S • LON 72°30'E" },
+  '/icebergs': { title: 'Iceberg Intelligence', ctaText: 'Drift Tracking', ctaPath: '/icebergs', coordinates: "LAT 68°50'S • LON 74°45'E" },
+  '/risk': { title: 'Risk Intelligence', ctaText: 'Optimize Path', ctaPath: '/routes', coordinates: "LAT 69°05'S • LON 75°20'E" },
+  '/routes': { title: 'Route Optimization', ctaText: 'Explain Choices', ctaPath: '/explainability', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/explainability': { title: 'Explainable AI', ctaText: 'System Health', ctaPath: '/system', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/digital-twin': { title: 'Digital Twin Simulation', ctaText: 'Re-Plan Route', ctaPath: '/routes', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/system': { title: 'System & Edge Status', ctaText: 'Mission Control', ctaPath: '/dashboard', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/settings': { title: 'System Settings', ctaText: 'Dashboard', ctaPath: '/dashboard', coordinates: "LAT 69°24'S • LON 76°11'E" },
+};
 
 export const Header: React.FC = () => {
   const {
-    missionName,
-    vesselName,
-    vesselClass,
     operatorName,
     operatorRole,
     notifications,
     unreadCount,
     markAllNotificationsRead,
     setMobileSidebarOpen,
+    isOffline,
+    toggleOfflineMode,
   } = useAppStore();
 
+  const location = useLocation();
+  const navigate = useNavigate();
   const [utcTime, setUtcTime] = useState<string>('');
   const [commandSearchOpen, setCommandSearchOpen] = useState<boolean>(false);
 
-  // Live UTC Clock updater
+  const currentMeta = PAGE_TITLES[location.pathname] || {
+    title: 'POLARIS Navigation',
+    ctaText: 'Mission Control',
+    ctaPath: '/dashboard',
+    coordinates: "LAT 69°24'S • LON 76°11'E",
+  };
+
   useEffect(() => {
     const update = () => {
       const now = new Date();
@@ -53,7 +84,6 @@ export const Header: React.FC = () => {
         })
       );
     };
-
     update();
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
@@ -63,179 +93,209 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-zinc-200 bg-white/95 backdrop-blur-xl px-4 sm:px-6 shadow-xs">
-        {/* Left: Mobile Sidebar Trigger + Global Quick Search */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setMobileSidebarOpen(true)}
-            className="flex lg:hidden items-center justify-center h-8 w-8 rounded-lg text-zinc-600 hover:text-black hover:bg-zinc-100 border border-zinc-200"
-            aria-label="Open navigation menu"
-          >
-            <Menu className="w-4 h-4" />
-          </button>
-
-          {/* Quick Search Palette Trigger Button */}
-          <button
-            onClick={() => setCommandSearchOpen(true)}
-            className="relative flex items-center w-60 sm:w-72 h-9 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-white hover:border-zinc-300 pl-10 pr-10 text-xs font-mono text-zinc-500 hover:text-zinc-900 transition-all text-left group shadow-2xs"
-          >
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 group-hover:text-black transition-colors" />
-            <span className="truncate font-medium">Search Polar Modules...</span>
-            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 inline-flex items-center rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-[9px] font-bold text-zinc-700 shadow-2xs">
-              ⌘K
-            </kbd>
-          </button>
-        </div>
-
-        {/* Center: Clean Rounded-Full Context Chips */}
-        <div className="hidden lg:flex items-center gap-2.5">
-          {/* Mission Chip */}
-          <div className="flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/80 px-3.5 py-1.5 text-xs font-medium text-emerald-800 shadow-2xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-bold text-[10px] font-mono text-emerald-600">MISSION:</span>
-            <span className="font-semibold">{missionName}</span>
-          </div>
-
-          {/* Vessel Chip */}
-          <div className="hidden xl:flex items-center gap-2 rounded-full bg-zinc-100 border border-zinc-200 px-3.5 py-1.5 text-xs font-medium text-zinc-700 shadow-2xs">
-            <Ship className="h-3.5 w-3.5 text-zinc-600" />
-            <span className="font-semibold text-zinc-900">{vesselName}</span>
-            <span className="rounded bg-black px-1.5 py-0.5 text-[10px] font-mono font-bold text-white shadow-2xs">
-              {vesselClass.split(' ')[0] || 'PC4'}
-            </span>
-          </div>
-        </div>
-
-        {/* Right: Live UTC Clock + Uplink Badge + Notifications + User */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          {/* Live UTC Clock */}
-          <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono font-medium text-zinc-700 bg-zinc-50 border border-zinc-200 px-3 py-1.5 rounded-full shadow-2xs">
-            <Clock className="h-3.5 w-3.5 text-zinc-500 animate-pulse" />
-            <span className="tabular-nums font-bold text-zinc-900">{utcTime || '00:00:00'}</span>
-            <span className="text-[10px] text-zinc-400 font-bold">UTC</span>
-          </div>
-
-          {/* Uplink Status Chip */}
-          <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-800 shadow-2xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping" />
-            <Wifi className="h-3.5 w-3.5 text-emerald-700" />
-            <span className="text-[11px] font-mono font-bold">UPLINK OK</span>
-          </div>
-
-          {/* Notifications Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="relative flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-black transition-colors shadow-2xs"
-                aria-label="Notifications"
-              >
-                <Bell className="h-4 w-4" />
-                {unread > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 text-[9px] font-mono font-bold text-white shadow-xs px-1">
-                    {unread}
-                  </span>
-                )}
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-80 sm:w-96 p-0 overflow-hidden bg-white border-zinc-200 shadow-2xl rounded-2xl"
+      <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-white/90 border-b border-[#e0e0e0] select-none shadow-xs transition-all">
+        <div className="w-full max-w-[1920px] mx-auto h-14 px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-4">
+          {/* Left: Mobile hamburger + Page Title + Mission Badge */}
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="flex lg:hidden items-center justify-center h-8 w-8 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-[#1d1d1f] transition-colors active:scale-95 shrink-0 cursor-pointer"
+              aria-label="Open menu"
             >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 bg-zinc-50">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-zinc-950 font-mono">
-                    POLARIS ALERTS & LOGS
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-black text-white font-bold">
-                    {unread} New
-                  </span>
-                </div>
-                {unread > 0 && (
-                  <button
-                    onClick={markAllNotificationsRead}
-                    className="text-[11px] text-zinc-600 hover:text-black font-mono flex items-center gap-1 font-bold transition-colors"
-                  >
-                    <CheckCheck className="w-3 h-3" />
-                    Mark all read
-                  </button>
-                )}
-              </div>
+              <Menu className="w-4 h-4" />
+            </button>
 
-              <div className="max-h-80 overflow-y-auto divide-y divide-zinc-100">
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    className={`p-3 text-xs transition-colors ${
-                      n.read ? 'bg-white' : 'bg-zinc-50/80'
-                    }`}
+            {/* Compact Brand Icon for mobile view */}
+            <Link to="/" className="flex lg:hidden items-center gap-1.5 shrink-0 group mr-1">
+              <div className="h-7 w-7 rounded-[8px] bg-[#1d1d1f] text-white flex items-center justify-center font-bold shadow-xs">
+                <Radio className="w-3.5 h-3.5" />
+              </div>
+            </Link>
+
+            <div className="flex items-center gap-2.5 min-w-0">
+              <h1 className="text-[16px] sm:text-[18px] font-semibold text-[#1d1d1f] tracking-tight leading-none truncate">
+                {currentMeta.title}
+              </h1>
+
+              {/* Mission Pill Indicator */}
+              <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[11px] text-neutral-600 shrink-0">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="text-neutral-500">Mission:</span>
+                <span className="text-[#1d1d1f] font-semibold">ANT-2417</span>
+                <span className="text-neutral-300 hidden xl:inline">&bull;</span>
+                <span className="text-neutral-500 hidden xl:inline truncate max-w-[140px]">RV Polar Sentinel</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Center: Apple Search Trigger */}
+          <div className="flex-1 max-w-[260px] xl:max-w-[320px] hidden sm:block">
+            <motion.button
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setCommandSearchOpen(true)}
+              className="w-full flex items-center justify-between h-8 px-3 rounded-full bg-[#f5f5f7] hover:bg-[#ebebed] border border-[#e0e0e0] text-[12px] text-neutral-500 hover:text-[#1d1d1f] transition-all cursor-pointer shadow-2xs group"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <Search className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-600 shrink-0" />
+                <span className="truncate">Search missions & bergs...</span>
+              </div>
+              <kbd className="hidden md:inline-block text-[10px] font-mono bg-white border border-[#e0e0e0] text-neutral-500 px-1.5 py-0.5 rounded font-semibold shrink-0 shadow-2xs">
+                ⌘K
+              </kbd>
+            </motion.button>
+          </div>
+
+          {/* Right: Coordinates + UTC Clock + Uplink + Notifications + Profile + CTA */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Search Icon for Mobile */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => setCommandSearchOpen(true)}
+              className="flex sm:hidden h-8 w-8 items-center justify-center rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-[#1d1d1f] transition-colors cursor-pointer"
+              aria-label="Search"
+            >
+              <Search className="w-3.5 h-3.5 text-neutral-600" />
+            </motion.button>
+
+            {/* Coordinates Badge */}
+            <div className="hidden 2xl:flex items-center gap-1.5 text-[11px] font-mono text-neutral-500 bg-[#f5f5f7] border border-[#e0e0e0] px-2.5 py-1 rounded-full">
+              <span>{currentMeta.coordinates || "LAT 69°24'S • LON 76°11'E"}</span>
+            </div>
+
+            {/* UTC Clock */}
+            <div className="hidden lg:flex items-center gap-1.5 text-[11px] font-mono text-[#1d1d1f] bg-[#f5f5f7] border border-[#e0e0e0] px-2.5 py-1 rounded-full">
+              <Clock className="w-3 h-3 text-[#0066cc]" />
+              <span className="font-semibold">{utcTime || '00:00:00'} UTC</span>
+            </div>
+
+            {/* Satellite / Edge Uplink */}
+            <TooltipProvider delayDuration={150}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.94 }}
+                    onClick={toggleOfflineMode}
+                    className={cn(
+                      'flex items-center gap-1.5 h-8 px-2.5 rounded-full text-[11px] font-semibold border transition-all cursor-pointer',
+                      isOffline
+                        ? 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100'
+                        : 'bg-emerald-50 text-emerald-900 border-emerald-200 hover:bg-emerald-100'
+                    )}
                   >
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <div className="flex items-center gap-1.5">
-                        <StatusIndicator
-                          status={n.type}
-                          variant="dot"
-                          size="sm"
-                          pulse={!n.read}
-                        />
-                        <span className="font-bold text-zinc-950 font-sans">
-                          {n.title}
-                        </span>
+                    {isOffline ? (
+                      <>
+                        <Database className="w-3 h-3 text-amber-700" />
+                        <span className="hidden md:inline">Edge Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <Wifi className="w-3 h-3 text-emerald-700" />
+                        <span className="hidden md:inline">Satellite OK</span>
+                      </>
+                    )}
+                  </motion.button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs bg-white text-[#1d1d1f] border border-[#e0e0e0] shadow-md font-normal">
+                  {isOffline ? 'Edge inference active (Jetson AGX Orin). Click to reconnect satellite uplink.' : 'Direct L-band Starlink polar satellite link active.'}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Notifications */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <motion.button
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-[#1d1d1f] transition-all cursor-pointer"
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-3.5 h-3.5 text-neutral-600" />
+                  {unread > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-600 text-[9px] font-bold text-white px-1 shadow-xs">
+                      {unread}
+                    </span>
+                  )}
+                </motion.button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 p-0 bg-white text-[#1d1d1f] border border-[#e0e0e0] shadow-2xl rounded-[18px] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[#e0e0e0] bg-[#f5f5f7]">
+                  <span className="text-[14px] font-semibold text-[#1d1d1f]">Notifications</span>
+                  {unread > 0 && (
+                    <button
+                      onClick={markAllNotificationsRead}
+                      className="text-[12px] text-[#0066cc] hover:underline flex items-center gap-1 font-normal cursor-pointer"
+                    >
+                      <CheckCheck className="w-3.5 h-3.5" />
+                      Mark all read
+                    </button>
+                  )}
+                </div>
+                <div className="max-h-72 overflow-y-auto divide-y divide-[#f0f0f0]">
+                  {notifications.map((n) => (
+                    <div key={n.id} className={`p-3 text-[12px] ${n.read ? 'bg-white' : 'bg-[#fafafc]'}`}>
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2">
+                          <StatusIndicator status={n.type} variant="dot" size="sm" pulse={!n.read} />
+                          <span className="font-semibold text-[#1d1d1f]">{n.title}</span>
+                        </div>
+                        <span className="text-[10px] text-neutral-400 font-mono">{n.timestamp}</span>
                       </div>
-                      <span className="text-[10px] font-mono text-zinc-400 font-medium">
-                        {n.timestamp}
-                      </span>
+                      <p className="text-[12px] text-neutral-600 pl-3.5 leading-relaxed">{n.message}</p>
                     </div>
-                    <p className="text-[11px] text-zinc-600 pl-3 leading-relaxed font-sans">
-                      {n.message}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* Operator Profile Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white py-1 pl-1 pr-3 hover:bg-zinc-50 transition-colors shadow-2xs">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-black text-xs font-bold text-white shadow-2xs">
-                  RN
-                </div>
-                <div className="hidden md:block text-left">
-                  <p className="text-xs font-bold text-zinc-950 leading-tight">
-                    {operatorName}
-                  </p>
-                  <p className="text-[10px] text-zinc-500 font-medium leading-tight">
-                    {operatorRole}
-                  </p>
-                </div>
-                <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-64 bg-white border-zinc-200 p-2 shadow-2xl rounded-2xl"
+            {/* Profile */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.94 }}
+                  className="flex items-center gap-1.5 h-8 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] border border-[#e0e0e0] pl-1 pr-2 text-[#1d1d1f] transition-all cursor-pointer"
+                >
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1d1d1f] text-white text-[10px] font-semibold">
+                    EM
+                  </div>
+                  <ChevronDown className="w-3 h-3 text-neutral-500" />
+                </motion.button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white border border-[#e0e0e0] p-2 shadow-xl rounded-[18px]">
+                <DropdownMenuLabel>
+                  <p className="text-[14px] font-semibold text-[#1d1d1f]">{operatorName}</p>
+                  <p className="text-[12px] text-neutral-500 font-normal">{operatorRole}</p>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="gap-2 text-[13px] text-neutral-700 hover:bg-[#f5f5f7] rounded-[10px] cursor-pointer">
+                  <Shield className="w-4 h-4 text-neutral-400" />
+                  <span>Security Level 4</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2 text-[13px] text-neutral-700 hover:bg-[#f5f5f7] rounded-[10px] cursor-pointer">
+                  <User className="w-4 h-4 text-neutral-400" />
+                  <span>Bridge Profile</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Action CTA */}
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.94 }}
+              onClick={() => navigate(currentMeta.ctaPath)}
+              className="btn-apple-primary !min-h-[34px] !h-[34px] !px-3.5 sm:!px-4 !py-1 !text-[12px] sm:!text-[13px] whitespace-nowrap shadow-xs cursor-pointer"
             >
-              <DropdownMenuLabel>
-                <p className="text-xs font-bold text-zinc-950 font-sans">{operatorName}</p>
-                <p className="text-[10px] text-zinc-500 font-mono font-medium">{operatorRole}</p>
-                <p className="text-[10px] text-zinc-400 font-mono mt-1">Station: Bharati / Maitri Antarctica</p>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 text-xs text-zinc-800 hover:text-black font-semibold cursor-pointer">
-                <Shield className="w-3.5 h-3.5 text-black" />
-                <span>Security Clearance: Level 4</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2 text-xs text-zinc-800 hover:text-black font-semibold cursor-pointer">
-                <User className="w-3.5 h-3.5 text-black" />
-                <span>Bridge Navigator Settings</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <Compass className="w-3.5 h-3.5" />
+              <span>{currentMeta.ctaText}</span>
+            </motion.button>
+          </div>
         </div>
       </header>
 
-      {/* Global Quick Command Palette Modal */}
       <CommandSearch open={commandSearchOpen} onOpenChange={setCommandSearchOpen} />
     </>
   );

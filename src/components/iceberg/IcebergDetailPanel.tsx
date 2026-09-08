@@ -26,36 +26,36 @@ export const IcebergDetailPanel: React.FC<IcebergDetailPanelProps> = ({
   const getRiskBadge = () => {
     switch (iceberg.riskLevel) {
       case 'CRITICAL':
-        return 'bg-rose-50 text-rose-900 border-rose-300';
+        return 'bg-rose-50 text-rose-700 border-rose-200';
       case 'HIGH':
-        return 'bg-orange-50 text-orange-900 border-orange-300';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'WARNING':
       case 'MODERATE':
-        return 'bg-amber-50 text-amber-900 border-amber-300';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
       default:
-        return 'bg-emerald-50 text-emerald-900 border-emerald-300';
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
     }
   };
 
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 space-y-5">
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-5 space-y-5">
       {/* Header */}
-      <div className="flex items-start justify-between pb-3 border-b border-zinc-100">
+      <div className="flex items-start justify-between pb-3 border-b border-[#f0f0f0]">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900">
+          <div className="p-2 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[#0066cc]">
             <Mountain className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold font-mono text-zinc-950">
+              <h3 className="text-[17px] font-semibold text-[#1d1d1f] font-mono">
                 {iceberg.code}
               </h3>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${getRiskBadge()}`}>
+              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${getRiskBadge()}`}>
                 {iceberg.riskLevel} RISK
               </span>
             </div>
-            <span className="text-[11px] font-mono text-zinc-500 font-medium">
-              {iceberg.name} | {iceberg.detectionSource}
+            <span className="text-[12px] text-neutral-500 font-normal">
+              {iceberg.name} &bull; {iceberg.detectionSource}
             </span>
           </div>
         </div>
@@ -63,86 +63,86 @@ export const IcebergDetailPanel: React.FC<IcebergDetailPanelProps> = ({
         {onClose && (
           <button
             onClick={onClose}
-            className="p-1 text-zinc-400 hover:text-zinc-900 rounded hover:bg-zinc-100 transition-colors"
+            className="p-1.5 text-neutral-400 hover:text-[#1d1d1f] rounded-full hover:bg-[#f5f5f7] transition-colors active:scale-95"
           >
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      {/* 4 Core Dimensions & Kinematics: Length, Velocity, Direction, Risk */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+      {/* 4 Core Dimensions & Kinematics */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-[12px]">
         {/* Length */}
-        <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-          <div className="flex items-center gap-1 text-[10px] text-zinc-500 font-medium">
-            <Ruler className="w-3.5 h-3.5 text-zinc-900" />
+        <div className="p-3 rounded-[12px] bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+          <div className="flex items-center gap-1 text-[11px] text-neutral-500 font-normal">
+            <Ruler className="w-3.5 h-3.5 text-[#0066cc]" />
             <span>LENGTH</span>
           </div>
-          <div className="text-sm font-bold text-zinc-950">
+          <div className="text-[16px] font-semibold text-[#1d1d1f]">
             {iceberg.lengthKm} km
           </div>
-          <span className="text-[9px] text-zinc-500">Area: {iceberg.areaKm2} km²</span>
+          <span className="text-[10px] text-neutral-400 font-normal">Area: {iceberg.areaKm2} km²</span>
         </div>
 
         {/* Velocity */}
-        <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-          <div className="flex items-center gap-1 text-[10px] text-zinc-500 font-medium">
-            <Gauge className="w-3.5 h-3.5 text-zinc-900" />
+        <div className="p-3 rounded-[12px] bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+          <div className="flex items-center gap-1 text-[11px] text-neutral-500 font-normal">
+            <Gauge className="w-3.5 h-3.5 text-[#0066cc]" />
             <span>VELOCITY</span>
           </div>
-          <div className="text-sm font-bold text-zinc-950">
+          <div className="text-[16px] font-semibold text-[#1d1d1f]">
             {iceberg.velocityMs} m/s
           </div>
-          <span className="text-[9px] text-zinc-500">({iceberg.velocityKts} kts)</span>
+          <span className="text-[10px] text-neutral-400 font-normal">({iceberg.velocityKts} kts)</span>
         </div>
 
         {/* Direction */}
-        <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-          <div className="flex items-center gap-1 text-[10px] text-zinc-500 font-medium">
-            <Compass className="w-3.5 h-3.5 text-black" />
+        <div className="p-3 rounded-[12px] bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+          <div className="flex items-center gap-1 text-[11px] text-neutral-500 font-normal">
+            <Compass className="w-3.5 h-3.5 text-[#0066cc]" />
             <span>DIRECTION</span>
           </div>
-          <div className="text-sm font-bold text-zinc-950">
+          <div className="text-[16px] font-semibold text-[#1d1d1f]">
             {iceberg.directionCompass} ({iceberg.directionDeg}°)
           </div>
-          <span className="text-[9px] text-zinc-500">True Heading</span>
+          <span className="text-[10px] text-neutral-400 font-normal">True Heading</span>
         </div>
 
         {/* Risk */}
-        <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-0.5">
-          <div className="flex items-center gap-1 text-[10px] text-zinc-500 font-medium">
-            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+        <div className="p-3 rounded-[12px] bg-[#fafafc] border border-[#e0e0e0] space-y-0.5">
+          <div className="flex items-center gap-1 text-[11px] text-neutral-500 font-normal">
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
             <span>RISK</span>
           </div>
-          <div className="text-sm font-bold text-rose-900">
+          <div className="text-[16px] font-semibold text-rose-700">
             {iceberg.riskLevel}
           </div>
-          <span className="text-[9px] text-zinc-500">Threat Assessment</span>
+          <span className="text-[10px] text-neutral-400 font-normal">Threat Level</span>
         </div>
       </div>
 
       {/* Collision Risk & Route Proximity */}
-      <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-zinc-50 border border-zinc-200">
+      <div className="grid grid-cols-2 gap-3 p-4 rounded-[14px] bg-[#fafafc] border border-[#e0e0e0]">
         <div className="space-y-1">
-          <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block font-bold">
+          <span className="text-[11px] text-neutral-500 uppercase tracking-wider block font-normal">
             Collision Probability
           </span>
-          <div className="text-xl font-extrabold font-sans text-rose-900">
+          <div className="text-[22px] font-semibold text-rose-700">
             {iceberg.collisionProbabilityPct}%
           </div>
-          <span className="text-[10px] font-mono text-zinc-500">
-            Calculated within 72h corridor
+          <span className="text-[11px] text-neutral-400 font-normal">
+            Within 72h corridor
           </span>
         </div>
 
-        <div className="space-y-1 border-l border-zinc-200 pl-3">
-          <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block font-bold">
+        <div className="space-y-1 border-l border-[#e0e0e0] pl-4">
+          <span className="text-[11px] text-neutral-500 uppercase tracking-wider block font-normal">
             Route Distance
           </span>
-          <div className="text-xl font-extrabold font-sans text-zinc-950">
+          <div className="text-[22px] font-semibold text-[#1d1d1f]">
             {iceberg.routeDistanceKm} km
           </div>
-          <span className="text-[10px] font-mono text-zinc-500">
+          <span className="text-[11px] text-neutral-400 font-normal">
             Closest Point of Approach (CPA)
           </span>
         </div>
@@ -150,36 +150,36 @@ export const IcebergDetailPanel: React.FC<IcebergDetailPanelProps> = ({
 
       {/* Trajectory Timeline: Current Position, +24h, +48h, +72h */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-mono">
-          <span className="text-zinc-950 font-bold uppercase tracking-wider flex items-center gap-1.5">
-            <Navigation className="w-3.5 h-3.5 text-black" />
+        <div className="flex items-center justify-between text-[12px]">
+          <span className="text-[#1d1d1f] font-semibold uppercase tracking-wider flex items-center gap-1.5 text-[11px]">
+            <Navigation className="w-3.5 h-3.5 text-[#0066cc]" />
             Predicted 72-Hour Drift Trajectory
           </span>
-          <span className="text-[10px] text-zinc-950 font-bold bg-zinc-100 px-1.5 py-0.5 rounded border border-zinc-200">4 STAGES</span>
+          <span className="text-[11px] text-[#0066cc] bg-[#f0f7ff] border border-[#d0e6ff] px-2 py-0.5 rounded-full font-semibold">4 STAGES</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {iceberg.trajectory.map((pt, idx) => (
             <div
               key={pt.stage}
-              className={`p-2.5 rounded-xl border text-xs font-mono space-y-1 ${
+              className={`p-3 rounded-[12px] border text-[11px] space-y-1 ${
                 idx === 0
-                  ? 'bg-zinc-50 border-black shadow-xs ring-1 ring-black'
-                  : 'bg-zinc-50/50 border-zinc-200'
+                  ? 'bg-[#f0f7ff] border-[#0066cc]'
+                  : 'bg-[#fafafc] border-[#e0e0e0]'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-zinc-950">
+                <span className="font-semibold text-[#1d1d1f]">
                   {pt.stage}
                 </span>
-                <span className="text-[9px] text-zinc-500 font-bold">
+                <span className="text-neutral-500 font-normal">
                   T+{pt.hourOffset}h
                 </span>
               </div>
-              <div className="text-[11px] text-zinc-900 font-mono font-bold">
+              <div className="text-[#1d1d1f] font-mono">
                 {Math.abs(pt.lat).toFixed(2)}°S, {pt.lng.toFixed(2)}°E
               </div>
-              <div className="text-[10px] text-amber-900 font-bold">
+              <div className="text-amber-700 font-normal">
                 Route: {pt.routeDistanceKm} km
               </div>
             </div>
@@ -188,42 +188,42 @@ export const IcebergDetailPanel: React.FC<IcebergDetailPanelProps> = ({
       </div>
 
       {/* AI Explanation Card */}
-      <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-300 space-y-2.5">
+      <div className="p-4 rounded-[14px] bg-[#fafafc] border border-[#e0e0e0] space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-950 font-extrabold flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-black" />
+          <span className="text-[11px] uppercase tracking-wider text-[#1d1d1f] font-semibold flex items-center gap-1.5">
+            <Zap className="w-3.5 h-3.5 text-[#0066cc]" />
             AI Drift Explanation
           </span>
-          <span className="text-xs font-mono font-bold text-zinc-950 bg-zinc-200/80 px-2 py-0.5 rounded border border-zinc-300">
+          <span className="text-[11px] font-semibold text-[#0066cc] bg-[#f0f7ff] px-2.5 py-0.5 rounded-full border border-[#d0e6ff]">
             Confidence: {iceberg.confidencePct}%
           </span>
         </div>
 
         {/* AI Quote */}
-        <p className="text-xs text-zinc-800 leading-relaxed italic font-sans font-medium">
-          "{iceberg.aiExplanation}"
+        <p className="text-[13px] text-neutral-700 leading-relaxed italic font-normal">
+          &quot;{iceberg.aiExplanation}&quot;
         </p>
 
         {/* Model Spec */}
-        <div className="pt-2 border-t border-zinc-200 space-y-1 text-[11px] font-mono text-zinc-600">
+        <div className="pt-2 border-t border-[#e0e0e0] space-y-1 text-[11px] text-neutral-600">
           <div className="flex items-center justify-between">
             <span>Model:</span>
-            <span className="text-zinc-950 font-bold">{iceberg.modelName}</span>
+            <span className="text-[#1d1d1f] font-semibold">{iceberg.modelName}</span>
           </div>
 
           {/* Forcing Weights */}
-          <div className="grid grid-cols-3 gap-1.5 pt-1 text-[10px] text-center font-bold">
-            <div className="p-2 rounded-lg bg-white border border-zinc-200 shadow-2xs">
-              <span className="text-zinc-500 block font-medium">Ocean Current</span>
-              <span className="text-zinc-950">{iceberg.oceanCurrentForcingPct}%</span>
+          <div className="grid grid-cols-3 gap-2 pt-1 text-[11px] text-center">
+            <div className="p-2 rounded-[10px] bg-white border border-[#e0e0e0]">
+              <span className="text-neutral-500 block font-normal text-[10px]">Current Drag</span>
+              <span className="text-[#1d1d1f] font-semibold">{iceberg.oceanCurrentForcingPct}%</span>
             </div>
-            <div className="p-2 rounded-lg bg-white border border-zinc-200 shadow-2xs">
-              <span className="text-zinc-500 block font-medium">Wind Drag</span>
-              <span className="text-zinc-950">{iceberg.windDragForcingPct}%</span>
+            <div className="p-2 rounded-[10px] bg-white border border-[#e0e0e0]">
+              <span className="text-neutral-500 block font-normal text-[10px]">Wind Drag</span>
+              <span className="text-[#1d1d1f] font-semibold">{iceberg.windDragForcingPct}%</span>
             </div>
-            <div className="p-2 rounded-lg bg-white border border-zinc-200 shadow-2xs">
-              <span className="text-zinc-500 block font-medium">Coriolis / Wave</span>
-              <span className="text-zinc-950">{iceberg.coriolisForcingPct}%</span>
+            <div className="p-2 rounded-[10px] bg-white border border-[#e0e0e0]">
+              <span className="text-neutral-500 block font-normal text-[10px]">Coriolis / Wave</span>
+              <span className="text-[#1d1d1f] font-semibold">{iceberg.coriolisForcingPct}%</span>
             </div>
           </div>
         </div>
@@ -233,9 +233,9 @@ export const IcebergDetailPanel: React.FC<IcebergDetailPanelProps> = ({
       <div className="pt-1 flex items-center gap-2">
         <button
           onClick={() => onLockRadar && onLockRadar(iceberg.code)}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-black hover:bg-zinc-800 text-white shadow-xs text-xs font-mono font-bold transition-colors"
+          className="btn-apple-primary w-full text-[13px]"
         >
-          <Radar className="w-4 h-4 text-white" />
+          <Radar className="w-4 h-4" />
           <span>Lock ECDIS Collision Tracker on {iceberg.code}</span>
         </button>
       </div>

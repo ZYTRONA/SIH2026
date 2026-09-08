@@ -1,147 +1,264 @@
-import React, { useState } from 'react';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { AntarcticMap } from '@/components/map/AntarcticMap';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  IcebergDetailPanel,
-  IcebergTrajectoryChart,
-  IcebergCatalogTable,
-} from '@/components/iceberg';
-import {
-  DETAILED_ICEBERGS_CATALOG,
+  HIGH_PRIORITY_ICEBERGS,
   DetailedIceberg,
 } from '@/data/icebergIntelligenceData';
 import {
-  Mountain,
-  Radar,
+  PolarStereographicMap,
+  ActiveIcebergsList,
+  KeyMetricsPanel,
+  IcebergModalCatalog,
+} from '@/components/iceberg';
+import {
   ShieldAlert,
-  Compass,
-  Radio,
-  Sparkles,
+  RotateCw,
+  Bell,
+  Settings,
+  Clock,
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export const IcebergIntelligence: React.FC = () => {
-  // Default to IB-023 as specified in prompt
   const [selectedIceberg, setSelectedIceberg] = useState<DetailedIceberg>(
-    DETAILED_ICEBERGS_CATALOG[0]
+    HIGH_PRIORITY_ICEBERGS[0] // IB-023
   );
-  const [lockedRadars, setLockedRadars] = useState<string[]>(['IB-023']);
+  const [catalogModalOpen, setCatalogModalOpen] = useState<boolean>(false);
+  const [lastUpdatedMin, setLastUpdatedMin] = useState<number>(2);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [notificationCount, setNotificationCount] = useState<number>(3);
 
-  const handleLockRadar = (code: string) => {
-    if (!lockedRadars.includes(code)) {
-      setLockedRadars((prev) => [...prev, code]);
-    }
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLastUpdatedMin((prev) => prev + 1);
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setLastUpdatedMin(0);
+      setIsRefreshing(false);
+    }, 600);
   };
 
-  const highThreatCount = DETAILED_ICEBERGS_CATALOG.filter(
-    (ib) => ib.riskLevel === 'CRITICAL' || ib.riskLevel === 'HIGH'
-  ).length;
-
   return (
-    <PageContainer
-      title="Iceberg Intelligence & Drift Tracking"
-      subtitle="Automated SAR/Optical Detection, Hydrodynamic Lagrangian Trajectory Forecasting & Collision Incursion Warnings"
-      actions={
-        <div className="flex items-center gap-2">
-          {/* Simulation Disclaimer */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black text-white text-xs font-mono font-bold shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-            <span>Prototype AI Simulation</span>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-700 shadow-xs">
-            <Radio className="w-3.5 h-3.5 text-black animate-pulse" />
-            <span>RADAR TRACKER: <strong className="text-zinc-950 font-bold">{lockedRadars.length} TARGETS LOCKED</strong></span>
-          </div>
-        </div>
-      }
-    >
-      <div className="space-y-6">
-        {/* 1. Quick Telemetry KPIs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-4 rounded-xl bg-white border border-zinc-200/90 shadow-xs space-y-1">
-            <div className="flex items-center justify-between text-zinc-500 text-xs font-mono font-bold">
-              <span>TRACKED OBJECTS</span>
-              <Mountain className="w-4 h-4 text-black" />
-            </div>
-            <div className="text-2xl font-extrabold font-sans text-zinc-950">
-              {DETAILED_ICEBERGS_CATALOG.length}
-            </div>
-            <span className="text-[10px] font-mono text-zinc-500 font-medium">Sentinel-1 & Optical SAR</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-zinc-200/90 shadow-xs space-y-1">
-            <div className="flex items-center justify-between text-zinc-500 text-xs font-mono font-bold">
-              <span>HIGH THREAT BERGS</span>
-              <ShieldAlert className="w-4 h-4 text-rose-600" />
-            </div>
-            <div className="text-2xl font-extrabold font-sans text-rose-900">
-              {highThreatCount} Active
-            </div>
-            <span className="text-[10px] font-mono text-rose-700 font-medium">Corridor Proximity &lt; 25 NM</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-zinc-200/90 shadow-xs space-y-1">
-            <div className="flex items-center justify-between text-zinc-500 text-xs font-mono font-bold">
-              <span>NEAREST INCURSION</span>
-              <Radar className="w-4 h-4 text-amber-600" />
-            </div>
-            <div className="text-2xl font-extrabold font-sans text-amber-900">
-              {selectedIceberg.routeDistanceKm} km
-            </div>
-            <span className="text-[10px] font-mono text-amber-800 font-medium">Target: {selectedIceberg.code}</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-zinc-200/90 shadow-xs space-y-1">
-            <div className="flex items-center justify-between text-zinc-500 text-xs font-mono font-bold">
-              <span>DRIFT MODEL CONFIDENCE</span>
-              <Compass className="w-4 h-4 text-black" />
-            </div>
-            <div className="text-2xl font-extrabold font-sans text-zinc-950">
-              {selectedIceberg.confidencePct}%
-            </div>
-            <span className="text-[10px] font-mono text-zinc-500 font-medium">Lagrangian + XGBoost</span>
-          </div>
-        </div>
-
-        {/* 2. Main 2-Column Operational Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: Dominant Map & Recharts Trajectory Dynamics Graph */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Interactive Antarctic Tactical Map */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-mono px-1">
-                <span className="text-zinc-950 font-bold flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-black animate-pulse" />
-                  HYDRODYNAMIC DRIFT FIELD & 72H TRAJECTORY VECTORS
-                </span>
-                <span className="text-zinc-900 font-extrabold bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
-                  SELECTED: {selectedIceberg.code}
-                </span>
+    <div className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f] flex flex-col justify-between selection:bg-[#0066cc] selection:text-white">
+      {/* Top Banner / Navigation Header Bar */}
+      <div className="bg-white border-b border-[#e0e0e0] sticky top-0 z-30 px-4 sm:px-6 py-3">
+        <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          {/* Left: Brand + Title + Threat Warning Badge */}
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-[8px] bg-[#1d1d1f] flex items-center justify-center text-white">
+                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3L2 19h20L12 3zm0 4.8l5.5 8.7h-11L12 7.8z" />
+                  <path d="M12 9l3 5H9l3-5z" opacity="0.6" />
+                </svg>
               </div>
-              <AntarcticMap />
+              <span className="text-[14px] font-semibold text-[#1d1d1f]">
+                POLARIS <span className="font-light text-neutral-500">AI</span>
+              </span>
             </div>
 
-            {/* Hydrodynamic Trajectory & Environmental Forcing Chart */}
-            <IcebergTrajectoryChart iceberg={selectedIceberg} />
+            <div className="hidden sm:block h-4 w-px bg-[#e0e0e0]" />
+
+            <h1 className="text-[16px] sm:text-[18px] font-semibold text-[#1d1d1f] tracking-[-0.224px]">
+              Iceberg Intelligence & Drift Tracking
+            </h1>
+
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-[12px] font-normal">
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+              <span>7 Warning Targets</span>
+            </div>
           </div>
 
-          {/* Right Column: Iceberg Detail Inspection Panel & Full Catalog Table */}
-          <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
-            {/* Selected Iceberg Detail Panel */}
-            <IcebergDetailPanel
-              iceberg={selectedIceberg}
-              onLockRadar={handleLockRadar}
-            />
+          {/* Right: Refresh status + Notification Bell + Settings */}
+          <div className="flex items-center gap-3 self-end md:self-auto text-[12px] text-neutral-600">
+            <button
+              onClick={handleRefresh}
+              className="flex items-center gap-1.5 hover:text-[#1d1d1f] transition-colors py-1 px-2.5 rounded-full bg-[#f5f5f7] border border-[#e0e0e0]"
+              title="Click to refresh telemetry feeds"
+            >
+              <RotateCw
+                className={`w-3.5 h-3.5 text-neutral-500 ${
+                  isRefreshing ? 'animate-spin text-[#0066cc]' : ''
+                }`}
+              />
+              <span>
+                {lastUpdatedMin === 0
+                  ? 'Updated just now'
+                  : `Updated ${lastUpdatedMin} min ago`}
+              </span>
+            </button>
 
-            {/* 32+ Iceberg Catalog & Quick Search Table */}
-            <IcebergCatalogTable
-              selectedId={selectedIceberg.id}
-              onSelectIceberg={(ib) => setSelectedIceberg(ib)}
-            />
+            <div className="h-4 w-px bg-[#e0e0e0]" />
+
+            {/* Notification Bell */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="relative p-1.5 rounded-full text-neutral-600 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-4 h-4" />
+                  {notificationCount > 0 && (
+                    <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-rose-500" />
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 p-0 bg-white border border-[#e0e0e0] shadow-xl rounded-[18px] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0] bg-[#fafafc]">
+                  <span className="text-[14px] font-semibold text-[#1d1d1f]">Drift Hazard Alerts</span>
+                  <button
+                    onClick={() => setNotificationCount(0)}
+                    className="text-[12px] text-[#0066cc] hover:underline"
+                  >
+                    Clear all
+                  </button>
+                </div>
+                <div className="divide-y divide-[#f0f0f0] max-h-60 overflow-y-auto text-[12px]">
+                  <div className="p-3 hover:bg-[#fafafc] transition-colors">
+                    <div className="flex items-center justify-between text-[11px] font-semibold text-rose-700 font-mono">
+                      <span>IB-023 CPA ALERT</span>
+                      <span className="text-neutral-400 font-normal">2m ago</span>
+                    </div>
+                    <p className="text-neutral-600 mt-1 leading-relaxed">
+                      IB-023 predicted to cross transit corridor at 6.2 km. Collision probability 18.4%.
+                    </p>
+                  </div>
+                  <div className="p-3 hover:bg-[#fafafc] transition-colors">
+                    <div className="flex items-center justify-between text-[11px] font-semibold text-amber-700 font-mono">
+                      <span>IB-041 DRIFT ACCELERATION</span>
+                      <span className="text-neutral-400 font-normal">14m ago</span>
+                    </div>
+                    <p className="text-neutral-600 mt-1 leading-relaxed">
+                      Drift speed increased to 0.98 km/h under Weddell Gyre acceleration.
+                    </p>
+                  </div>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <div className="h-4 w-px bg-[#e0e0e0]" />
+
+            {/* Settings Gear */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="p-1.5 rounded-full text-neutral-600 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
+                  aria-label="Settings"
+                >
+                  <Settings className="w-4 h-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 p-2 bg-white border border-[#e0e0e0] shadow-xl rounded-[18px]">
+                <DropdownMenuLabel className="text-[14px] font-semibold text-[#1d1d1f]">
+                  Sensor Feeds & Models
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-[12px] font-mono text-neutral-700 cursor-pointer">
+                  Sentinel-1 SAR Feed: LIVE
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-[12px] font-mono text-neutral-700 cursor-pointer">
+                  CryoSat-2 Altimetry: SYNCED
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-[12px] font-mono text-neutral-700 cursor-pointer">
+                  Model: Polaris Drift v2.4
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
-    </PageContainer>
+
+      {/* Main Page Body */}
+      <main className="flex-1 max-w-[1920px] w-full mx-auto px-4 sm:px-6 py-5 sm:py-6 space-y-5">
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center text-[12px] text-neutral-500">
+          <Link
+            to="/dashboard"
+            className="hover:text-[#0066cc] transition-colors"
+          >
+            Polaris AI Dashboard
+          </Link>
+          <span className="mx-2 text-neutral-300">/</span>
+          <span className="text-[#1d1d1f] font-semibold">
+            Iceberg Intelligence & Drift Tracking
+          </span>
+        </nav>
+
+        {/* 3-Column Dashboard Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          {/* Column 1: Active Icebergs (Left Panel) */}
+          <div className="lg:col-span-4 xl:col-span-3">
+            <ActiveIcebergsList
+              icebergs={HIGH_PRIORITY_ICEBERGS}
+              selectedIceberg={selectedIceberg}
+              onSelectIceberg={(ib) => setSelectedIceberg(ib)}
+              onViewAll={() => setCatalogModalOpen(true)}
+            />
+          </div>
+
+          {/* Column 2: Polar Stereographic Projection Map (Center Panel) */}
+          <div className="lg:col-span-5 xl:col-span-6">
+            <PolarStereographicMap
+              icebergs={HIGH_PRIORITY_ICEBERGS}
+              selectedIceberg={selectedIceberg}
+              onSelectIceberg={(ib) => setSelectedIceberg(ib)}
+            />
+          </div>
+
+          {/* Column 3: Key Metrics (Right Panel) */}
+          <div className="lg:col-span-3 xl:col-span-3">
+            <KeyMetricsPanel
+              totalActiveCount={37}
+              highRiskCount={7}
+              incursionsCount={12}
+              sarTrackedPct={94}
+            />
+          </div>
+        </div>
+      </main>
+
+      {/* Footer Telemetry Strip */}
+      <footer className="w-full bg-white border-t border-[#e0e0e0] px-4 sm:px-6 py-3.5 mt-6">
+        <div className="max-w-[1920px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-neutral-500 font-mono">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span>
+              Data Source: Sentinel-1 SAR &bull; CryoSat-2 Altimetry &bull; Iceberg Drift AI
+            </span>
+            <span className="hidden md:inline text-neutral-300">|</span>
+            <span className="text-[#1d1d1f] font-normal">
+              Model: Polaris Iceberg Drift v2.4
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-1.5 text-neutral-600">
+              <Clock className="w-3.5 h-3.5 text-neutral-400" />
+              <span>All times calibrated in UTC</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {/* Comprehensive 37 Iceberg Inspection Catalog Modal */}
+      <IcebergModalCatalog
+        isOpen={catalogModalOpen}
+        onClose={() => setCatalogModalOpen(false)}
+        selectedIceberg={selectedIceberg}
+        onSelectIceberg={(ib) => setSelectedIceberg(ib)}
+      />
+    </div>
   );
 };
 

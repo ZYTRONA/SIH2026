@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { LandingPage } from '@/pages/LandingPage';
 import { Dashboard } from '@/pages/Dashboard';
 import { MissionPlanner } from '@/pages/MissionPlanner';
 import { SeaIceForecast } from '@/pages/SeaIceForecast';
@@ -15,8 +16,11 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+        {/* Public SEO & Product Landing Page */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* Mission Control Cockpit Deck */}
+        <Route element={<AppLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="mission-planner" element={<MissionPlanner />} />
           <Route path="sea-ice" element={<SeaIceForecast />} />

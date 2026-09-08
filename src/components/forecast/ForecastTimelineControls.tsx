@@ -1,8 +1,6 @@
 import React from 'react';
 import { ForecastHorizonKey } from '@/data/seaIceData';
 import { Clock, Play, Pause, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ForecastTimelineControlsProps {
   activeHorizon: ForecastHorizonKey;
@@ -22,45 +20,41 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
   onReset,
 }) => {
   return (
-    <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs select-none">
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-4 flex flex-col sm:flex-row items-center justify-between gap-3 select-none">
       {/* Label */}
-      <div className="flex items-center gap-2.5 text-xs font-mono text-zinc-700">
-        <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-950">
+      <div className="flex items-center gap-2.5 text-[12px] text-[#1d1d1f]">
+        <div className="p-1.5 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[#0066cc]">
           <Clock className="w-3.5 h-3.5" />
         </div>
-        <span className="font-bold uppercase tracking-wider text-zinc-950">
+        <span className="font-semibold uppercase tracking-wider text-[11px] text-neutral-500">
           FORECAST HORIZON:
         </span>
       </div>
 
-      {/* Radix UI Tabs for Segmented Control */}
-      <Tabs
-        value={activeHorizon}
-        onValueChange={(val) => onSelectHorizon(val as ForecastHorizonKey)}
-        className="w-auto"
-      >
-        <TabsList className="h-9 p-0.5 bg-zinc-100 border border-zinc-200 rounded-xl">
-          {horizons.map((horizon) => (
-            <TabsTrigger
-              key={horizon}
-              value={horizon}
-              className="h-8 px-3.5 text-xs font-mono font-bold data-[state=active]:bg-black data-[state=active]:text-white transition-all"
-            >
-              {horizon}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      {/* Segmented Pill Container */}
+      <div className="apple-segmented-container">
+        {horizons.map((horizon) => (
+          <button
+            key={horizon}
+            onClick={() => onSelectHorizon(horizon)}
+            className={`apple-segmented-item ${
+              activeHorizon === horizon ? 'apple-segmented-item-active' : ''
+            }`}
+          >
+            {horizon}
+          </button>
+        ))}
+      </div>
 
       {/* Playback & Reset Controls */}
       <div className="flex items-center gap-2">
         {onTogglePlay && (
-          <Button
+          <button
             onClick={onTogglePlay}
-            variant={isPlaying ? 'destructive' : 'default'}
-            size="sm"
-            className={`font-mono gap-1.5 font-bold rounded-xl shadow-xs cursor-pointer ${
-              isPlaying ? 'bg-rose-600 hover:bg-rose-700' : 'bg-black hover:bg-zinc-800 text-white'
+            className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[13px] font-semibold transition-all active:scale-95 ${
+              isPlaying
+                ? 'bg-rose-600 hover:bg-rose-700 text-white'
+                : 'btn-apple-primary'
             }`}
             title={isPlaying ? 'Pause timeline progression' : 'Auto-play forecast sequence'}
           >
@@ -71,23 +65,21 @@ export const ForecastTimelineControls: React.FC<ForecastTimelineControlsProps> =
               </>
             ) : (
               <>
-                <Play className="w-3.5 h-3.5 fill-current text-white" />
+                <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Animate</span>
               </>
             )}
-          </Button>
+          </button>
         )}
 
         {onReset && (
-          <Button
+          <button
             onClick={onReset}
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 text-zinc-600 hover:text-black hover:bg-zinc-100 border-zinc-300 rounded-xl cursor-pointer"
+            className="flex items-center justify-center h-9 w-9 text-neutral-600 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] border border-[#e0e0e0] rounded-full transition-colors active:scale-95"
             title="Reset to Current observation"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-          </Button>
+          </button>
         )}
       </div>
     </div>

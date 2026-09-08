@@ -3,12 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>POLARIS AI | Polar Adaptive Route Intelligence System</title>
-    <!-- Professional Typography: Plus Jakarta Sans (Modern Geometric UI) + Inter + JetBrains Mono (Scientific Telemetry) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    
+    <!-- Primary SEO Metadata -->
+    <title>POLARIS AI | Polar Adaptive Route Intelligence System — Antarctic Maritime Navigation AI</title>
+    <meta name="description" content="POLARIS AI is an advanced multi-sensor decision support system for Antarctic and high-latitude maritime navigation. Real-time sea-ice tracking, iceberg intelligence, fuel-optimal routing, and autonomous polar decision engine." />
+    <meta name="keywords" content="polar navigation, antarctic route optimization, sea ice tracking, iceberg detection, polar code, maritime AI, polar research vessel, navigation decision support, IMO POLARIS, Bharati Station, Maitri Station, Sentinel-1 SAR, ResUNet, NSGA-II" />
+    <meta name="author" content="POLARIS AI / Team ZYTRONA" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://zytronasih.vercel.app" />
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://zytronasih.vercel.app" />
+    <meta property="og:site_name" content="POLARIS AI Mission Control" />
+    <meta property="og:title" content="POLARIS AI | Polar Adaptive Route Intelligence System" />
+    <meta property="og:description" content="Real-time multi-sensor SAR satellite intelligence, iceberg tracking and fuel-optimal route recommendations for high-latitude Antarctic maritime operations." />
+    <meta property="og:image" content="https://zytronasih.vercel.app/og-image.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://zytronasih.vercel.app" />
+    <meta name="twitter:title" content="POLARIS AI | Polar Adaptive Route Intelligence" />
+    <meta name="twitter:description" content="Autonomous polar decision engine for safe, fuel-optimal, and IMO Polar Code compliant Antarctic maritime navigation." />
+    <meta name="twitter:image" content="https://zytronasih.vercel.app/og-image.svg" />
+
+    <!-- Mobile Theme Color (Apple Parchment Canvas) -->
+    <meta name="theme-color" content="#f5f5f7" />
+    <meta name="color-scheme" content="light" />
+
+    <!-- Apple Typography: SF Pro Text, SF Pro Display, SF Mono Web Fonts & Inter Fallback -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/sf-pro-display" />
+
+    <!-- SPA 404 Fallback Path Restoration Script -->
     <script>
       (function() {
         var redirect = sessionStorage.redirect;
@@ -18,8 +51,57 @@
         }
       })();
     </script>
+
+    <!-- JSON-LD Structured Data Schema (SoftwareApplication + Organization) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "POLARIS AI",
+          "operatingSystem": "Web, Edge (NVIDIA Jetson AGX Orin)",
+          "applicationCategory": "BusinessApplication, NavigationApplication",
+          "description": "Polar Adaptive Route Intelligence System for Antarctic maritime navigation decision support and multi-sensor iceberg tracking.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "url": "https://zytronasih.vercel.app",
+          "featureList": [
+            "ResUNet v3.2 Sea-Ice Spatiotemporal Forecasting",
+            "Copernicus Sentinel-1 SAR Iceberg Drift Modeling",
+            "IMO Polar Code POLARIS Risk Index Outcome (RIO) Assessment",
+            "NSGA-II Multi-Objective Evolutionary Route Optimization",
+            "SHAP Explainable AI Decision Transparency",
+            "Autonomous Shipboard Offline Cryospheric Cache"
+          ]
+        },
+        {
+          "@type": "Organization",
+          "name": "POLARIS AI — Polar Maritime Systems",
+          "url": "https://zytronasih.vercel.app",
+          "logo": "https://zytronasih.vercel.app/favicon.svg",
+          "sameAs": [
+            "https://github.com"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "name": "POLARIS AI",
+          "url": "https://zytronasih.vercel.app",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://zytronasih.vercel.app/dashboard?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
-  <body class="bg-[#FAFAFA] text-zinc-900 antialiased selection:bg-black selection:text-white overflow-x-hidden min-h-screen">
+  <body class="bg-[#f5f5f7] text-[#1d1d1f] antialiased selection:bg-[#0066cc] selection:text-white overflow-x-hidden min-h-screen font-sans">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 
 interface MissionFormProps {
   onSubmit: (config: MissionConfig) => void;
@@ -89,24 +88,24 @@ export const MissionForm: React.FC<MissionFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-zinc-200/90 rounded-xl p-5 sm:p-6 space-y-5 shadow-xs">
+    <form onSubmit={handleSubmit} className="apple-card p-6 space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3.5 border-b border-zinc-100">
+      <div className="flex items-center justify-between pb-3.5 border-b border-[#f0f0f0]">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900 shadow-2xs">
+          <div className="p-2 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[#1d1d1f]">
             <Compass className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm sm:text-base font-bold font-sans text-zinc-950">
+            <h3 className="text-[16px] font-semibold text-[#1d1d1f]">
               Expedition Parameters & Constraints
             </h3>
-            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider font-semibold">
+            <span className="text-[12px] text-neutral-500 font-normal">
               Antarctic High-Latitude Route Request
             </span>
           </div>
         </div>
 
-        <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-md bg-black text-white shadow-xs">
+        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#f5f5f7] text-[#1d1d1f] border border-[#e0e0e0]">
           CONFIG DECK
         </span>
       </div>
@@ -115,18 +114,18 @@ export const MissionForm: React.FC<MissionFormProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Vessel Choice */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-            <Ship className="w-3.5 h-3.5 text-zinc-900" />
+          <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+            <Ship className="w-3.5 h-3.5 text-[#1d1d1f]" />
             Vessel Profile
           </label>
           <Select
             value={vessel}
             onValueChange={(val) => setVessel(val as MissionConfig['vessel'])}
           >
-            <SelectTrigger className="bg-white border-zinc-200 text-zinc-900 font-medium">
+            <SelectTrigger className="bg-[#f5f5f7] border-[#e0e0e0] text-[#1d1d1f] rounded-[11px] h-10">
               <SelectValue placeholder="Select vessel" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-[#e0e0e0] rounded-[14px]">
               <SelectItem value="Polar Research Vessel">Polar Research Vessel (R/V Sentinel)</SelectItem>
               <SelectItem value="Research Vessel Alpha">Research Vessel Alpha</SelectItem>
               <SelectItem value="Ice-Class Supply Vessel">Ice-Class Supply Vessel</SelectItem>
@@ -136,18 +135,18 @@ export const MissionForm: React.FC<MissionFormProps> = ({
 
         {/* Polar Capability (PC1 - PC7) */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-zinc-900" />
+          <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-[#1d1d1f]" />
             Polar Class Capability
           </label>
           <Select
             value={polarCapability}
             onValueChange={(val) => setPolarCapability(val as PolarCapability)}
           >
-            <SelectTrigger className="bg-white border-zinc-200 text-zinc-900 font-medium">
+            <SelectTrigger className="bg-[#f5f5f7] border-[#e0e0e0] text-[#1d1d1f] rounded-[11px] h-10">
               <SelectValue placeholder="Select Polar Class" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-[#e0e0e0] rounded-[14px]">
               <SelectItem value="PC1">PC1 — Year-round all polar waters</SelectItem>
               <SelectItem value="PC2">PC2 — Year-round moderate multi-year ice</SelectItem>
               <SelectItem value="PC3">PC3 — Year-round thick first-year ice</SelectItem>
@@ -161,15 +160,15 @@ export const MissionForm: React.FC<MissionFormProps> = ({
       </div>
 
       {/* 2. Start & Destination Coordinates */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-zinc-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#f0f0f0]">
         {/* Start Coordinates */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-zinc-900" />
+            <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#1d1d1f]" />
               Start Location (Origin)
             </label>
-            <span className="text-[10px] font-mono text-zinc-400 font-semibold">Lat / Lng</span>
+            <span className="text-[11px] text-neutral-400 font-mono">Lat / Lng</span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -179,7 +178,7 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={startLat}
               onChange={(e) => setStartLat(parseFloat(e.target.value))}
               placeholder="Latitude"
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black shadow-xs"
+              className="bg-[#f5f5f7] border border-[#e0e0e0] rounded-[11px] px-3 py-2 text-[12px] font-mono text-[#1d1d1f] focus:outline-none focus:border-[#0066cc]"
             />
             <input
               type="number"
@@ -187,19 +186,19 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={startLng}
               onChange={(e) => setStartLng(parseFloat(e.target.value))}
               placeholder="Longitude"
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black shadow-xs"
+              className="bg-[#f5f5f7] border border-[#e0e0e0] rounded-[11px] px-3 py-2 text-[12px] font-mono text-[#1d1d1f] focus:outline-none focus:border-[#0066cc]"
             />
           </div>
 
           {/* Quick Presets */}
-          <div className="flex items-center gap-1 flex-wrap pt-0.5">
-            <span className="text-[9px] font-mono text-zinc-500 mr-1 font-bold">Presets:</span>
+          <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+            <span className="text-[10px] text-neutral-400 font-normal">Presets:</span>
             {START_PRESETS.map((p, idx) => (
               <button
                 type="button"
                 key={p.name}
                 onClick={() => handleStartPreset(idx)}
-                className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border border-zinc-200 transition-colors font-semibold"
+                className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] border border-[#e0e0e0] transition-colors"
               >
                 {p.name.split(' (')[0]}
               </button>
@@ -210,11 +209,11 @@ export const MissionForm: React.FC<MissionFormProps> = ({
         {/* Destination Coordinates */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-black" />
+            <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#1d1d1f]" />
               Destination Station
             </label>
-            <span className="text-[10px] font-mono text-zinc-400 font-semibold">Lat / Lng</span>
+            <span className="text-[11px] text-neutral-400 font-mono">Lat / Lng</span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -224,7 +223,7 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={destLat}
               onChange={(e) => setDestLat(parseFloat(e.target.value))}
               placeholder="Latitude"
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black shadow-xs"
+              className="bg-[#f5f5f7] border border-[#e0e0e0] rounded-[11px] px-3 py-2 text-[12px] font-mono text-[#1d1d1f] focus:outline-none focus:border-[#0066cc]"
             />
             <input
               type="number"
@@ -232,19 +231,19 @@ export const MissionForm: React.FC<MissionFormProps> = ({
               value={destLng}
               onChange={(e) => setDestLng(parseFloat(e.target.value))}
               placeholder="Longitude"
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black shadow-xs"
+              className="bg-[#f5f5f7] border border-[#e0e0e0] rounded-[11px] px-3 py-2 text-[12px] font-mono text-[#1d1d1f] focus:outline-none focus:border-[#0066cc]"
             />
           </div>
 
           {/* Quick Presets */}
-          <div className="flex items-center gap-1 flex-wrap pt-0.5">
-            <span className="text-[9px] font-mono text-zinc-500 mr-1 font-bold">Presets:</span>
+          <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+            <span className="text-[10px] text-neutral-400 font-normal">Presets:</span>
             {DESTINATION_PRESETS.map((p, idx) => (
               <button
                 type="button"
                 key={p.name}
                 onClick={() => handleDestPreset(idx)}
-                className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border border-zinc-200 transition-colors font-semibold"
+                className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f] border border-[#e0e0e0] transition-colors"
               >
                 {p.name.split(' (')[0]}
               </button>
@@ -254,25 +253,25 @@ export const MissionForm: React.FC<MissionFormProps> = ({
       </div>
 
       {/* 3. Mission Timing & Priority Controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-zinc-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-[#f0f0f0]">
         {/* Mission Date */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-zinc-900" />
+          <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-[#1d1d1f]" />
             Mission Date
           </label>
           <input
             type="date"
             value={missionDate}
             onChange={(e) => setMissionDate(e.target.value)}
-            className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black shadow-xs"
+            className="w-full bg-[#f5f5f7] border border-[#e0e0e0] rounded-[11px] px-3 py-2 text-[12px] font-mono text-[#1d1d1f] focus:outline-none focus:border-[#0066cc]"
           />
         </div>
 
         {/* Departure Time */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-zinc-900" />
+          <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-[#1d1d1f]" />
             Departure Time
           </label>
           <input
@@ -280,24 +279,24 @@ export const MissionForm: React.FC<MissionFormProps> = ({
             value={departureTime}
             onChange={(e) => setDepartureTime(e.target.value)}
             placeholder="06:00 UTC"
-            className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black shadow-xs"
+            className="w-full bg-[#f5f5f7] border border-[#e0e0e0] rounded-[11px] px-3 py-2 text-[12px] font-mono text-[#1d1d1f] focus:outline-none focus:border-[#0066cc]"
           />
         </div>
 
         {/* Navigation Priority */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-            <Sliders className="w-3.5 h-3.5 text-zinc-900" />
+          <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+            <Sliders className="w-3.5 h-3.5 text-[#1d1d1f]" />
             Navigation Priority
           </label>
           <Select
             value={navigationPriority}
             onValueChange={(val) => setNavigationPriority(val as NavigationPriority)}
           >
-            <SelectTrigger className="bg-white border-zinc-200 text-zinc-900 font-medium">
+            <SelectTrigger className="bg-[#f5f5f7] border-[#e0e0e0] text-[#1d1d1f] rounded-[11px] h-10">
               <SelectValue placeholder="Select Priority" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-[#e0e0e0] rounded-[14px]">
               <SelectItem value="Balanced">Balanced (Default)</SelectItem>
               <SelectItem value="Safest">Safest (Minimum Risk)</SelectItem>
               <SelectItem value="Fastest">Fastest (Time Critical)</SelectItem>
@@ -308,18 +307,18 @@ export const MissionForm: React.FC<MissionFormProps> = ({
 
         {/* Forecast Horizon */}
         <div className="space-y-1.5">
-          <label className="text-xs font-mono font-semibold text-zinc-700 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-zinc-900" />
+          <label className="text-[12px] font-semibold text-neutral-600 flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-[#1d1d1f]" />
             Forecast Horizon
           </label>
           <Select
             value={forecastHorizon}
             onValueChange={(val) => setForecastHorizon(val as ForecastHorizon)}
           >
-            <SelectTrigger className="bg-white border-zinc-200 text-zinc-900 font-medium">
+            <SelectTrigger className="bg-[#f5f5f7] border-[#e0e0e0] text-[#1d1d1f] rounded-[11px] h-10">
               <SelectValue placeholder="Select Horizon" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-[#e0e0e0] rounded-[14px]">
               <SelectItem value="24 hours">24 hours</SelectItem>
               <SelectItem value="48 hours">48 hours</SelectItem>
               <SelectItem value="72 hours">72 hours (Recommended)</SelectItem>
@@ -330,24 +329,21 @@ export const MissionForm: React.FC<MissionFormProps> = ({
       </div>
 
       {/* 4. Action Button */}
-      <div className="pt-3 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="text-[11px] font-mono text-zinc-500 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+      <div className="pt-3 border-t border-[#f0f0f0] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-[12px] text-neutral-500 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           <span>Antarctic environmental ensemble solvers ready</span>
         </div>
 
-        <Button
+        <button
           type="submit"
           disabled={isLoading}
-          variant="default"
-          size="lg"
-          className="w-full sm:w-auto font-bold tracking-wider bg-black hover:bg-zinc-800 text-white shadow-xs rounded-xl"
+          className="btn-apple-primary w-full sm:w-auto"
         >
-          <Sparkles className="w-4 h-4 text-white" />
+          <Sparkles className="w-4 h-4" />
           <span>Generate Navigation Plan</span>
-        </Button>
+        </button>
       </div>
     </form>
   );
 };
-

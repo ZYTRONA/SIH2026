@@ -31,10 +31,12 @@ export const RiskLayerToggleBar: React.FC<RiskLayerToggleBarProps> = ({
   ];
 
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-950">
-        <Layers className="w-4 h-4 text-black" />
-        <span className="tracking-wider">RISK HEATMAP LAYERS:</span>
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="flex items-center gap-2 text-[12px] font-semibold text-[#1d1d1f]">
+        <div className="p-1 rounded-full bg-[#f5f5f7] text-[#0066cc]">
+          <Layers className="w-3.5 h-3.5" />
+        </div>
+        <span className="tracking-wider uppercase text-[11px] text-neutral-500">RISK HEATMAP LAYERS:</span>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap justify-center">
@@ -46,17 +48,17 @@ export const RiskLayerToggleBar: React.FC<RiskLayerToggleBarProps> = ({
             <button
               key={it.key}
               onClick={() => onToggle(it.key)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] transition-all cursor-pointer active:scale-95 ${
                 isActive
-                  ? 'bg-black text-white border border-black font-bold shadow-xs'
-                  : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-zinc-200 font-medium'
+                  ? 'bg-[#0066cc] text-white border border-[#0066cc] font-semibold'
+                  : 'bg-[#f5f5f7] hover:bg-[#e0e0e0] text-neutral-700 border border-[#e0e0e0] font-normal'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-zinc-200' : 'text-zinc-500'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-neutral-500'}`} />
               <span>{it.label}</span>
               <span
-                className={`w-3.5 h-3.5 rounded flex items-center justify-center border text-[9px] ml-1 ${
-                  isActive ? 'border-zinc-500 bg-zinc-800 text-white' : 'border-zinc-300 bg-white text-transparent'
+                className={`w-3.5 h-3.5 rounded-full flex items-center justify-center border text-[9px] ml-1 ${
+                  isActive ? 'border-white bg-white/20 text-white' : 'border-neutral-300 bg-white text-transparent'
                 }`}
               >
                 {isActive && <Check className="w-2.5 h-2.5 stroke-[3]" />}

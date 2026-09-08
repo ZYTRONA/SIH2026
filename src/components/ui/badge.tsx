@@ -3,26 +3,26 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-mono font-bold transition-colors border select-none',
+  'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-normal tracking-[-0.12px] transition-colors border select-none',
   {
     variants: {
       variant: {
         default:
-          'border-zinc-300 bg-zinc-100 text-zinc-900',
+          'border-[#e0e0e0] bg-[#f5f5f7] text-[#1d1d1f]',
         secondary:
-          'border-zinc-200 bg-zinc-50 text-zinc-700',
+          'border-[#f0f0f0] bg-[#fafafc] text-[#333333]',
         active:
-          'border-black bg-black text-white',
+          'border-[#0066cc] bg-[#0066cc] text-white',
         destructive:
-          'border-rose-300 bg-rose-50 text-rose-900',
+          'border-rose-200 bg-rose-50 text-rose-800',
         outline:
-          'text-zinc-800 border-zinc-300 bg-white',
+          'text-[#1d1d1f] border-[#e0e0e0] bg-white',
         success:
-          'border-emerald-300 bg-emerald-50 text-emerald-900',
+          'border-emerald-200 bg-emerald-50 text-emerald-800',
         warning:
-          'border-amber-300 bg-amber-50 text-amber-900',
+          'border-amber-200 bg-amber-50 text-amber-800',
         ice:
-          'border-zinc-300 bg-zinc-100 text-zinc-900',
+          'border-sky-200 bg-sky-50 text-sky-800',
       },
     },
     defaultVariants: {

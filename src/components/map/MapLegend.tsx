@@ -6,18 +6,18 @@ export const MapLegend: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white/95 border border-zinc-200/90 rounded-2xl shadow-xl backdrop-blur-md overflow-hidden transition-all max-w-[280px] sm:max-w-xs pointer-events-auto select-none">
-      {/* Header / Toggle Button */}
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] shadow-lg overflow-hidden transition-all max-w-[280px] sm:max-w-xs pointer-events-auto select-none">
+      {/* Header / Toggle Button — 44px Minimum Touch Target */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-mono font-bold text-zinc-950 hover:bg-zinc-50 transition-colors cursor-pointer group"
+        className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-[13px] font-semibold text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer group active:scale-95"
         title={isExpanded ? 'Collapse map legend' : 'Expand map legend'}
       >
-        <div className="flex items-center gap-1.5">
-          <Info className="w-3.5 h-3.5 text-black group-hover:scale-110 transition-transform" />
-          <span>MAP TELEMETRY LEGEND</span>
+        <div className="flex items-center gap-2">
+          <Info className="w-4 h-4 text-[#0066cc]" />
+          <span>Map Telemetry Legend</span>
         </div>
-        <div className="p-0.5 rounded text-zinc-500 group-hover:text-black transition-colors">
+        <div className="p-0.5 rounded text-neutral-400 group-hover:text-[#1d1d1f] transition-colors">
           {isExpanded ? (
             <ChevronUp className="w-3.5 h-3.5" />
           ) : (
@@ -34,98 +34,74 @@ export const MapLegend: React.FC = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden border-t border-zinc-100"
+            transition={{ duration: 0.15 }}
+            className="overflow-hidden border-t border-[#f0f0f0]"
           >
-            <div className="p-3.5 space-y-3 text-[10px] font-mono max-h-64 overflow-y-auto">
+            <div className="p-4 space-y-3 text-[11px] font-mono max-h-64 overflow-y-auto">
               {/* 1. Sea Ice Concentration */}
-              <div className="space-y-1">
-                <span className="text-zinc-500 font-bold uppercase tracking-wider block">
-                  Sea-Ice Concentration
+              <div className="space-y-1.5">
+                <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
+                  Sea-Ice Concentration (SAR)
                 </span>
-                <div className="grid grid-cols-2 gap-1 text-zinc-800">
+                <div className="grid grid-cols-2 gap-1.5 text-[#1d1d1f]">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-xs bg-[#18181B]/20 border border-zinc-400" />
-                    <span>0–20% Open Drift</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-200 border border-sky-400" />
+                    <span>0–20% Open</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-xs bg-[#18181B]/40 border border-zinc-500" />
-                    <span>20–50% Thin Floes</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-400 border border-sky-500" />
+                    <span>20–50% Thin</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-xs bg-[#18181B]/60 border border-zinc-700" />
-                    <span>50–80% Pack Ice</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#0066cc] border border-[#0071e3]" />
+                    <span>50–80% Pack</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-xs bg-[#18181B]/90 border border-black" />
-                    <span>80–100% Fast Ice</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-neutral-900 border border-neutral-700" />
+                    <span>80–100% Fast</span>
                   </div>
                 </div>
               </div>
 
-              {/* 2. Risk Scale */}
-              <div className="space-y-1 pt-1.5 border-t border-zinc-100">
-                <span className="text-zinc-500 font-bold uppercase tracking-wider block">
-                  Navigation Risk Score
+              {/* 2. Colorblind-Safe Risk Scale */}
+              <div className="space-y-1.5 pt-2.5 border-t border-[#f0f0f0]">
+                <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
+                  Navigation Risk Score (RIO)
                 </span>
-                <div className="flex items-center gap-1">
-                  <div className="flex-1 text-center py-0.5 rounded bg-emerald-50 text-emerald-900 border border-emerald-300 font-bold">
-                    0-20 SAFE
+                <div className="grid grid-cols-5 gap-1 text-[9px] font-semibold text-center">
+                  <div className="py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    SAFE
                   </div>
-                  <div className="flex-1 text-center py-0.5 rounded bg-zinc-100 text-zinc-900 border border-zinc-300 font-bold">
-                    20-40 LOW
+                  <div className="py-1 rounded-full bg-[#f5f5f7] text-[#1d1d1f] border border-[#e0e0e0]">
+                    LOW
                   </div>
-                  <div className="flex-1 text-center py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-300 font-bold">
-                    40-60 MOD
+                  <div className="py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                    MOD
                   </div>
-                  <div className="flex-1 text-center py-0.5 rounded bg-orange-50 text-orange-900 border border-orange-300 font-bold">
-                    60-80 HIGH
+                  <div className="py-1 rounded-full bg-orange-50 text-orange-800 border border-orange-200">
+                    HIGH
                   </div>
-                  <div className="flex-1 text-center py-0.5 rounded bg-rose-50 text-rose-900 border border-rose-300 font-bold">
-                    80+ CRIT
+                  <div className="py-1 rounded-full bg-rose-50 text-rose-800 border border-rose-200">
+                    CRIT
                   </div>
                 </div>
               </div>
 
-              {/* 3. Icebergs */}
-              <div className="space-y-1 pt-1.5 border-t border-zinc-100">
-                <span className="text-zinc-500 font-bold uppercase tracking-wider block">
-                  Tracked Icebergs
+              {/* 3. Tracked Icebergs */}
+              <div className="space-y-1.5 pt-2.5 border-t border-[#f0f0f0]">
+                <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
+                  Tracked Icebergs (Sentinel-1)
                 </span>
-                <div className="flex items-center justify-between text-zinc-800 font-medium">
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-rose-600" />
-                    Critical Threat
+                <div className="flex items-center justify-between text-[#1d1d1f] font-normal">
+                  <span className="flex items-center gap-1 text-rose-700">
+                    <span className="w-2 h-2 rounded-full bg-rose-600" /> Critical
                   </span>
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-amber-600" />
-                    Warning Zone
+                  <span className="flex items-center gap-1 text-amber-700">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" /> Advisory
                   </span>
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-zinc-600" />
-                    Low Drift
+                  <span className="flex items-center gap-1 text-emerald-700">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" /> Nominal
                   </span>
-                </div>
-              </div>
-
-              {/* 4. Routes */}
-              <div className="space-y-1 pt-1.5 border-t border-zinc-100">
-                <span className="text-zinc-500 font-bold uppercase tracking-wider block">
-                  Route Corridors
-                </span>
-                <div className="space-y-1 text-zinc-800 font-medium">
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-1 bg-black rounded-full inline-block" />
-                    <span className="font-bold text-zinc-950">Recommended (POLARIS)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-0.5 bg-amber-600 border-b border-dashed border-amber-500 inline-block" />
-                    <span>Alt A (Fastest / Ice Edge)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-0.5 bg-emerald-700 border-b border-dotted border-emerald-600 inline-block" />
-                    <span>Alt B (Max Safety Detour)</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -135,4 +111,3 @@ export const MapLegend: React.FC = () => {
     </div>
   );
 };
-

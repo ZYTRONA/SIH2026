@@ -29,45 +29,45 @@ const iconMap = {
 
 export const RecommendationSummaryCard: React.FC = () => {
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 sm:p-6 space-y-5">
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-6 space-y-6">
       {/* 1. Header Banner & Decision Question */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-zinc-100">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-[#f0f0f0]">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-black text-white shadow-2xs">
+            <div className="p-2 rounded-xl bg-[#0066cc]/10 text-[#0066cc]">
               <HelpCircle className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-600 font-bold">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[#86868b] font-semibold">
                 Autonomous Navigation Decision Transparency
               </span>
-              <h2 className="text-lg sm:text-xl font-bold font-sans text-zinc-950">
+              <h2 className="text-[18px] sm:text-[20px] font-semibold text-[#1d1d1f] tracking-tight">
                 &quot;{EXPLAINABILITY_HEADER.question}&quot;
               </h2>
             </div>
           </div>
-          <p className="text-xs sm:text-sm text-zinc-700 font-sans leading-relaxed pt-1 max-w-3xl">
+          <p className="text-[13px] sm:text-[14px] text-[#424245] leading-relaxed pt-1 max-w-3xl font-normal">
             {EXPLAINABILITY_HEADER.rationaleSummary}
           </p>
         </div>
 
         {/* Recommended Route & Confidence Pill */}
-        <div className="flex items-center gap-3 bg-zinc-50 p-3.5 rounded-xl border border-zinc-200 shadow-xs flex-shrink-0 self-start lg:self-auto">
-          <div className="p-2 rounded-lg bg-black text-white">
+        <div className="flex items-center gap-3 bg-[#fafafc] p-4 rounded-xl border border-[#e0e0e0] flex-shrink-0 self-start lg:self-auto">
+          <div className="p-2.5 rounded-xl bg-[#0066cc]/10 text-[#0066cc]">
             <Award className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider">
+              <span className="text-[11px] font-mono font-semibold text-[#86868b] uppercase tracking-wider">
                 RECOMMENDED:
               </span>
-              <span className="text-sm font-bold font-sans text-zinc-950">
+              <span className="text-[14px] font-semibold text-[#1d1d1f]">
                 {EXPLAINABILITY_HEADER.recommendedRouteName}
               </span>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-[11px] font-mono text-zinc-500">Model Confidence:</span>
-              <Badge variant="default" className="font-bold bg-black text-white border-black">
+              <span className="text-[11px] font-mono text-[#86868b]">Model Confidence:</span>
+              <Badge variant="default" className="font-semibold bg-[#0066cc] text-white border-transparent">
                 {EXPLAINABILITY_HEADER.overallConfidencePct}% CONFIDENCE
               </Badge>
             </div>
@@ -76,56 +76,56 @@ export const RecommendationSummaryCard: React.FC = () => {
       </div>
 
       {/* 2. Five Core Reasoning Points requested by Prompt */}
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-600 font-bold flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-black" />
+          <span className="text-[11px] font-mono uppercase tracking-wider text-[#86868b] font-semibold flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#0066cc]" />
             Core Navigational Rationale & Multi-Factor Justifications
           </span>
-          <span className="text-[10px] font-mono text-emerald-800 font-bold">
+          <span className="text-[11px] font-mono text-emerald-700 font-semibold">
             5/5 Safety & Kinetic Constraints Satisfied
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {CORE_REASONING_POINTS.map((point: ReasoningPoint) => {
             const Icon = iconMap[point.iconName] || ShieldCheck;
 
             return (
               <div
                 key={point.id}
-                className="p-4 rounded-xl bg-zinc-50/90 border border-zinc-200 space-y-2.5 hover:border-zinc-400 transition-all duration-200 flex flex-col justify-between shadow-2xs group"
+                className="p-4 rounded-xl bg-[#fafafc] border border-[#e0e0e0] space-y-2.5 hover:border-[#0066cc]/40 transition-all flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-white border border-zinc-200 text-zinc-900 shadow-2xs group-hover:scale-105 transition-transform">
+                      <div className="p-1.5 rounded-lg bg-white border border-[#e0e0e0] text-[#0066cc]">
                         <Icon className="w-4 h-4" />
                       </div>
-                      <h4 className="text-xs font-bold font-sans text-zinc-950">
+                      <h4 className="text-[13px] font-semibold text-[#1d1d1f]">
                         {point.title}
                       </h4>
                     </div>
                     <Badge
                       variant="outline"
-                      className={`text-[9px] font-bold flex-shrink-0 ${
+                      className={`text-[10px] font-semibold flex-shrink-0 ${
                         point.badgeType === 'safe'
-                          ? 'bg-emerald-50 text-emerald-900 border-emerald-300'
-                          : 'bg-zinc-100 text-zinc-900 border-zinc-300'
+                          ? 'bg-emerald-500/10 text-emerald-800 border-emerald-500/30'
+                          : 'bg-[#f5f5f7] text-[#1d1d1f] border-[#e0e0e0]'
                       }`}
                     >
                       {point.badge}
                     </Badge>
                   </div>
 
-                  <p className="text-[11px] font-sans text-zinc-700 leading-relaxed font-medium">
+                  <p className="text-[12px] text-[#424245] leading-relaxed font-normal">
                     {point.detail}
                   </p>
                 </div>
 
-                <div className="pt-2.5 border-t border-zinc-200 flex items-center justify-between text-[11px] font-mono">
-                  <span className="text-zinc-500">{point.summary}</span>
-                  <span className="text-zinc-950 font-bold flex items-center gap-1">
+                <div className="pt-2.5 border-t border-[#e0e0e0] flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-[#86868b] font-normal">{point.summary}</span>
+                  <span className="text-[#1d1d1f] font-semibold flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                     {point.metric}
                   </span>

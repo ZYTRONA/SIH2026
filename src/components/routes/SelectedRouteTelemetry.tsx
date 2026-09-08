@@ -23,14 +23,14 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
     ROUTE_CANDIDATES.find((r) => r.key === selectedRouteKey) || ROUTE_CANDIDATES[3];
 
   return (
-    <div className="bg-white border border-zinc-200/90 shadow-xs rounded-xl p-5 space-y-4">
+    <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-6 space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#f0f0f0]">
+        <div className="flex items-center gap-2.5">
           <div
-            className="p-1.5 rounded-lg border"
+            className="p-2 rounded-xl border"
             style={{
-              borderColor: `${route.color}50`,
+              borderColor: `${route.color}40`,
               backgroundColor: `${route.color}15`,
               color: route.color,
             }}
@@ -39,68 +39,68 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold font-sans text-zinc-950">
+              <h3 className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">
                 {route.name} Telemetry & Waypoints
               </h3>
               {route.isRecommended && (
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-black text-white border border-black">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-[#0066cc] text-white">
                   AI RECOMMENDED
                 </span>
               )}
             </div>
-            <span className="text-[10px] font-mono text-zinc-500">
+            <span className="text-[11px] font-mono text-[#86868b]">
               Corridor ID: {route.id} • Color Signature:{' '}
-              <span className="font-bold" style={{ color: route.color }}>
+              <span className="font-semibold" style={{ color: route.color }}>
                 {route.key}
               </span>
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono">
-          <span className="text-zinc-500">Average Transit Speed:</span>
-          <span className="font-bold text-zinc-950">{route.averageSpeedKts} kts</span>
+        <div className="flex items-center gap-2 text-[12px] font-mono">
+          <span className="text-[#86868b]">Average Transit Speed:</span>
+          <span className="font-semibold text-[#1d1d1f]">{route.averageSpeedKts} kts</span>
         </div>
       </div>
 
       {/* 4 Summary Stat Pills */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
-        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
-          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
-            <Gauge className="w-3 h-3 text-zinc-400" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
+        <div className="p-3 rounded-xl bg-[#fafafc] border border-[#e0e0e0]">
+          <span className="text-[10px] text-[#86868b] flex items-center gap-1 font-semibold uppercase">
+            <Gauge className="w-3 h-3 text-[#86868b]" />
             Distance
           </span>
-          <span className="text-sm font-bold text-zinc-950">{route.distanceFormatted}</span>
+          <span className="text-[14px] font-semibold text-[#1d1d1f]">{route.distanceFormatted}</span>
         </div>
 
-        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
-          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
-            <Clock className="w-3 h-3 text-zinc-400" />
+        <div className="p-3 rounded-xl bg-[#fafafc] border border-[#e0e0e0]">
+          <span className="text-[10px] text-[#86868b] flex items-center gap-1 font-semibold uppercase">
+            <Clock className="w-3 h-3 text-[#86868b]" />
             ETA Window
           </span>
-          <span className="text-sm font-bold text-zinc-950">{route.etaFormatted}</span>
+          <span className="text-[14px] font-semibold text-[#1d1d1f]">{route.etaFormatted}</span>
         </div>
 
-        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
-          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
-            <Fuel className="w-3 h-3 text-zinc-500" />
+        <div className="p-3 rounded-xl bg-[#fafafc] border border-[#e0e0e0]">
+          <span className="text-[10px] text-[#86868b] flex items-center gap-1 font-semibold uppercase">
+            <Fuel className="w-3 h-3 text-[#86868b]" />
             Fuel Burn
           </span>
-          <span className="text-sm font-bold text-zinc-950">{route.fuelFormatted}</span>
+          <span className="text-[14px] font-semibold text-[#1d1d1f]">{route.fuelFormatted}</span>
         </div>
 
-        <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
-          <span className="text-[10px] text-zinc-500 flex items-center gap-1 font-semibold">
-            <Shield className="w-3 h-3 text-zinc-500" />
+        <div className="p-3 rounded-xl bg-[#fafafc] border border-[#e0e0e0]">
+          <span className="text-[10px] text-[#86868b] flex items-center gap-1 font-semibold uppercase">
+            <Shield className="w-3 h-3 text-[#86868b]" />
             Risk Index
           </span>
           <span
-            className={`text-sm font-bold ${
+            className={`text-[14px] font-semibold ${
               route.riskTier === 'SAFE'
-                ? 'text-emerald-800'
+                ? 'text-emerald-700'
                 : route.riskTier === 'LOW'
-                ? 'text-zinc-900'
-                : 'text-amber-800'
+                ? 'text-[#1d1d1f]'
+                : 'text-amber-700'
             }`}
           >
             {route.riskFormatted}
@@ -109,8 +109,8 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
       </div>
 
       {/* Waypoints Trajectory List */}
-      <div className="space-y-2">
-        <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-600 font-bold px-1 block">
+      <div className="space-y-2.5">
+        <span className="text-[11px] font-mono uppercase tracking-wider text-[#86868b] font-semibold px-1 block">
           Sequential Navigation Waypoints
         </span>
 
@@ -122,48 +122,48 @@ export const SelectedRouteTelemetry: React.FC<SelectedRouteTelemetryProps> = ({
             return (
               <div
                 key={wp.id}
-                className={`p-2.5 rounded-xl border text-xs font-mono flex items-center justify-between gap-3 ${
+                className={`p-3 rounded-xl border text-xs font-mono flex items-center justify-between gap-3 ${
                   isStart
-                    ? 'bg-zinc-100 border-zinc-300'
+                    ? 'bg-[#f5f5f7] border-[#e0e0e0]'
                     : isDest
-                    ? 'bg-emerald-50/70 border-emerald-300'
-                    : 'bg-zinc-50 border-zinc-200'
+                    ? 'bg-emerald-500/10 border-emerald-500/20'
+                    : 'bg-[#fafafc] border-[#e0e0e0]'
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold"
                     style={{
-                      backgroundColor: `${route.color}20`,
+                      backgroundColor: `${route.color}15`,
                       color: route.color,
-                      border: `1px solid ${route.color}60`,
+                      border: `1px solid ${route.color}40`,
                     }}
                   >
                     {isStart ? 'S' : isDest ? 'D' : index}
                   </div>
                   <div>
-                    <span className="font-bold text-zinc-950">{wp.name}</span>
-                    <span className="text-[10px] text-zinc-500 block font-normal">
+                    <span className="font-semibold text-[#1d1d1f] text-[13px]">{wp.name}</span>
+                    <span className="text-[11px] text-[#86868b] block font-normal">
                       Coords: {Math.abs(wp.lat).toFixed(2)}°S, {wp.lng.toFixed(2)}°E
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 text-[11px] flex-shrink-0">
-                  <span className="text-zinc-700 flex items-center gap-1 font-medium">
-                    <Snowflake className="w-3.5 h-3.5 text-zinc-500" />
+                  <span className="text-[#424245] flex items-center gap-1 font-normal">
+                    <Snowflake className="w-3.5 h-3.5 text-[#0066cc]" />
                     Ice: {wp.iceConcentrationPct}%
                   </span>
                   {isDest ? (
-                    <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-bold text-[10px] border border-emerald-300">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-800 font-semibold text-[10px]">
                       DESTINATION
                     </span>
                   ) : isStart ? (
-                    <span className="px-2 py-0.5 rounded bg-black text-white font-bold text-[10px] border border-black">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#0066cc] text-white font-semibold text-[10px]">
                       START BEACON
                     </span>
                   ) : (
-                    <span className="text-zinc-400 font-medium">WAYPOINT</span>
+                    <span className="text-[#86868b] font-normal">WAYPOINT</span>
                   )}
                 </div>
               </div>

@@ -6,15 +6,10 @@ import {
   Wind,
   Ship,
   Clock,
-  Info,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { KPICardData } from '@/data/dashboardData';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 const iconMap = {
   Snowflake,
@@ -25,65 +20,114 @@ const iconMap = {
   Clock,
 };
 
+const sparklineData: Record<string, number[]> = {
+  Snowflake: [62, 65, 68, 72, 76, 78, 80, 82, 82.4],
+  Mountain: [28, 30, 31, 33, 34, 35, 36, 37, 37],
+  ShieldAlert: [18, 20, 22, 21, 23, 24, 24, 24, 24],
+  Wind: [18, 21, 24, 28, 32, 30, 27, 25, 24],
+  Ship: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  Clock: [48, 47, 46, 45, 44, 43, 42, 42, 41.87],
+};
+
+interface SparklineProps {
+  data: number[];
+  color?: string;
+  width?: number;
+  height?: number;
+}
+
+const Sparkline: React.FC<SparklineProps> = ({
+  data,
+  color = '#0066cc',
+  width = 120,
+  height = 24,
+}) => {
+  if (!data || data.length < 2) return null;
+
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const padding = 2;
+  const usableHeight = height - padding * 2;
+  const stepX = (width - padding * 2) / (data.length - 1);
+
+  const points = data
+    .map((val, idx) => {
+      const x = padding + idx * stepX;
+      const y = height - padding - ((val - min) / range) * usableHeight;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+
+  return (
+    <svg width={width} height={height} className="overflow-visible block">
+      <polyline
+        fill="none"
+        stroke={color}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={points}
+      />
+    </svg>
+  );
+};
+
 interface KPICardProps {
   data: KPICardData;
 }
 
 export const KPICard: React.FC<KPICardProps> = ({ data }) => {
   const Icon = iconMap[data.iconName] || ShieldAlert;
+  const sparkData = sparklineData[data.iconName] || [];
 
-  const getStatusBadge = () => {
+  const getSubtitleBadge = () => {
     switch (data.status) {
       case 'safe':
-        return 'bg-emerald-50 text-emerald-900 border-emerald-200';
+        return 'bg-emerald-50 text-emerald-800 border-emerald-200';
       case 'warning':
-        return 'bg-amber-50 text-amber-900 border-amber-200';
+        return 'bg-amber-50 text-amber-800 border-amber-200';
       case 'critical':
-        return 'bg-rose-50 text-rose-900 border-rose-200';
+        return 'bg-rose-50 text-rose-800 border-rose-200';
       default:
-        return 'bg-zinc-100 text-zinc-900 border-zinc-200';
+        return 'bg-[#f5f5f7] text-neutral-700 border-[#e0e0e0]';
     }
   };
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="group rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:border-zinc-300 cursor-default select-none">
-            {/* Top Header */}
-            <div className="flex items-center justify-between gap-1">
-              <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-zinc-500 truncate">
-                {data.label}
-              </p>
-              <div className="p-1.5 rounded-lg bg-zinc-100/80 border border-zinc-200 text-zinc-800 group-hover:bg-black group-hover:text-white transition-colors">
-                <Icon className="w-3.5 h-3.5" />
-              </div>
-            </div>
-
-            {/* Primary Value */}
-            <div className="mt-2.5 flex items-baseline justify-between gap-2">
-              <p className="text-2xl sm:text-2xl font-extrabold font-sans text-zinc-950 tracking-tight tabular-nums">
-                {data.value}
-              </p>
-              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${getStatusBadge()}`}>
-                {data.trend || data.statusText || 'NOMINAL'}
-              </span>
-            </div>
-
-            {/* Supporting Subtext */}
-            <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500 font-sans">
-              <span className="truncate text-[11px] font-medium text-zinc-600">{data.supportingInfo}</span>
-              <Info className="w-3 h-3 text-zinc-400 group-hover:text-zinc-700 shrink-0 ml-1" />
-            </div>
+    <motion.div
+      whileHover={{ y: -3, transition: { type: 'spring', stiffness: 450, damping: 25 } }}
+      whileTap={{ scale: 0.985 }}
+      className="apple-card p-4 flex flex-col justify-between hover:border-neutral-400 cursor-default select-none min-h-[150px] shadow-2xs"
+    >
+      {/* Top: Icon + Label */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="h-7 w-7 rounded-full bg-[#f5f5f7] text-[#1d1d1f] flex items-center justify-center shrink-0 border border-[#e0e0e0]">
+            <Icon className="w-3.5 h-3.5" />
           </div>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="bg-zinc-950 text-white border-zinc-800 text-xs font-mono p-2.5 max-w-xs shadow-2xl">
-          <p className="font-bold text-white mb-1">{data.label}: {data.value}</p>
-          <p className="text-zinc-300 text-[11px] font-sans">{data.supportingInfo}</p>
-          <p className="text-zinc-500 text-[10px] mt-1 pt-1 border-t border-zinc-800">Status: {data.status?.toUpperCase() || 'NOMINAL'} • Live Telemetry Feed</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+          <span className="text-[12px] text-neutral-500 font-normal leading-tight line-clamp-1">
+            {data.label}
+          </span>
+        </div>
+      </div>
+
+      {/* Value + Subtitle */}
+      <div className="mt-2">
+        <p className="text-[24px] sm:text-[26px] font-semibold text-[#1d1d1f] tracking-tight tabular-nums leading-none">
+          {data.value}
+        </p>
+        <div className="mt-2 flex items-center">
+          <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-normal border', getSubtitleBadge())}>
+            {data.statusText || data.trend || ''}
+          </span>
+        </div>
+      </div>
+
+      {/* Sparkline */}
+      <div className="mt-2 pt-1 border-t border-[#f0f0f0]">
+        <Sparkline data={sparkData} color="#0066cc" width={120} height={20} />
+      </div>
+    </motion.div>
   );
 };
-

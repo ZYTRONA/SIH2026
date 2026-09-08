@@ -1,0 +1,6 @@
+# Robots.txt for POLARIS AI — Polar Adaptive Route Intelligence System
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://zytronasih.vercel.app/sitemap.xml

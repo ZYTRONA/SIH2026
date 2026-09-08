@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Compass, Snowflake, Mountain, Route, ArrowUpRight } from 'lucide-react';
+import { Compass, Snowflake, Mountain, Route, ArrowUpRight, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export const QuickActionsBar: React.FC = () => {
   const navigate = useNavigate();
@@ -11,70 +12,76 @@ export const QuickActionsBar: React.FC = () => {
       description: 'Expedition waypoints & stations',
       path: '/mission-planner',
       icon: Compass,
-      accent: 'hover:border-black',
     },
     {
-      label: 'View Sea-Ice Forecast',
+      label: 'Sea-Ice Forecast',
       description: 'SAR ice thickness & drift modeling',
       path: '/sea-ice',
       icon: Snowflake,
-      accent: 'hover:border-black',
     },
     {
-      label: 'View Icebergs',
+      label: 'Iceberg Radar',
       description: '37 tracked icebergs & drift vectors',
       path: '/icebergs',
       icon: Mountain,
-      accent: 'hover:border-black',
     },
     {
-      label: 'Optimize Route',
+      label: 'Route Optimizer',
       description: 'Multi-objective AI polar navigation',
       path: '/routes',
       icon: Route,
-      accent: 'hover:border-black',
     },
   ];
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-5 space-y-3 shadow-xs">
-      <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
-        <h3 className="text-sm font-bold font-sans text-zinc-950">
-          Command Quick Actions
-        </h3>
-        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider font-bold">
-          Module Fast Launch
+    <div className="apple-card p-0 overflow-hidden select-none shadow-2xs">
+      <div className="px-5 py-4 flex flex-row items-center justify-between border-b border-[#f0f0f0] bg-[#fafafc]">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-[8px] bg-white border border-[#e0e0e0] text-[#0066cc]">
+            <Zap className="w-4 h-4" />
+          </div>
+          <h3 className="text-[15px] sm:text-[16px] font-semibold text-[#1d1d1f] tracking-tight">
+            Tactical Quick Launch
+          </h3>
+        </div>
+        <span className="text-[12px] text-neutral-500 font-normal">
+          Bridge Fast Deck
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-        {actions.map((action) => {
-          const Icon = action.icon;
-          return (
-            <button
-              key={action.path}
-              onClick={() => navigate(action.path)}
-              className={`p-3.5 rounded-xl bg-white hover:bg-zinc-50 border border-zinc-200 text-left transition-all duration-200 group flex items-start justify-between gap-2 shadow-xs hover:shadow-md ${action.accent}`}
-            >
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-900 group-hover:bg-black group-hover:text-white transition-colors shadow-2xs">
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold font-sans text-zinc-950 group-hover:text-black transition-colors">
-                    {action.label}
+      <div className="p-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {actions.map((action) => {
+            const Icon = action.icon;
+            return (
+              <motion.button
+                key={action.path}
+                whileHover={{ y: -2, scale: 1.01, transition: { type: 'spring', stiffness: 450, damping: 25 } }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => navigate(action.path)}
+                className="p-3.5 rounded-[14px] bg-[#fafafc] hover:bg-[#f5f5f7] border border-[#e0e0e0] hover:border-[#0066cc] text-left transition-colors duration-150 group flex items-start justify-between gap-2 min-h-[56px] select-none cursor-pointer"
+              >
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="p-2 rounded-[8px] bg-white border border-[#e0e0e0] text-[#1d1d1f] group-hover:bg-[#0066cc] group-hover:text-white group-hover:border-[#0066cc] transition-colors shrink-0 mt-0.5">
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <div className="text-[10px] font-sans text-zinc-500 mt-0.5 font-medium">
-                    {action.description}
+                  <div className="min-w-0">
+                    <div className="text-[14px] font-semibold text-[#1d1d1f] group-hover:text-[#0066cc] truncate tracking-[-0.224px]">
+                      {action.label}
+                    </div>
+                    <div className="text-[12px] text-neutral-500 mt-0.5 font-normal truncate">
+                      {action.description}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all flex-shrink-0" />
-            </button>
-          );
-        })}
+                <ArrowUpRight className="w-4 h-4 text-neutral-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 mt-1" />
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 };
+

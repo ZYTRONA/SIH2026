@@ -9,6 +9,15 @@ export interface AppNotification {
   read: boolean;
 }
 
+export interface OfflineCacheStats {
+  sarIceGridCached: boolean;
+  icebergsTracked: number;
+  routesPrecomputed: number;
+  cacheSize: string;
+  lastSyncTimestamp: string;
+  storageQuotaUsedPercent: number;
+}
+
 interface AppState {
   // Sidebar states
   sidebarCollapsed: boolean;
@@ -24,11 +33,16 @@ interface AppState {
   operatorName: string;
   operatorRole: string;
 
-  // System status
+  // System & Offline Edge Resilience
+  isOffline: boolean;
   systemOnline: boolean;
   cloudConnected: boolean;
   edgeConnected: boolean;
   lastSyncTime: string;
+  offlineCache: OfflineCacheStats;
+  toggleOfflineMode: () => void;
+  setOffline: (offline: boolean) => void;
+  syncOfflineCache: () => void;
 
   // Notifications
   notifications: AppNotification[];
@@ -37,7 +51,7 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  sidebarCollapsed: true, // Default collapsed as requested
+  sidebarCollapsed: false,
   mobileSidebarOpen: false,
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
@@ -49,10 +63,50 @@ export const useAppStore = create<AppState>((set, get) => ({
   operatorName: 'Dr. R. Nair',
   operatorRole: 'Chief Scientific Navigator',
 
+  isOffline: false,
   systemOnline: true,
   cloudConnected: true,
   edgeConnected: true,
   lastSyncTime: '2 min ago',
+
+  offlineCache: {
+    sarIceGridCached: true,
+    icebergsTracked: 32,
+    routesPrecomputed: 4,
+    cacheSize: '48.2 GB',
+    lastSyncTimestamp: '2 min ago (Copernicus Pass #443)',
+    storageQuotaUsedPercent: 62.4,
+  },
+
+  toggleOfflineMode: () => {
+    const nextOffline = !get().isOffline;
+    set({
+      isOffline: nextOffline,
+      cloudConnected: !nextOffline,
+      systemOnline: true, // Edge inference still keeps system active
+      edgeConnected: true,
+    });
+  },
+
+  setOffline: (offline) => {
+    set({
+      isOffline: offline,
+      cloudConnected: !offline,
+      systemOnline: true,
+      edgeConnected: true,
+    });
+  },
+
+  syncOfflineCache: () => {
+    const nowStr = 'Just now (Edge Verified)';
+    set((state) => ({
+      lastSyncTime: nowStr,
+      offlineCache: {
+        ...state.offlineCache,
+        lastSyncTimestamp: nowStr,
+      },
+    }));
+  },
 
   notifications: [
     {

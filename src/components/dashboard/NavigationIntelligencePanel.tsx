@@ -1,171 +1,173 @@
 import React from 'react';
 import {
-  BrainCircuit,
-  Compass,
-  Zap,
+  Sparkles,
   ArrowRight,
+  Fuel,
+  Clock,
   ShieldCheck,
+  Snowflake,
   TrendingUp,
 } from 'lucide-react';
 import { NAVIGATION_INTELLIGENCE_DATA } from '@/data/dashboardData';
 import { Link } from 'react-router-dom';
-import { Progress } from '@/components/ui/progress';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
-export const NavigationIntelligencePanel: React.FC = () => {
-  const {
-    recommendedRoute,
-    confidencePct,
-    estimatedFuelSavingPct,
-    estimatedTimeDeltaHours,
-    safetyScore,
-    currentCondition,
-    aiRationale,
-  } = NAVIGATION_INTELLIGENCE_DATA;
+interface CircularConfidenceProps {
+  value: number;
+  size?: number;
+  strokeWidth?: number;
+}
+
+const CircularConfidence: React.FC<CircularConfidenceProps> = ({
+  value,
+  size = 76,
+  strokeWidth = 5,
+}) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (value / 100) * circumference;
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <div className="rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs space-y-4">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-950">
-              <BrainCircuit className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-zinc-950 font-sans tracking-tight">
-                Navigation Intelligence
-              </h2>
-              <p className="text-[11px] text-zinc-500 font-sans font-medium">
-                Autonomous Polar Decision Engine (A* + NSGA-II)
-              </p>
-            </div>
-          </div>
-
-          <span className="rounded-full bg-black px-2.5 py-1 text-[10px] font-mono font-bold text-white shadow-xs">
-            ACTIVE ADVISORY
-          </span>
-        </div>
-
-        <div className="space-y-3.5">
-          {/* Observed Environmental State */}
-          <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3.5 space-y-1">
-            <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
-              <Compass className="w-3.5 h-3.5 text-zinc-800" />
-              Observed Environmental State
-            </p>
-            <p className="text-xs text-zinc-900 font-sans italic font-medium">
-              &quot;{currentCondition}&quot;
-            </p>
-          </div>
-
-          {/* AI Recommendation */}
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3.5 space-y-2">
-            <div className="flex items-center justify-between">
-              <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-900 flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-black" />
-                AI Recommendation
-              </p>
-              <span className="rounded bg-black px-2 py-0.5 text-[10px] font-mono font-bold text-white shadow-2xs">
-                {recommendedRoute} ROUTE
-              </span>
-            </div>
-            <p className="text-xs text-zinc-700 font-sans leading-relaxed">
-              {aiRationale}
-            </p>
-          </div>
-
-          {/* 4 Metrics Grid with Radix UI Progress Indicators */}
-          <div className="grid grid-cols-2 gap-2.5 font-mono">
-            {/* 1. Model Confidence */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3 space-y-1.5 cursor-default hover:border-zinc-300 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase">Confidence</span>
-                    <span className="text-xs font-extrabold text-zinc-950">{confidencePct}%</span>
-                  </div>
-                  <Progress value={confidencePct} className="h-1.5 bg-zinc-200" indicatorClassName="bg-black" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="text-xs font-mono">
-                ECMWF & SAR ensemble confidence: {confidencePct}%
-              </TooltipContent>
-            </Tooltip>
-
-            {/* 2. Fuel Saving */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3 space-y-1.5 cursor-default hover:border-zinc-300 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase">Fuel Saving</span>
-                    <span className="text-xs font-extrabold text-emerald-600 flex items-center gap-0.5">
-                      <TrendingUp className="w-3 h-3" />
-                      +{estimatedFuelSavingPct}%
-                    </span>
-                  </div>
-                  <Progress value={estimatedFuelSavingPct * 5} className="h-1.5 bg-zinc-200" indicatorClassName="bg-emerald-600" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="text-xs font-mono">
-                Estimated fuel reduction compared to baseline standard corridor
-              </TooltipContent>
-            </Tooltip>
-
-            {/* 3. Time Delta */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3 space-y-1.5 cursor-default hover:border-zinc-300 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase">Time Delta</span>
-                    <span className="text-xs font-extrabold text-zinc-950">{estimatedTimeDeltaHours} hrs</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-zinc-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-zinc-700 w-3/4 rounded-full" />
-                  </div>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="text-xs font-mono">
-                Total voyage time advantage: {estimatedTimeDeltaHours} hours
-              </TooltipContent>
-            </Tooltip>
-
-            {/* 4. Safety Index */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3 space-y-1.5 cursor-default hover:border-zinc-300 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase">Safety Index</span>
-                    <span className="text-xs font-extrabold text-zinc-950 flex items-center gap-0.5">
-                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                      {safetyScore}/100
-                    </span>
-                  </div>
-                  <Progress value={safetyScore} className="h-1.5 bg-zinc-200" indicatorClassName="bg-black" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="text-xs font-mono">
-                POLARIS RIO Structural Compliance Index (Safe &gt; 80)
-              </TooltipContent>
-            </Tooltip>
-          </div>
-
-          {/* Drilldown button */}
-          <Link
-            to="/routes"
-            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-black hover:bg-zinc-800 text-white font-bold text-xs font-mono transition-colors shadow-xs group"
-          >
-            <span>Inspect Detailed Route Optimization</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
+    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="#f0f0f0"
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="#0066cc"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-700 ease-out"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-[18px] font-semibold text-[#1d1d1f] leading-none">{value}%</span>
+        <span className="text-[10px] text-neutral-400 font-normal mt-0.5">Confidence</span>
       </div>
-    </TooltipProvider>
+    </div>
   );
 };
 
+interface MetricRowProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  delta?: string;
+  deltaType?: 'positive' | 'negative' | 'neutral';
+  deltaLabel?: string;
+}
+
+const MetricRow: React.FC<MetricRowProps> = ({ icon, label, value, delta, deltaLabel }) => (
+  <div className="flex items-center justify-between py-2.5 border-b border-[#f0f0f0] last:border-0">
+    <div className="flex items-center gap-2.5">
+      <div className="p-1.5 rounded-full bg-[#f5f5f7] text-[#1d1d1f]">
+        {icon}
+      </div>
+      <span className="text-[14px] text-neutral-600 font-normal">{label}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <span className="text-[14px] font-semibold text-[#1d1d1f] tabular-nums">{value}</span>
+      {delta && (
+        <span className="text-[12px] font-normal text-emerald-600 flex items-center gap-0.5">
+          <TrendingUp className="w-3 h-3" />
+          {delta}
+        </span>
+      )}
+      {deltaLabel && (
+        <span className="text-[11px] text-neutral-400">{deltaLabel}</span>
+      )}
+    </div>
+  </div>
+);
+
+export const NavigationIntelligencePanel: React.FC = () => {
+  const { confidencePct, estimatedFuelSavingPct, estimatedTimeDeltaHours, safetyScore } = NAVIGATION_INTELLIGENCE_DATA;
+
+  return (
+    <div className="apple-card p-0 overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-[#f0f0f0] bg-[#fafafc]">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc]">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-[14px] font-semibold text-[#1d1d1f]">Navigation Intelligence</h3>
+            <p className="text-[12px] text-neutral-500">AI-powered route optimization and risk assessment</p>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Recommendation Banner */}
+      <div className="px-5 py-4 border-b border-[#f0f0f0]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-[11px] font-semibold text-[#0066cc] uppercase tracking-wider">AI Recommendation</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-normal bg-emerald-50 text-emerald-800 border border-emerald-200">Optimal</span>
+            </div>
+            <h4 className="text-[21px] font-semibold text-[#1d1d1f] tracking-tight">Route Delta 2.1</h4>
+            <p className="text-[14px] text-neutral-600 mt-1 leading-relaxed">
+              Adaptive route balancing safety, ice risk, and fuel efficiency.
+            </p>
+          </div>
+          <CircularConfidence value={confidencePct} />
+        </div>
+      </div>
+
+      {/* Metrics */}
+      <div className="px-5 py-2">
+        <MetricRow
+          icon={<Fuel className="w-3.5 h-3.5" />}
+          label="Fuel Saving"
+          value={`${estimatedFuelSavingPct}%`}
+          delta="-2.1 t"
+          deltaType="positive"
+        />
+        <MetricRow
+          icon={<Clock className="w-3.5 h-3.5" />}
+          label="Time Delta"
+          value={`${Math.abs(estimatedTimeDeltaHours)}h ${Math.round(Math.abs(estimatedTimeDeltaHours % 1) * 60)}m`}
+          delta="-2h 18m"
+          deltaType="positive"
+          deltaLabel="vs baseline"
+        />
+        <MetricRow
+          icon={<ShieldCheck className="w-3.5 h-3.5" />}
+          label="Safety Index"
+          value={`${safetyScore}/100`}
+          delta="Improved"
+          deltaType="positive"
+        />
+        <MetricRow
+          icon={<Snowflake className="w-3.5 h-3.5" />}
+          label="Ice Exposure"
+          value="Low"
+          delta="Reduced"
+          deltaType="positive"
+        />
+      </div>
+
+      {/* View Full Analysis Link */}
+      <div className="px-5 py-3 border-t border-[#f0f0f0] bg-[#fafafc]">
+        <Link
+          to="/routes"
+          className="btn-apple-secondary w-full !min-h-[38px] !h-[38px] !text-[14px]"
+        >
+          <span>View Full Analysis</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    </div>
+  );
+};

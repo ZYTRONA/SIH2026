@@ -15,7 +15,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/50 backdrop-blur-xs data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 z-50 bg-black/40 backdrop-blur-xs data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className
     )}
     {...props}
@@ -32,13 +32,13 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-zinc-200 bg-white p-6 shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl',
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-[#e0e0e0] bg-white p-6 duration-150 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-[18px]',
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-lg p-1.5 text-zinc-400 opacity-70 transition-all hover:opacity-100 hover:bg-zinc-100 hover:text-black focus:outline-none focus:ring-2 focus:ring-black">
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full h-8 w-8 flex items-center justify-center bg-[#f5f5f7] border border-[#e0e0e0] text-neutral-500 hover:text-[#1d1d1f] hover:bg-[#e0e0e0] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0071e3] active:scale-95">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -53,7 +53,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left border-b border-zinc-200 pb-3',
+      'flex flex-col space-y-1.5 text-left border-b border-[#f0f0f0] pb-3.5',
       className
     )}
     {...props}
@@ -67,7 +67,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-3 border-t border-zinc-200',
+      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-3.5 border-t border-[#f0f0f0]',
       className
     )}
     {...props}
@@ -82,7 +82,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      'text-base font-bold font-sans text-zinc-950 tracking-tight',
+      'text-[18px] sm:text-[21px] font-semibold text-[#1d1d1f] tracking-[-0.28px] leading-tight',
       className
     )}
     {...props}
@@ -96,7 +96,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('text-xs text-zinc-500 font-sans leading-relaxed font-medium', className)}
+    className={cn('text-[14px] text-neutral-600 leading-relaxed font-normal tracking-[-0.224px]', className)}
     {...props}
   />
 ));
