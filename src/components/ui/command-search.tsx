@@ -15,8 +15,6 @@ import {
   Mountain,
   AlertTriangle,
   Route,
-  BrainCircuit,
-  Activity,
   Server,
   ArrowRight,
   Terminal,
@@ -34,8 +32,6 @@ const quickNavLinks = [
   { path: '/icebergs', label: 'Iceberg Catalog & Drift Tracking', icon: Mountain, category: 'Hazard Tracking' },
   { path: '/risk', label: 'Antarctic POLARIS Risk Assessment', icon: AlertTriangle, category: 'Safety & RIO' },
   { path: '/routes', label: 'Pareto Route Optimization Center', icon: Route, category: 'Multi-Objective AI' },
-  { path: '/explainability', label: 'Explainable AI (XAI) Attributions', icon: BrainCircuit, category: 'Decision Transparency' },
-  { path: '/digital-twin', label: 'Antarctic Multi-Day Digital Twin', icon: Activity, category: 'Simulation Engine' },
   { path: '/system', label: 'Edge Telemetry & Cloud Pipelines', icon: Server, category: 'Infrastructure' },
 ];
 

@@ -8,8 +8,6 @@ import { SeaIceForecast } from '@/pages/SeaIceForecast';
 import { IcebergIntelligence } from '@/pages/IcebergIntelligence';
 import { RiskIntelligence } from '@/pages/RiskIntelligence';
 import { RouteOptimization } from '@/pages/RouteOptimization';
-import { ExplainableAI } from '@/pages/ExplainableAI';
-import { DigitalTwin } from '@/pages/DigitalTwin';
 import { SystemStatus } from '@/pages/SystemStatus';
 
 export const App: React.FC = () => {
@@ -27,8 +25,6 @@ export const App: React.FC = () => {
           <Route path="icebergs" element={<IcebergIntelligence />} />
           <Route path="risk" element={<RiskIntelligence />} />
           <Route path="routes" element={<RouteOptimization />} />
-          <Route path="explainability" element={<ExplainableAI />} />
-          <Route path="digital-twin" element={<DigitalTwin />} />
           <Route path="system" element={<SystemStatus />} />
           {/* Catch-all fallback */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

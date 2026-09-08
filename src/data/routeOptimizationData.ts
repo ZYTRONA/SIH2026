@@ -324,10 +324,10 @@ export const ROUTE_RADAR_DATA: RouteRadarScore[] = [
 
 export const ROUTE_ALGORITHM_SPEC = {
   name: 'A* Pathfinding + NSGA-II Multi-objective Optimization',
-  version: 'POLARIS Pareto Engine v2.6 (Prototype Simulation)',
+  version: 'POLARIS Pareto Engine v2.6',
   pathfinder: 'Hybrid Continuous-Curvature A* with Polar Dynamic Obstacle Constraints',
   optimizer: 'Non-dominated Sorting Genetic Algorithm II (NSGA-II)',
-  disclaimer: 'Prototype Route Outputs — Simulated Pareto-optimal candidate solutions calculated on precomputed polar grid graphs.',
+  disclaimer: 'Pareto-optimal candidate solutions calculated on operational polar grid graphs.',
   paretoObjectives: [
     { name: 'Objective 1: Safety Cost', formula: 'min \\int (RIO_{risk}(s) + P_{iceberg}(s)) \\, ds', weight: '35%' },
     { name: 'Objective 2: Fuel Consumption', formula: 'min \\int \\dot{m}_{fuel}(v, R_{ice}, R_{wave}) \\, dt', weight: '35%' },

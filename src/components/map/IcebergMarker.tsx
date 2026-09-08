@@ -86,8 +86,8 @@ export const IcebergMarker: React.FC<IcebergMarkerProps> = ({
         <polygon
           points={`${ix - 8},${iy - 5} ${ix + 8},${iy - 5} ${ix + 6},${iy + 6} ${ix - 6},${iy + 6}`}
           fill={colors.fill}
-          stroke="#0A1120"
-          strokeWidth="1"
+          stroke="#FFFFFF"
+          strokeWidth="1.5"
         />
       )}
 
@@ -95,8 +95,8 @@ export const IcebergMarker: React.FC<IcebergMarkerProps> = ({
         <polygon
           points={`${ix},${iy - 7} ${ix + 7},${iy + 5} ${ix - 7},${iy + 5}`}
           fill={colors.fill}
-          stroke="#0A1120"
-          strokeWidth="1"
+          stroke="#FFFFFF"
+          strokeWidth="1.5"
         />
       )}
 
@@ -104,8 +104,8 @@ export const IcebergMarker: React.FC<IcebergMarkerProps> = ({
         <polygon
           points={`${ix},${iy - 5} ${ix + 5},${iy + 3} ${ix - 5},${iy + 3}`}
           fill={colors.fill}
-          stroke="#0A1120"
-          strokeWidth="1"
+          stroke="#FFFFFF"
+          strokeWidth="1.5"
         />
       )}
 
@@ -113,23 +113,37 @@ export const IcebergMarker: React.FC<IcebergMarkerProps> = ({
         <polygon
           points={`${ix},${iy - 4} ${ix + 4},${iy} ${ix},${iy + 4} ${ix - 4},${iy}`}
           fill={colors.fill}
-          stroke="#0A1120"
-          strokeWidth="0.75"
+          stroke="#FFFFFF"
+          strokeWidth="1"
         />
       )}
 
-      {/* 4. Code Tag */}
-      <text
-        x={ix + 9}
-        y={iy - 4}
-        fill={colors.fill}
-        fontSize="9"
-        fontFamily="monospace"
-        fontWeight="bold"
-        className="select-none"
-      >
-        {iceberg.code}
-      </text>
+      {/* 4. Code Tag with Light Badge */}
+      <g transform={`translate(${ix + 8}, ${iy - 14})`}>
+        <rect
+          x="0"
+          y="0"
+          width="48"
+          height="16"
+          rx="4"
+          fill="#FFFFFF"
+          stroke={colors.fill}
+          strokeWidth="1"
+          filter="drop-shadow(0 1px 2px rgba(0,0,0,0.1))"
+        />
+        <text
+          x="24"
+          y="11"
+          fill={colors.fill}
+          fontSize="9"
+          fontFamily="monospace"
+          fontWeight="bold"
+          textAnchor="middle"
+          className="select-none"
+        >
+          {iceberg.code}
+        </text>
+      </g>
     </g>
   );
 };

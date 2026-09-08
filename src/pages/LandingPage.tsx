@@ -6,7 +6,6 @@ import {
   Snowflake,
   Mountain,
   ShieldCheck,
-  Brain,
   HardDrive,
   ArrowRight,
   Send,
@@ -73,15 +72,6 @@ export const LandingPage: React.FC = () => {
         'Evolutionary multi-objective pathfinding solving non-dominated Pareto trade-offs between transit duration, heavy marine fuel consumption, and cryospheric hazard exposure.',
       path: '/routes',
       metric: '14.2% Fuel Savings',
-    },
-    {
-      icon: Brain,
-      title: 'Explainable AI & Decision Transparency',
-      badge: 'SHAP Feature Attribution',
-      description:
-        'Transparent decision attribution providing ship masters and scientific navigators with clear natural language rationales and SHAP feature importance explaining why specific corridors are chosen.',
-      path: '/explainability',
-      metric: 'Transparent XAI',
     },
     {
       icon: HardDrive,
@@ -350,7 +340,6 @@ export const LandingPage: React.FC = () => {
               <li><Link to="/dashboard" className="hover:text-[#0066cc]">Mission Control</Link></li>
               <li><Link to="/mission-planner" className="hover:text-[#0066cc]">Route Planner</Link></li>
               <li><Link to="/routes" className="hover:text-[#0066cc]">Pareto Optimizer</Link></li>
-              <li><Link to="/digital-twin" className="hover:text-[#0066cc]">Digital Twin</Link></li>
             </ul>
           </div>
 
@@ -360,7 +349,6 @@ export const LandingPage: React.FC = () => {
               <li><Link to="/icebergs" className="hover:text-[#0066cc]">Iceberg Radar</Link></li>
               <li><Link to="/sea-ice" className="hover:text-[#0066cc]">Sea-Ice Forecast</Link></li>
               <li><Link to="/risk" className="hover:text-[#0066cc]">Risk Matrix (RIO)</Link></li>
-              <li><Link to="/explainability" className="hover:text-[#0066cc]">Explainable AI</Link></li>
             </ul>
           </div>
 

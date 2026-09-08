@@ -95,7 +95,7 @@ export const RouteLayer: React.FC<RouteLayerProps> = ({
               cx={wx}
               cy={wy}
               r="5.5"
-              fill="#0A1120"
+              fill="#FFFFFF"
               stroke={activeRoute.color}
               strokeWidth="2"
             />
@@ -103,7 +103,7 @@ export const RouteLayer: React.FC<RouteLayerProps> = ({
             <text
               x={wx + 8}
               y={wy + 3}
-              fill="#E2E8F0"
+              fill="#1d1d1f"
               fontSize="9"
               fontFamily="monospace"
               fontWeight="bold"

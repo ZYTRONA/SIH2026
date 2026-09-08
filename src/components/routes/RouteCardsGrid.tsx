@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   ROUTE_CANDIDATES,
   RouteCandidateDetail,
@@ -12,12 +11,9 @@ import {
   Fuel,
   Clock,
   Compass,
-  ArrowRight,
-  HelpCircle,
   CheckCircle2,
   AlertTriangle,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface RouteCardsGridProps {
@@ -29,8 +25,6 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
   selectedRouteKey,
   onSelectRoute,
 }) => {
-  const navigate = useNavigate();
-
   return (
     <div className="space-y-3 select-none">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
@@ -177,33 +171,14 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
 
               {/* Bottom Section for AI Recommended Route: Reason & "Why this route?" button */}
               {isRecommended && (
-                <div className="mt-4 pt-3.5 border-t border-[#f0f0f0] space-y-2.5 bg-[#fafafc] -mx-5 -mb-5 p-4 rounded-b-[18px]">
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-mono font-semibold text-[#1d1d1f] uppercase tracking-wider flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 text-[#0066cc]" />
-                      AI Recommendation Rationale
-                    </span>
-                    <p className="text-[12px] text-[#424245] leading-relaxed italic font-normal">
-                      &quot;{route.recommendationReason}&quot;
-                    </p>
-                  </div>
-
-                  {/* Why this route? Button — 44px Touch Target */}
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate('/explainability');
-                    }}
-                    variant="default"
-                    size="sm"
-                    className="w-full gap-2 min-h-[44px] bg-[#0066cc] hover:bg-[#0071e3] text-white font-semibold justify-between rounded-full cursor-pointer active:scale-95 transition-all"
-                  >
-                    <span className="flex items-center gap-2">
-                      <HelpCircle className="w-4 h-4" />
-                      Why this route? (XAI)
-                    </span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
+                <div className="mt-4 pt-3.5 border-t border-[#f0f0f0] space-y-1.5 bg-[#fafafc] -mx-5 -mb-5 p-4 rounded-b-[18px]">
+                  <span className="text-[11px] font-mono font-semibold text-[#1d1d1f] uppercase tracking-wider flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-[#0066cc]" />
+                    AI Recommendation Rationale
+                  </span>
+                  <p className="text-[12px] text-[#424245] leading-relaxed italic font-normal">
+                    &quot;{route.recommendationReason}&quot;
+                  </p>
                 </div>
               )}
 

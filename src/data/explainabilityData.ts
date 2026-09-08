@@ -49,7 +49,7 @@ export interface RouteCostItem {
 }
 
 export const EXPLAINABILITY_HEADER = {
-  title: 'Explainable Navigation Intelligence',
+  title: 'Decision Intelligence & Rationale',
   question: 'Why did POLARIS recommend this route?',
   recommendedRouteName: 'Balanced Route',
   overallConfidencePct: 91,

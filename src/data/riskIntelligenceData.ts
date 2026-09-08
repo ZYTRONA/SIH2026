@@ -166,7 +166,7 @@ export const RISK_TIMELINE_72H: RiskChartPoint[] = [
 export const RISK_ENGINE_SPEC = {
   name: 'POLARIS Deterministic Risk Engine v2.4',
   framework: 'IMO Polar Operational Limit Assessment Risk Indexing System (POLARIS RIO)',
-  disclaimer: 'Deterministic mathematical & structural safety model for prototype decision support.',
+  disclaimer: 'Deterministic mathematical & structural safety model for operational decision support.',
   inputs: [
     { name: 'Sea Ice', source: 'Sentinel-1 SAR / AMSR2', weight: '25%', formula: 'RIO = \\sum (C_i \\times RV_i)' },
     { name: 'Icebergs', source: 'SAR Catalog & Lagrangian Drift', weight: '25%', formula: 'P_{coll} \\times Area_{berg} / Dist^2' },

@@ -82,35 +82,34 @@ export const VesselMarker: React.FC<VesselMarkerProps> = ({
       <circle
         cx={vx}
         cy={vy}
-        r="9"
-        fill="#0A1120"
-        stroke="#22D3EE"
-        strokeWidth="2"
+        r="10"
+        fill="#FFFFFF"
+        stroke="#10B981"
+        strokeWidth="2.5"
       />
       <polygon
-        points={`${vx},${vy - 6} ${vx + 4},${vy + 5} ${vx - 4},${vy + 5}`}
-        fill="#22D3EE"
+        points={`${vx},${vy - 7} ${vx + 4},${vy + 5} ${vx - 4},${vy + 5}`}
+        fill="#10B981"
         transform={`rotate(${vessel.headingDeg}, ${vx}, ${vy})`}
       />
 
-      {/* 5. Telemetry Pill Label */}
-      <g transform={`translate(${vx + 14}, ${vy - 16})`}>
+      {/* 5. Telemetry Pill Label (Light Apple Badge) */}
+      <g transform={`translate(${vx + 16}, ${vy - 16})`}>
         <rect
           x="0"
           y="0"
           width="170"
           height="32"
-          rx="4"
-          fill="#0A1120"
-          fillOpacity="0.9"
-          stroke="#22D3EE"
-          strokeWidth="1"
-          strokeOpacity="0.8"
+          rx="6"
+          fill="#FFFFFF"
+          stroke="#10B981"
+          strokeWidth="1.5"
+          filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
         />
         <text
           x="8"
           y="13"
-          fill="#22D3EE"
+          fill="#1d1d1f"
           fontSize="10"
           fontFamily="monospace"
           fontWeight="bold"
@@ -120,9 +119,10 @@ export const VesselMarker: React.FC<VesselMarkerProps> = ({
         <text
           x="8"
           y="25"
-          fill="#94A3B8"
+          fill="#059669"
           fontSize="9"
           fontFamily="monospace"
+          fontWeight="bold"
         >
           HDG: {vessel.headingDeg}° | SPD: {vessel.speedKts} KTS [PC3]
         </text>

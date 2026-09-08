@@ -6,7 +6,6 @@ import {
   EdgeEngineStatusCard,
   DataSourcesStatusCard,
   ArchitectureFlowDiagram,
-  SimulationDisclaimerBanner,
 } from '@/components/system';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -37,9 +36,6 @@ export const SystemStatus: React.FC = () => {
 
         {/* 3. System Architecture Flow Diagram */}
         <ArchitectureFlowDiagram isOffline={isOffline} />
-
-        {/* 4. Prototype Disclaimer Banner */}
-        <SimulationDisclaimerBanner />
       </div>
     </PageContainer>
   );

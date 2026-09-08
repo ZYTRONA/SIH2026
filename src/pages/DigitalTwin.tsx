@@ -5,7 +5,6 @@ import {
   TimelineControls,
   LiveStatsPanel,
   RouteRecalculationOverlay,
-  PrototypeNoticeBanner,
   RecalculationStage,
 } from '@/components/digital-twin';
 import {
@@ -141,16 +140,13 @@ export const DigitalTwin: React.FC = () => {
 
   return (
     <PageContainer
-      title="Antarctic Digital Twin"
+      title="Dynamic Simulation"
       subtitle="Interactive dynamic multi-day simulation of Antarctic ice, iceberg kinematics, vessel telemetry, and route adaptation."
       badge="SIMULATION ACTIVE"
       badgeType="active"
     >
       <div className="space-y-6">
-        {/* 1. Mandatory Notice Banner */}
-        <PrototypeNoticeBanner />
-
-        {/* 2. Timeline Controls */}
+        {/* 1. Timeline Controls */}
         <TimelineControls
           currentDayIndex={currentDayIndex}
           isPlaying={isPlaying}

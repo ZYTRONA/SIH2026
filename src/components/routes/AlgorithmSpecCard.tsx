@@ -1,6 +1,6 @@
 import React from 'react';
 import { ROUTE_ALGORITHM_SPEC } from '@/data/routeOptimizationData';
-import { Cpu, GitFork, Sliders, Info, ShieldAlert, Sparkles } from 'lucide-react';
+import { Cpu, GitFork, Sliders, Info, Sparkles } from 'lucide-react';
 
 export const AlgorithmSpecCard: React.FC = () => {
   return (
@@ -22,7 +22,7 @@ export const AlgorithmSpecCard: React.FC = () => {
         </div>
 
         <span className="px-3 py-1 rounded-full text-[11px] font-mono bg-[#f5f5f7] text-[#1d1d1f] border border-[#e0e0e0] font-semibold">
-          PROTOTYPE SIMULATION
+          OPERATIONAL SOLVER
         </span>
       </div>
 
@@ -61,19 +61,6 @@ export const AlgorithmSpecCard: React.FC = () => {
               Output: <code className="text-[#1d1d1f] font-semibold">Pareto Optimal Frontier</code> (Rank-1 Solutions)
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Mandatory Disclaimer */}
-      <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 text-xs">
-        <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-        <div className="space-y-0.5">
-          <span className="font-semibold text-amber-900 block text-[12px]">
-            Prototype AI Simulation Notice
-          </span>
-          <p className="text-[#424245] text-[12px] leading-relaxed font-normal">
-            The candidate routes shown are precomputed prototype simulated solutions representing the Pareto-optimal frontier under current environmental conditions. Full real-time edge solver coupling operates in connected testbed simulation mode.
-          </p>
         </div>
       </div>
 

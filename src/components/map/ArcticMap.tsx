@@ -93,10 +93,17 @@ export const ArcticMap: React.FC<ArcticMapProps> = ({
       worldCopyJump: false,
     });
 
-    // OpenStreetMap tiles (free, no API key required)
+    // OpenStreetMap base tiles (free, no API key required)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       subdomains: 'abc',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // OpenSeaMap nautical seamarks tile layer (openseamap.org / openseamap.com)
+    L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
+      attribution: 'Nautical data &copy; <a href="https://www.openseamap.org">OpenSeaMap</a> contributors',
+      maxZoom: 18,
     }).addTo(map);
 
     // Sea-ice concentration heatmap overlay

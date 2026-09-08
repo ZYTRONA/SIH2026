@@ -5,8 +5,6 @@ import {
   TriangleAlert,
   ShieldAlert,
   Route,
-  Brain,
-  Network,
   Server,
   Radio,
   X,
@@ -38,8 +36,6 @@ const navigationItems: NavItem[] = [
   { path: '/icebergs', label: 'Iceberg Intelligence', icon: TriangleAlert, dot: 'warning' },
   { path: '/risk', label: 'Risk Intelligence', icon: ShieldAlert },
   { path: '/routes', label: 'Route Optimization', icon: Route, dot: 'teal' },
-  { path: '/explainability', label: 'Explainable AI', icon: Brain },
-  { path: '/digital-twin', label: 'Digital Twin', icon: Network },
   { path: '/system', label: 'System Status', icon: Server },
 ];
 

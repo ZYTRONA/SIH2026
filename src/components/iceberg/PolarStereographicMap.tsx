@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DetailedIceberg, HIGH_PRIORITY_ICEBERGS } from '@/data/icebergIntelligenceData';
-import { Layers, Plus, Minus, Crosshair, Check } from 'lucide-react';
+import { Layers, Plus, Minus, Crosshair, Check, Navigation, Compass } from 'lucide-react';
+import { AntarcticMap } from '@/components/map/AntarcticMap';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +22,7 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
   selectedIceberg,
   onSelectIceberg,
 }) => {
+  const [mapMode, setMapMode] = useState<'openseamap' | 'polar'>('openseamap');
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [showDriftVectors, setShowDriftVectors] = useState<boolean>(true);
   const [showTrajectories, setShowTrajectories] = useState<boolean>(true);
@@ -116,6 +118,32 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
     },
   ];
 
+  if (mapMode === 'openseamap') {
+    return (
+      <div className="relative w-full h-[520px] sm:h-[580px] lg:h-[620px] rounded-2xl overflow-hidden flex flex-col">
+        {/* Top Right Chart Switcher */}
+        <div className="absolute top-3 right-3 z-40 flex items-center gap-1 bg-white p-1 rounded-full border border-[#e0e0e0] shadow-md select-none">
+          <button
+            onClick={() => setMapMode('openseamap')}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#0066cc] text-white shadow-xs cursor-pointer"
+          >
+            <Navigation className="w-3 h-3" />
+            <span>OpenSeaMap Nautical</span>
+          </button>
+          <button
+            onClick={() => setMapMode('polar')}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold text-neutral-600 hover:bg-[#f5f5f7] cursor-pointer"
+          >
+            <Compass className="w-3 h-3 text-neutral-400" />
+            <span>Polar HUD</span>
+          </button>
+        </div>
+
+        <AntarcticMap heightClass="h-full" />
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-[520px] sm:h-[580px] lg:h-[620px] rounded-2xl bg-[#EAF3F9] border border-slate-200/90 shadow-sm overflow-hidden flex items-center justify-center select-none group">
       {/* 1. Top Left Badge */}
@@ -123,6 +151,24 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
         <div className="px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur-xs border border-slate-200 text-[11px] font-mono font-bold text-slate-800 tracking-wider shadow-xs">
           POLAR STEREOGRAPHIC PROJECTION
         </div>
+      </div>
+
+      {/* Top Right Chart Switcher */}
+      <div className="absolute top-3 right-3 z-40 flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-full border border-slate-200 shadow-md select-none">
+        <button
+          onClick={() => setMapMode('openseamap')}
+          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer"
+        >
+          <Navigation className="w-3 h-3 text-[#0066cc]" />
+          <span>OpenSeaMap Nautical</span>
+        </button>
+        <button
+          onClick={() => setMapMode('polar')}
+          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#0066cc] text-white shadow-xs cursor-pointer"
+        >
+          <Compass className="w-3 h-3" />
+          <span>Polar HUD</span>
+        </button>
       </div>
 
       {/* 2. Top Meridian Coordinates */}

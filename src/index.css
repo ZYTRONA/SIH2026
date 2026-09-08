@@ -219,3 +219,62 @@
     transform: scale(0.96);
   }
 }
+
+/* ----------------------------------------------------
+   Leaflet Light Nautical Canvas Customizations
+   ---------------------------------------------------- */
+.leaflet-container {
+  background-color: #EAF4F9 !important;
+  font-family: inherit;
+  outline: none;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.leaflet-bottom.leaflet-right,
+.leaflet-bottom.leaflet-left {
+  bottom: 38px !important;
+}
+
+.leaflet-tile {
+  filter: brightness(1) contrast(1.02);
+}
+
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(4px);
+  border-radius: 6px;
+  padding: 2px 6px !important;
+  font-size: 10px !important;
+  color: #64748b !important;
+  margin: 6px !important;
+  border: 1px solid #e2e8f0;
+}
+
+.leaflet-control-attribution a {
+  color: #0066cc !important;
+  text-decoration: none;
+}
+
+.leaflet-control-scale-line {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1.5px solid #0066cc !important;
+  color: #1d1d1f !important;
+  font-size: 10px !important;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 2px 5px !important;
+}
+
+@keyframes radar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-radar-spin {
+  animation: radar-spin 6s linear infinite;
+}

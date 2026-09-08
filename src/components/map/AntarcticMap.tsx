@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import mapboxgl from 'mapbox-gl';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import {
   MapLayerVisibility,
   IcebergFeature,
@@ -61,6 +62,40 @@ const ANTARCTIC_STATIONS = [
   { name: 'Cape Town Port [Origin]', lat: -33.9249, lng: 18.4241, country: 'South Africa (Origin)', isDest: false },
 ];
 
+// LatLng polygon definitions for Risk Zones
+const RISK_ZONE_COORDS: Record<string, L.LatLngExpression[]> = {
+  'risk-critical': [
+    [-67.5, 66.0],
+    [-67.8, 71.5],
+    [-68.8, 70.0],
+    [-68.5, 65.0],
+  ],
+  'risk-high': [
+    [-68.5, 70.0],
+    [-68.7, 75.0],
+    [-70.2, 74.0],
+    [-69.8, 68.5],
+  ],
+  'risk-moderate': [
+    [-65.5, 63.0],
+    [-66.0, 69.0],
+    [-67.5, 68.0],
+    [-67.0, 62.0],
+  ],
+  'risk-low': [
+    [-68.8, 74.5],
+    [-69.1, 78.0],
+    [-70.0, 77.5],
+    [-69.8, 73.5],
+  ],
+  'risk-safe': [
+    [-60.0, 56.0],
+    [-60.2, 68.0],
+    [-63.0, 67.0],
+    [-62.8, 55.0],
+  ],
+};
+
 export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   initialLayers,
   controlledLayers,
@@ -77,11 +112,11 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   customOverlay,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const layersGroupRef = useRef<L.LayerGroup | null>(null);
+  const tileLayersRef = useRef<{ base?: L.TileLayer; seamarks?: L.TileLayer; ref?: L.TileLayer }>({});
 
   const [basemapMode, setBasemapMode] = useState<BasemapMode>('openseamap');
-  const [engineReady, setEngineReady] = useState<boolean>(false);
   const [selectedIceberg, setSelectedIceberg] = useState<IcebergFeature | null>(null);
   const [selectedZone, setSelectedZone] = useState<RiskZoneFeature | null>(null);
   const [hudMessage, setHudMessage] = useState<string | null>(null);
@@ -115,363 +150,353 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   const icebergs = customIcebergs || ICEBERGS_DATA;
   const routes = customRoutes || ROUTE_PATHS_DATA;
 
-  // Open-Source Raster Styles for Maritime & Sailing Navigation
-  const getBasemapStyle = useCallback((mode: BasemapMode): mapboxgl.Style => {
-    if (mode === 'esriOcean') {
-      return {
-        version: 8,
-        sources: {
-          'esri-ocean': {
-            type: 'raster',
-            tiles: [
-              'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
-            ],
-            tileSize: 256,
-            maxzoom: 13,
-            attribution: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS',
-          },
-          'esri-labels': {
-            type: 'raster',
-            tiles: [
-              'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}',
-            ],
-            tileSize: 256,
-            maxzoom: 13,
-          },
-        },
-        layers: [
-          { id: 'esri-ocean-layer', type: 'raster', source: 'esri-ocean', minzoom: 0, maxzoom: 18 },
-          { id: 'esri-labels-layer', type: 'raster', source: 'esri-labels', minzoom: 0, maxzoom: 18 },
-        ],
-      };
+  // 1. Initialize Leaflet Map Instance with OpenSeaMap Nautical Chart
+  useEffect(() => {
+    if (basemapMode === 'polar') {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        layersGroupRef.current = null;
+      }
+      return;
     }
 
-    if (mode === 'osm') {
-      return {
-        version: 8,
-        sources: {
-          'osm-tiles': {
-            type: 'raster',
-            tiles: [
-              'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            ],
-            tileSize: 256,
-            maxzoom: 19,
-            attribution: '&copy; OpenStreetMap contributors',
-          },
-          'openseamap-tiles': {
-            type: 'raster',
-            tiles: ['https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png'],
-            tileSize: 256,
-            maxzoom: 18,
-            attribution: 'Map data &copy; OpenSeaMap contributors',
-          },
-        },
-        layers: [
-          { id: 'osm-layer', type: 'raster', source: 'osm-tiles', minzoom: 0, maxzoom: 19 },
-          { id: 'openseamap-layer', type: 'raster', source: 'openseamap-tiles', minzoom: 0, maxzoom: 18 },
-        ],
-      };
+    if (!mapContainerRef.current) return;
+
+    // If map instance already exists, switch tile layers
+    if (mapInstanceRef.current) {
+      updateBasemapTiles(basemapMode);
+      return;
     }
 
-    // Default: OpenSeaMap Nautical Chart with ESRI Ocean Bathymetry (Best for Sailing)
-    return {
-      version: 8,
-      sources: {
-        'esri-ocean': {
-          type: 'raster',
-          tiles: [
-            'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
-          ],
-          tileSize: 256,
-          maxzoom: 13,
-          attribution: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA',
-        },
-        'esri-labels': {
-          type: 'raster',
-          tiles: [
-            'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}',
-          ],
-          tileSize: 256,
-          maxzoom: 13,
-        },
-        'openseamap-seamarks': {
-          type: 'raster',
-          tiles: ['https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png'],
-          tileSize: 256,
-          maxzoom: 18,
-          attribution: 'Nautical data &copy; OpenSeaMap contributors',
-        },
-      },
-      layers: [
-        { id: 'esri-ocean-layer', type: 'raster', source: 'esri-ocean', minzoom: 0, maxzoom: 18 },
-        { id: 'esri-labels-layer', type: 'raster', source: 'esri-labels', minzoom: 0, maxzoom: 18 },
-        { id: 'openseamap-seamarks-layer', type: 'raster', source: 'openseamap-seamarks', minzoom: 0, maxzoom: 18 },
-      ],
-    };
-  }, []);
-
-  // Update GeoJSON Layers (Routes, Risk Zones) on Mapbox instance
-  const syncMapboxLayers = useCallback((map: mapboxgl.Map) => {
-    // 1. Routes
-    routes.forEach((route) => {
-      const sourceId = `route-source-${route.id}`;
-      const layerId = `route-layer-${route.id}`;
-      const coords = route.waypoints.map((wp) => [wp.lng, wp.lat]);
-
-      if (map.getSource(sourceId)) {
-        (map.getSource(sourceId) as mapboxgl.GeoJSONSource).setData({
-          type: 'Feature',
-          properties: { name: route.name, color: route.color },
-          geometry: { type: 'LineString', coordinates: coords },
-        });
-      } else {
-        map.addSource(sourceId, {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            properties: { name: route.name, color: route.color },
-            geometry: { type: 'LineString', coordinates: coords },
-          },
-        });
-      }
-
-      if (!map.getLayer(layerId)) {
-        map.addLayer({
-          id: layerId,
-          type: 'line',
-          source: sourceId,
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-            visibility: activeLayers.routes ? 'visible' : 'none',
-          },
-          paint: {
-            'line-color': route.color || '#0284C7',
-            'line-width': selectedRouteId === route.id ? 5 : 3,
-            'line-opacity': selectedRouteId === route.id ? 1 : 0.75,
-            'line-dasharray': route.dashArray ? [3, 2] : [1, 0],
-          },
-        });
-      } else {
-        map.setLayoutProperty(layerId, 'visibility', activeLayers.routes ? 'visible' : 'none');
-        map.setPaintProperty(layerId, 'line-width', selectedRouteId === route.id ? 5 : 3);
-      }
+    const map = L.map(mapContainerRef.current, {
+      center: [vessel.lat, vessel.lng],
+      zoom: 5,
+      zoomControl: false,
+      attributionControl: true,
+      minZoom: 2,
+      maxZoom: 18,
+      worldCopyJump: false,
     });
 
-    // 2. Iceberg Markers
-    // Clear old markers
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
+    const layerGroup = L.layerGroup().addTo(map);
+    layersGroupRef.current = layerGroup;
+    mapInstanceRef.current = map;
 
+    // Scale bar
+    L.control.scale({ imperial: true, position: 'bottomright' }).addTo(map);
+
+    // Initial base tiles
+    updateBasemapTiles(basemapMode);
+
+    // Initial bounding box to view complete Antarctic voyage corridor
+    map.fitBounds([[-70.8, 54.0], [-59.5, 79.5]], { padding: [50, 50], animate: false });
+
+    // Force Leaflet to calculate container size accurately on mount
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 150);
+
+    const handleResize = () => {
+      map.invalidateSize();
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        layersGroupRef.current = null;
+      }
+    };
+  }, [basemapMode]);
+
+  // Helper to switch base tiles
+  const updateBasemapTiles = (mode: BasemapMode) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    if (tileLayersRef.current.base) map.removeLayer(tileLayersRef.current.base);
+    if (tileLayersRef.current.seamarks) map.removeLayer(tileLayersRef.current.seamarks);
+    if (tileLayersRef.current.ref) map.removeLayer(tileLayersRef.current.ref);
+    tileLayersRef.current = {};
+
+    if (mode === 'esriOcean') {
+      const base = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
+        {
+          attribution: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS',
+          maxZoom: 13,
+        }
+      ).addTo(map);
+
+      const ref = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 13 }
+      ).addTo(map);
+
+      const seamarks = L.tileLayer(
+        'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+        {
+          attribution: 'Nautical data &copy; <a href="https://www.openseamap.org">OpenSeaMap</a>',
+          maxZoom: 18,
+        }
+      ).addTo(map);
+
+      tileLayersRef.current = { base, ref, seamarks };
+    } else if (mode === 'osm') {
+      const base = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const seamarks = L.tileLayer(
+        'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+        {
+          attribution: 'Nautical data &copy; <a href="https://www.openseamap.org">OpenSeaMap</a>',
+          maxZoom: 18,
+        }
+      ).addTo(map);
+
+      tileLayersRef.current = { base, seamarks };
+    } else {
+      // Default: OpenSeaMap Nautical Chart (openseamap.org / openseamap.com)
+      const base = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const seamarks = L.tileLayer(
+        'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+        {
+          attribution: 'Nautical data &copy; <a href="https://www.openseamap.org">OpenSeaMap</a> contributors',
+          maxZoom: 18,
+        }
+      ).addTo(map);
+
+      tileLayersRef.current = { base, seamarks };
+    }
+  };
+
+  // 2. Render and Synchronize Leaflet Layers (Routes, Icebergs, Vessel, Stations, Risk)
+  const syncLeafletLayers = useCallback(() => {
+    const group = layersGroupRef.current;
+    if (!group) return;
+
+    group.clearLayers();
+
+    // A. Risk Zones Layer
+    if (activeLayers.risk) {
+      riskZones.forEach((rz) => {
+        const coords = RISK_ZONE_COORDS[rz.id];
+        if (!coords) return;
+
+        const polygon = L.polygon(coords, {
+          color: rz.borderColor || '#EF4444',
+          weight: 2,
+          dashArray: '5,5',
+          fillColor: rz.borderColor || '#EF4444',
+          fillOpacity: 0.14,
+        });
+
+        polygon.on('click', () => {
+          setSelectedZone(rz);
+          setHudMessage(`Risk Zone: ${rz.name} (${rz.tier})`);
+        });
+
+        group.addLayer(polygon);
+      });
+    }
+
+    // B. Pareto Routes Layer
+    if (activeLayers.routes) {
+      routes.forEach((route) => {
+        const isSelected = route.id === selectedRouteId;
+        const latLngs: L.LatLngExpression[] = route.waypoints.map((wp) => [wp.lat, wp.lng]);
+
+        if (isSelected) {
+          // Ambient glow polyline
+          const glow = L.polyline(latLngs, {
+            color: route.color || '#0066cc',
+            weight: 12,
+            opacity: 0.22,
+            lineCap: 'round',
+            lineJoin: 'round',
+          });
+          group.addLayer(glow);
+        }
+
+        const line = L.polyline(latLngs, {
+          color: route.color || '#0066cc',
+          weight: isSelected ? 5 : 3,
+          opacity: isSelected ? 1 : 0.7,
+          dashArray: isSelected ? undefined : route.dashArray,
+          lineCap: 'round',
+          lineJoin: 'round',
+        });
+
+        line.on('click', () => {
+          if (onSelectRoute) onSelectRoute(route.id);
+          setHudMessage(`Selected Corridor: ${route.name} (${route.totalDistanceNm} NM, Safety: ${route.safetyScore}%)`);
+        });
+
+        group.addLayer(line);
+
+        // Waypoints for selected route
+        if (isSelected) {
+          route.waypoints.forEach((wp, idx, arr) => {
+            if (idx === 0 || idx === arr.length - 1) return;
+            const wpIcon = L.divIcon({
+              className: 'custom-wp-icon',
+              html: `
+                <div style="width: 10px; height: 10px; border-radius: 9999px; background-color: #FFFFFF; border: 2.5px solid ${route.color || '#0066cc'}; box-shadow: 0 2px 4px rgba(0,0,0,0.15);"></div>
+              `,
+              iconSize: [10, 10],
+              iconAnchor: [5, 5],
+            });
+
+            const marker = L.marker([wp.lat, wp.lng], { icon: wpIcon });
+            marker.on('click', () => {
+              setHudMessage(`Waypoint: ${wp.name} (Ice Conc: ${wp.iceConcentrationPct}%)`);
+            });
+            group.addLayer(marker);
+          });
+        }
+      });
+    }
+
+    // C. Iceberg Markers Layer
     if (activeLayers.icebergs) {
       icebergs.forEach((ib) => {
-        const el = document.createElement('div');
-        el.className = 'cursor-pointer select-none';
         const isSelected = selectedIceberg?.id === ib.id;
         const color =
           ib.riskLevel === 'critical'
             ? '#E11D48'
             : ib.riskLevel === 'warning' || ib.riskLevel === 'high'
             ? '#D97706'
-            : '#10B981';
-        const bg =
-          ib.riskLevel === 'critical'
-            ? '#FFE4E6'
-            : ib.riskLevel === 'warning' || ib.riskLevel === 'high'
-            ? '#FEF3C7'
-            : '#D1FAE5';
+            : '#0284C7';
 
-        el.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px; font-family: monospace; font-size: 10px; font-weight: 900; background-color: ${bg}; border: 2px solid ${color}; color: ${color}; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); transform: ${isSelected ? 'scale(1.2)' : 'scale(1)'}; transition: transform 0.15s ease;">
-            <span>▲</span>
-            <span>${ib.code}</span>
-          </div>
-        `;
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
-          setSelectedIceberg(ib);
-          setHudMessage(`Selected Iceberg: ${ib.code} (${ib.sizeClass}) - ${ib.driftSpeedKts} kts`);
+        const ibIcon = L.divIcon({
+          className: 'custom-iceberg-icon',
+          html: `
+            <div style="cursor: pointer; select: none; transform: ${isSelected ? 'scale(1.2)' : 'scale(1)'}; transition: transform 0.15s ease;">
+              <div style="display: flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px; font-family: monospace; font-size: 10px; font-weight: 800; background-color: #FFFFFF; border: 2px solid ${color}; color: ${color}; box-shadow: 0 3px 6px rgba(0,0,0,0.15); white-space: nowrap;">
+                <span>▲</span>
+                <span>${ib.code}</span>
+              </div>
+            </div>
+          `,
+          iconSize: [60, 24],
+          iconAnchor: [30, 12],
         });
 
-        const marker = new mapboxgl.Marker({ element: el })
-          .setLngLat([ib.lng, ib.lat])
-          .addTo(map);
-        markersRef.current.push(marker);
+        const marker = L.marker([ib.lat, ib.lng], { icon: ibIcon });
+        marker.on('click', (e) => {
+          L.DomEvent.stopPropagation(e);
+          setSelectedIceberg(ib);
+          setHudMessage(`Iceberg ${ib.code} (${ib.sizeClass}) - Drift: ${ib.driftSpeedKts} kts`);
+        });
+
+        group.addLayer(marker);
       });
     }
 
-    // 3. Vessel Marker
-    const vesselEl = document.createElement('div');
-    vesselEl.className = 'cursor-pointer select-none';
-    vesselEl.innerHTML = `
-      <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-        <div style="position: absolute; width: 44px; height: 44px; border-radius: 9999px; background-color: rgba(16, 185, 129, 0.25); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-        <div style="height: 38px; width: 38px; border-radius: 9999px; background-color: #020617; border: 2.5px solid #10B981; color: #10B981; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); transform: rotate(${vessel.headingDeg}deg);">
-          <svg style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
-        </div>
-        <div style="position: absolute; left: 42px; top: 2px; white-space: nowrap; padding: 3px 8px; border-radius: 6px; background-color: #020617; color: #FFFFFF; border: 1.5px solid #10B981; font-family: monospace; font-size: 11px; font-weight: 800; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.4);">
-          ${vessel.name} [${vessel.speedKts} kts]
-        </div>
-      </div>
-    `;
-    vesselEl.addEventListener('click', () => {
-      setHudMessage(`${vessel.name} | Heading: ${vessel.headingDeg}° | Speed: ${vessel.speedKts} kts | IMO PC3`);
-    });
-
-    const vesselMarker = new mapboxgl.Marker({ element: vesselEl })
-      .setLngLat([vessel.lng, vessel.lat])
-      .addTo(map);
-    markersRef.current.push(vesselMarker);
-
-    // 4. Research Station Markers
+    // D. Research Station Markers
     ANTARCTIC_STATIONS.forEach((st) => {
-      const stEl = document.createElement('div');
-      stEl.className = 'cursor-pointer select-none';
       const isDest = st.isDest;
-      stEl.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px; font-family: monospace; font-size: 10px; font-weight: 900; background-color: ${isDest ? '#020617' : '#FFFFFF'}; border: 2px solid ${isDest ? '#10B981' : '#0284C7'}; color: ${isDest ? '#10B981' : '#0284C7'}; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
-          <span>${isDest ? '🏁' : '📍'}</span>
-          <span>${st.name}</span>
-        </div>
-      `;
-      stEl.addEventListener('click', () => {
+      const stIcon = L.divIcon({
+        className: 'custom-station-icon',
+        html: `
+          <div style="cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-family: monospace; font-size: 10px; font-weight: 800; background-color: ${isDest ? '#0066cc' : '#FFFFFF'}; border: 2px solid ${isDest ? '#0066cc' : '#0284C7'}; color: ${isDest ? '#FFFFFF' : '#0284C7'}; box-shadow: 0 3px 6px rgba(0,0,0,0.15); white-space: nowrap;">
+            <span>${isDest ? '🏁' : '📍'}</span>
+            <span>${st.name}</span>
+          </div>
+        `,
+        iconSize: [120, 26],
+        iconAnchor: [60, 13],
+      });
+
+      const marker = L.marker([st.lat, st.lng], { icon: stIcon });
+      marker.on('click', () => {
         setHudMessage(`Station: ${st.name} [${Math.abs(st.lat).toFixed(2)}°S, ${st.lng.toFixed(2)}°E]`);
       });
 
-      const stMarker = new mapboxgl.Marker({ element: stEl })
-        .setLngLat([st.lng, st.lat])
-        .addTo(map);
-      markersRef.current.push(stMarker);
+      group.addLayer(marker);
     });
-  }, [routes, icebergs, vessel, selectedIceberg, selectedRouteId, activeLayers]);
 
-  // Initialize Mapbox GL Instance with Open-Source Nautical Tiles
+    // E. Research Vessel Marker
+    const vesselIcon = L.divIcon({
+      className: 'custom-vessel-icon',
+      html: `
+        <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+          <div style="position: absolute; width: 44px; height: 44px; border-radius: 9999px; background-color: rgba(16, 185, 129, 0.25); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+          <div style="height: 38px; width: 38px; border-radius: 9999px; background-color: #FFFFFF; border: 2.5px solid #10B981; color: #10B981; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.18); transform: rotate(${vessel.headingDeg}deg);">
+            <svg style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+          </div>
+          <div style="position: absolute; left: 42px; top: 2px; white-space: nowrap; padding: 3px 8px; border-radius: 6px; background-color: #FFFFFF; color: #1d1d1f; border: 1.5px solid #10B981; font-family: monospace; font-size: 11px; font-weight: 800; box-shadow: 0 4px 8px rgba(0,0,0,0.12);">
+            ${vessel.name} [${vessel.speedKts} kts]
+          </div>
+        </div>
+      `,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22],
+    });
+
+    const vesselMarker = L.marker([vessel.lat, vessel.lng], { icon: vesselIcon });
+    vesselMarker.on('click', () => {
+      setHudMessage(`${vessel.name} | Heading: ${vessel.headingDeg}° | Speed: ${vessel.speedKts} kts | IMO PC3`);
+    });
+
+    group.addLayer(vesselMarker);
+  }, [routes, icebergs, vessel, selectedIceberg, selectedRouteId, activeLayers, onSelectRoute, riskZones]);
+
+  // Sync Leaflet layers on state changes
   useEffect(() => {
-    if (basemapMode === 'polar') {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-      setEngineReady(false);
-      return;
+    if (mapInstanceRef.current && basemapMode !== 'polar') {
+      syncLeafletLayers();
     }
-
-    if (!mapContainerRef.current) return;
-
-    try {
-      mapboxgl.accessToken = ''; // No token required for open-source raster tiles!
-      const map = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: getBasemapStyle(basemapMode),
-        center: [vessel.lng, vessel.lat],
-        zoom: 4.8,
-        minZoom: 1.5,
-        maxZoom: 16,
-        attributionControl: false,
-      });
-
-      map.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
-
-      map.on('load', () => {
-        mapInstanceRef.current = map;
-        setEngineReady(true);
-        syncMapboxLayers(map);
-      });
-
-      map.on('zoom', () => {
-        setZoomLevel(Math.round((map.getZoom() / 5) * 100) / 100);
-      });
-
-      return () => {
-        markersRef.current.forEach((m) => m.remove());
-        markersRef.current = [];
-        map.remove();
-        mapInstanceRef.current = null;
-      };
-    } catch {
-      setBasemapMode('polar');
-    }
-  }, [basemapMode, getBasemapStyle]);
-
-  // Sync Layers whenever dependencies change
-  useEffect(() => {
-    if (mapInstanceRef.current && engineReady) {
-      syncMapboxLayers(mapInstanceRef.current);
-    }
-  }, [syncMapboxLayers, engineReady, activeLayers, selectedRouteId]);
+  }, [syncLeafletLayers, basemapMode, activeLayers, selectedRouteId, selectedIceberg]);
 
   const toSvg = (pct: number) => pct * 10;
 
   return (
     <div className={`relative flex flex-col ${heightClass} overflow-hidden rounded-[18px] border border-[#e0e0e0] bg-white`}>
-      {/* 1. Tactical HUD Header (Solid Pure White Apple Bar) */}
-      <div className="absolute top-0 inset-x-0 z-30 flex items-center justify-between px-4 py-2.5 bg-white border-b border-[#e0e0e0]">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-[12px] font-mono font-semibold text-[#1d1d1f]">
-            <Compass className="w-4 h-4 text-[#0066cc]" />
-            <span>ANTARCTIC HIGH-LATITUDE MARITIME CHART</span>
-          </div>
-          <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-[#f5f5f7] text-[#1d1d1f] border border-[#e0e0e0] font-normal">
-            {basemapMode === 'openseamap'
-              ? 'OPENSEAMAP NAUTICAL (EPSG:3857/WGS84)'
-              : basemapMode === 'esriOcean'
-              ? 'ESRI BATHYMETRY & OCEAN DEPTH'
-              : basemapMode === 'osm'
-              ? 'OPENSTREETMAP MARINE'
-              : 'POLAR STEREOGRAPHIC (EPSG:3031)'}
-          </span>
-        </div>
-
-        {/* Telemetry Status Right */}
-        <div className="flex items-center gap-2 sm:gap-3 text-[11px] font-mono">
-          <div className="hidden md:flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[#1d1d1f]">
-            <Crosshair className="w-3 h-3 text-[#0066cc]" />
-            <span className="font-semibold">
-              POS: {Math.abs(vessel.lat).toFixed(2)}°S, {vessel.lng.toFixed(2)}°E
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-normal">
-            <Radio className="w-3 h-3 text-emerald-600 animate-pulse" />
-            <span>RADAR: 48 NM ACTIVE</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Top Left Layer & Basemap Controls Bar */}
-      {!hideControls && (
-        <div className="absolute top-14 left-4 z-30">
+      {/* 1. Tactical Command Header Bar */}
+      <div className="h-14 px-3.5 bg-white border-b border-[#e0e0e0] flex items-center justify-between gap-3 shrink-0 z-20">
+        {/* Left: MapControls Floating Command Deck */}
+        {!hideControls ? (
           <MapControls
             layers={activeLayers}
             onToggleLayer={handleToggleLayer}
             zoomLevel={zoomLevel}
             onZoomIn={() => {
-              if (mapInstanceRef.current) {
+              if (mapInstanceRef.current && basemapMode !== 'polar') {
                 mapInstanceRef.current.zoomIn();
               } else {
                 setZoomLevel((z) => Math.min(2.0, z + 0.2));
               }
             }}
             onZoomOut={() => {
-              if (mapInstanceRef.current) {
+              if (mapInstanceRef.current && basemapMode !== 'polar') {
                 mapInstanceRef.current.zoomOut();
               } else {
                 setZoomLevel((z) => Math.max(0.8, z - 0.2));
               }
             }}
             onResetView={() => {
-              if (mapInstanceRef.current) {
-                mapInstanceRef.current.flyTo({ center: [vessel.lng, vessel.lat], zoom: 4.8 });
+              if (mapInstanceRef.current && basemapMode !== 'polar') {
+                mapInstanceRef.current.fitBounds([[-70.8, 54.0], [-59.5, 79.5]], { padding: [50, 50] });
               } else {
                 setZoomLevel(1);
               }
             }}
             onCenterVessel={() => {
-              if (mapInstanceRef.current) {
-                mapInstanceRef.current.flyTo({ center: [vessel.lng, vessel.lat], zoom: 6, speed: 1.2 });
+              if (mapInstanceRef.current && basemapMode !== 'polar') {
+                mapInstanceRef.current.flyTo([vessel.lat, vessel.lng], 6, { duration: 1.2 });
               } else {
                 setZoomLevel(1.4);
               }
@@ -481,22 +506,36 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
             basemapMode={basemapMode}
             onSelectBasemap={(mode) => setBasemapMode(mode)}
           />
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center gap-2 text-[12px] font-mono font-semibold text-[#1d1d1f]">
+            <Compass className="w-4 h-4 text-[#0066cc]" />
+            <span>ANTARCTIC MARITIME CHART</span>
+          </div>
+        )}
 
-      {/* 3. Bottom Left Legend */}
-      <div className="absolute bottom-12 left-4 z-30">
-        <MapLegend />
+        {/* Right: Telemetry Live Status */}
+        <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono shrink-0">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f5f5f7] border border-[#e0e0e0] text-[#1d1d1f]">
+            <Crosshair className="w-3.5 h-3.5 text-[#0066cc]" />
+            <span className="font-semibold">
+              POS: {Math.abs(vessel.lat).toFixed(2)}°S, {vessel.lng.toFixed(2)}°E
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-normal">
+            <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+            <span className="font-semibold">RADAR: 48 NM ACTIVE</span>
+          </div>
+        </div>
       </div>
 
-      {/* 4. Real Open-Source Map Engine Viewport */}
-      {basemapMode !== 'polar' ? (
-        <div className="flex-1 w-full h-full relative bg-[#090D16] pt-12 pb-8">
-          <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
-        </div>
-      ) : (
-        /* Tactical Polar Vector Projection Canvas (EPSG:3031 Fallback) */
-        <div className="flex-1 w-full h-full relative flex items-center justify-center p-2 bg-[#EAF4F9] overflow-hidden pt-12 pb-8">
+      {/* 2. Map Viewport Canvas */}
+      <div className="flex-1 relative w-full h-full bg-[#EAF4F9] overflow-hidden">
+        {basemapMode !== 'polar' ? (
+          <div ref={mapContainerRef} className="absolute inset-0 w-full h-full z-0" />
+        ) : (
+          /* Tactical Polar Vector Projection Canvas (EPSG:3031 Fallback) */
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center p-2 bg-[#EAF4F9] overflow-hidden z-0">
           <div
             className="w-full h-full flex items-center justify-center transition-transform duration-300 select-none"
             style={{ transform: `scale(${zoomLevel})` }}
@@ -713,157 +752,163 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
         </div>
       )}
 
-      {/* 5. HUD Interactive Notification Bar */}
-      {hudMessage && (
-        <div className="absolute top-14 right-4 z-40 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 border-2 border-border text-xs font-mono text-text-primary shadow-2xl flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Crosshair className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="font-bold">{hudMessage}</span>
-          </div>
-          <button
-            onClick={() => setHudMessage(null)}
-            className="text-text-muted hover:text-text-primary font-bold text-xs"
-          >
-            ✕
-          </button>
+        {/* 5. Map Legend Overlay */}
+        <div className="absolute bottom-3 left-3 z-30 pointer-events-auto">
+          <MapLegend />
         </div>
-      )}
 
-      {/* 6. Selected Iceberg Inspection Flyout Modal (100% Solid Opacity, Zero Blur) */}
-      {selectedIceberg && (
-        <div className="absolute top-14 right-4 z-40 w-80 sm:w-96 rounded-2xl bg-white dark:bg-slate-900 border-2 border-border shadow-2xl p-4 space-y-3">
-          <div className="flex items-start justify-between pb-2 border-b border-border">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-card-subtle border border-border text-text-primary">
-                <Mountain className="w-4 h-4 text-amber-500" />
+        {/* 6. HUD Interactive Notification Bar */}
+        {hudMessage && (
+          <div className="absolute top-3 right-3 z-30 px-3.5 py-2 rounded-xl bg-white border border-[#e0e0e0] text-xs font-mono text-[#1d1d1f] shadow-xl flex items-center justify-between gap-3 max-w-sm pointer-events-auto">
+            <div className="flex items-center gap-2 min-w-0">
+              <Crosshair className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span className="font-bold truncate">{hudMessage}</span>
+            </div>
+            <button
+              onClick={() => setHudMessage(null)}
+              className="text-neutral-400 hover:text-[#1d1d1f] font-bold text-xs cursor-pointer shrink-0"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* 7. Selected Iceberg Inspection Flyout Modal */}
+        {selectedIceberg && (
+          <div className="absolute top-3 right-3 z-30 w-80 sm:w-96 rounded-2xl bg-white border border-[#e0e0e0] shadow-2xl p-4 space-y-3 pointer-events-auto">
+            <div className="flex items-start justify-between pb-2 border-b border-[#f0f0f0]">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-[#f5f5f7] border border-[#e0e0e0] text-[#1d1d1f]">
+                  <Mountain className="w-4 h-4 text-amber-500" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[#1d1d1f] font-mono">
+                    {selectedIceberg.name}
+                  </h4>
+                  <span className="text-[10px] text-neutral-500 font-mono font-normal">
+                    CODE: {selectedIceberg.code} | {selectedIceberg.detectionSource}
+                  </span>
+                </div>
               </div>
-              <div>
-                <h4 className="text-xs font-bold text-text-primary font-mono">
-                  {selectedIceberg.name}
-                </h4>
-                <span className="text-[10px] text-text-muted font-mono font-normal">
-                  CODE: {selectedIceberg.code} | {selectedIceberg.detectionSource}
+
+              <button
+                onClick={() => setSelectedIceberg(null)}
+                className="p-1 text-neutral-400 hover:text-[#1d1d1f] rounded hover:bg-[#f5f5f7] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              <div className="p-2 rounded-xl bg-[#f5f5f7] border border-[#e0e0e0]">
+                <span className="text-neutral-500 text-[10px] block font-normal">POSITION</span>
+                <span className="text-[#1d1d1f] font-bold">
+                  {Math.abs(selectedIceberg.lat).toFixed(2)}°S, {selectedIceberg.lng.toFixed(2)}°E
+                </span>
+              </div>
+
+              <div className="p-2 rounded-xl bg-[#f5f5f7] border border-[#e0e0e0]">
+                <span className="text-neutral-500 text-[10px] block font-normal">THREAT LEVEL</span>
+                <span
+                  className={`font-bold uppercase ${
+                    selectedIceberg.riskLevel === 'critical'
+                      ? 'text-rose-600'
+                      : selectedIceberg.riskLevel === 'warning' || selectedIceberg.riskLevel === 'high'
+                      ? 'text-amber-600'
+                      : 'text-emerald-600'
+                  }`}
+                >
+                  {selectedIceberg.riskLevel}
+                </span>
+              </div>
+
+              <div className="p-2 rounded-xl bg-[#f5f5f7] border border-[#e0e0e0]">
+                <span className="text-neutral-500 text-[10px] block font-normal">SIZE & AREA</span>
+                <span className="text-[#1d1d1f] font-bold">
+                  {selectedIceberg.sizeClass} ({selectedIceberg.areaKm2} km²)
+                </span>
+              </div>
+
+              <div className="p-2 rounded-xl bg-[#f5f5f7] border border-[#e0e0e0]">
+                <span className="text-neutral-500 text-[10px] block font-normal">THICKNESS / DRAFT</span>
+                <span className="text-[#1d1d1f] font-bold">
+                  {selectedIceberg.thicknessM} m
+                </span>
+              </div>
+
+              <div className="p-2 rounded-xl bg-[#f5f5f7] border border-[#e0e0e0]">
+                <span className="text-neutral-500 text-[10px] block font-normal">DRIFT VECTOR</span>
+                <span className="text-[#1d1d1f] font-bold">
+                  {selectedIceberg.driftSpeedKts} kts @ {selectedIceberg.driftDirectionDeg}°
+                </span>
+              </div>
+
+              <div className="p-2.5 rounded-[12px] bg-[#f5f5f7] border border-[#e0e0e0]">
+                <span className="text-neutral-500 text-[10px] block font-normal">CLOSEST APPROACH</span>
+                <span className="text-amber-700 font-semibold">
+                  {selectedIceberg.closestApproachNm} NM
                 </span>
               </div>
             </div>
 
-            <button
-              onClick={() => setSelectedIceberg(null)}
-              className="p-1 text-text-muted hover:text-text-primary rounded hover:bg-card-subtle"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
+            {selectedIceberg.nearestStation && (
+              <div className="text-[11px] font-mono text-neutral-500 px-1">
+                Nearest Station: <span className="text-[#1d1d1f] font-semibold">{selectedIceberg.nearestStation}</span>
+              </div>
+            )}
 
-          <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
-            <div className="p-2 rounded-xl bg-card-subtle border border-border">
-              <span className="text-text-muted text-[10px] block font-normal">POSITION</span>
-              <span className="text-text-primary font-bold">
-                {Math.abs(selectedIceberg.lat).toFixed(2)}°S, {selectedIceberg.lng.toFixed(2)}°E
-              </span>
-            </div>
-
-            <div className="p-2 rounded-xl bg-card-subtle border border-border">
-              <span className="text-text-muted text-[10px] block font-normal">THREAT LEVEL</span>
-              <span
-                className={`font-bold uppercase ${
-                  selectedIceberg.riskLevel === 'critical'
-                    ? 'text-rose-600'
-                    : selectedIceberg.riskLevel === 'warning' || selectedIceberg.riskLevel === 'high'
-                    ? 'text-amber-600'
-                    : 'text-emerald-600'
-                }`}
+            <div className="flex items-center gap-2 pt-2 border-t border-[#f0f0f0]">
+              <button
+                onClick={() => {
+                  setHudMessage(`Proximity radar tracker locked on ${selectedIceberg.code}`);
+                  setSelectedIceberg(null);
+                }}
+                className="btn-apple-primary w-full !min-h-[36px] !h-[36px] !text-[12px]"
               >
-                {selectedIceberg.riskLevel}
-              </span>
-            </div>
-
-            <div className="p-2 rounded-xl bg-card-subtle border border-border">
-              <span className="text-text-muted text-[10px] block font-normal">SIZE & AREA</span>
-              <span className="text-text-primary font-bold">
-                {selectedIceberg.sizeClass} ({selectedIceberg.areaKm2} km²)
-              </span>
-            </div>
-
-            <div className="p-2 rounded-xl bg-card-subtle border border-border">
-              <span className="text-text-muted text-[10px] block font-normal">THICKNESS / DRAFT</span>
-              <span className="text-text-primary font-bold">
-                {selectedIceberg.thicknessM} m
-              </span>
-            </div>
-
-            <div className="p-2 rounded-xl bg-card-subtle border border-border">
-              <span className="text-text-muted text-[10px] block font-normal">DRIFT VECTOR</span>
-              <span className="text-text-primary font-bold">
-                {selectedIceberg.driftSpeedKts} kts @ {selectedIceberg.driftDirectionDeg}°
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-[12px] bg-[#f5f5f7] border border-[#e0e0e0]">
-              <span className="text-neutral-500 text-[10px] block font-normal">CLOSEST APPROACH</span>
-              <span className="text-amber-700 font-semibold">
-                {selectedIceberg.closestApproachNm} NM
-              </span>
+                <Radar className="w-3.5 h-3.5" />
+                <span>Lock Collision Radar</span>
+              </button>
             </div>
           </div>
+        )}
 
-          {selectedIceberg.nearestStation && (
-            <div className="text-[11px] font-mono text-neutral-500 px-1">
-              Nearest Station: <span className="text-[#1d1d1f] font-semibold">{selectedIceberg.nearestStation}</span>
+        {/* 8. Selected Risk Zone Inspection Modal */}
+        {selectedZone && (
+          <div className="absolute top-3 right-3 z-30 w-80 rounded-[18px] bg-white border border-[#e0e0e0] shadow-xl p-4 space-y-2.5 pointer-events-auto">
+            <div className="flex items-start justify-between pb-2 border-b border-[#f0f0f0]">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-600" />
+                <h4 className="text-[13px] font-semibold text-[#1d1d1f] font-mono">
+                  {selectedZone.name}
+                </h4>
+              </div>
+              <button
+                onClick={() => setSelectedZone(null)}
+                className="p-1 rounded-full text-neutral-400 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-          )}
 
-          <div className="flex items-center gap-2 pt-2 border-t border-[#f0f0f0]">
-            <button
-              onClick={() => {
-                setHudMessage(`Proximity radar tracker locked on ${selectedIceberg.code}`);
-                setSelectedIceberg(null);
-              }}
-              className="btn-apple-primary w-full !min-h-[36px] !h-[36px] !text-[12px]"
-            >
-              <Radar className="w-3.5 h-3.5" />
-              <span>Lock Collision Radar</span>
-            </button>
+            <div className="space-y-1.5 text-[12px] font-mono">
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-500 font-normal">Risk Severity:</span>
+                <span className="font-semibold text-rose-700">{selectedZone.tier}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-500 font-normal">Calculated RIO:</span>
+                <span className="font-semibold text-[#1d1d1f]">{selectedZone.riskScore} / 100</span>
+              </div>
+              <p className="text-[12px] text-neutral-600 font-sans leading-relaxed pt-1 font-normal">
+                {selectedZone.description}
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* 7. Selected Risk Zone Inspection Modal */}
-      {selectedZone && (
-        <div className="absolute top-14 right-4 z-40 w-80 rounded-[18px] bg-white border border-[#e0e0e0] shadow-xl p-4 space-y-2.5">
-          <div className="flex items-start justify-between pb-2 border-b border-[#f0f0f0]">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-rose-600" />
-              <h4 className="text-[13px] font-semibold text-[#1d1d1f] font-mono">
-                {selectedZone.name}
-              </h4>
-            </div>
-            <button
-              onClick={() => setSelectedZone(null)}
-              className="p-1 rounded-full text-neutral-400 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="space-y-1.5 text-[12px] font-mono">
-            <div className="flex items-center justify-between">
-              <span className="text-neutral-500 font-normal">Risk Severity:</span>
-              <span className="font-semibold text-rose-700">{selectedZone.tier}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-neutral-500 font-normal">Calculated RIO:</span>
-              <span className="font-semibold text-[#1d1d1f]">{selectedZone.riskScore} / 100</span>
-            </div>
-            <p className="text-[12px] text-neutral-600 font-sans leading-relaxed pt-1 font-normal">
-              {selectedZone.description}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* 8. Bottom Map HUD Footer Bar (Solid Pure White Apple Bar) */}
-      <div className="absolute bottom-0 inset-x-0 z-30 flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-white border-t border-[#e0e0e0] text-[11px] font-mono text-neutral-600">
+      {/* 3. Bottom Map HUD Footer Bar */}
+      <div className="h-9 px-4 bg-white/95 backdrop-blur-xs border-t border-[#e0e0e0] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-neutral-600 shrink-0 z-20">
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />

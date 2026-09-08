@@ -13,7 +13,7 @@ import { Sparkles, ShieldCheck } from 'lucide-react';
 export const ExplainableAI: React.FC = () => {
   return (
     <PageContainer
-      title="Explainable Navigation Intelligence"
+      title="Decision Intelligence & Rationale"
       subtitle="Transparent AI decision rationales, SHAP feature attributions, and uncertainty margins."
       badge="TRANSPARENCY 91%"
       badgeType="active"

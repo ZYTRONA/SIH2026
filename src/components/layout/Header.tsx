@@ -36,13 +36,11 @@ import { cn } from '@/lib/utils';
 
 const PAGE_TITLES: Record<string, { title: string; ctaText: string; ctaPath: string; coordinates?: string }> = {
   '/dashboard': { title: 'Mission Control', ctaText: 'Plan Route', ctaPath: '/mission-planner', coordinates: "LAT 69°24'S • LON 76°11'E" },
-  '/mission-planner': { title: 'Mission Planner', ctaText: 'Launch Simulation', ctaPath: '/digital-twin', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/mission-planner': { title: 'Mission Planner', ctaText: 'Optimize Route', ctaPath: '/routes', coordinates: "LAT 69°24'S • LON 76°11'E" },
   '/sea-ice': { title: 'Sea-Ice Forecast', ctaText: 'Risk Analysis', ctaPath: '/risk', coordinates: "LAT 70°15'S • LON 72°30'E" },
   '/icebergs': { title: 'Iceberg Intelligence', ctaText: 'Drift Tracking', ctaPath: '/icebergs', coordinates: "LAT 68°50'S • LON 74°45'E" },
   '/risk': { title: 'Risk Intelligence', ctaText: 'Optimize Path', ctaPath: '/routes', coordinates: "LAT 69°05'S • LON 75°20'E" },
-  '/routes': { title: 'Route Optimization', ctaText: 'Explain Choices', ctaPath: '/explainability', coordinates: "LAT 69°24'S • LON 76°11'E" },
-  '/explainability': { title: 'Explainable AI', ctaText: 'System Health', ctaPath: '/system', coordinates: "LAT 69°24'S • LON 76°11'E" },
-  '/digital-twin': { title: 'Digital Twin Simulation', ctaText: 'Re-Plan Route', ctaPath: '/routes', coordinates: "LAT 69°24'S • LON 76°11'E" },
+  '/routes': { title: 'Route Optimization', ctaText: 'System Health', ctaPath: '/system', coordinates: "LAT 69°24'S • LON 76°11'E" },
   '/system': { title: 'System & Edge Status', ctaText: 'Mission Control', ctaPath: '/dashboard', coordinates: "LAT 69°24'S • LON 76°11'E" },
   '/settings': { title: 'System Settings', ctaText: 'Dashboard', ctaPath: '/dashboard', coordinates: "LAT 69°24'S • LON 76°11'E" },
 };
@@ -93,7 +91,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-white/90 border-b border-[#e0e0e0] select-none shadow-xs transition-all">
+      <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/90 border-b border-[#e0e0e0] select-none shadow-xs transition-all">
         <div className="w-full max-w-[1920px] mx-auto h-14 px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-4">
           {/* Left: Mobile hamburger + Page Title + Mission Badge */}
           <div className="flex items-center gap-3 min-w-0">
