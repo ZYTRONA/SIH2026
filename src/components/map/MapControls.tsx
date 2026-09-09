@@ -551,9 +551,12 @@ export const MapControls: React.FC<MapControlsProps> = ({
         {/* Right Telemetry Badges (Integrated into Top Header Bar) */}
         <div className="flex items-center gap-2 pointer-events-auto shrink-0">
           {/* Live Sailing Status Pill */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#e0e0e0] shadow-sm text-[11px] font-mono">
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#e0e0e0] shadow-sm text-[11px] font-mono"
+            title={vesselName ? `Active AIS Flagship: ${vesselName}` : 'Live Sailing AIS Transponder'}
+          >
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-            <span className="font-bold text-[#0A2540]">LIVE SAILING</span>
+            <span className="font-bold text-[#0A2540]">{vesselName || 'LIVE SAILING'}</span>
             <span className="text-neutral-300">•</span>
             <span className="text-neutral-600 font-semibold">{vesselSpeedKts !== undefined ? `${vesselSpeedKts.toFixed(1)} kts` : '13.2 kts'}</span>
             <span className="text-neutral-300">•</span>
