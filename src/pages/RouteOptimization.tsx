@@ -46,7 +46,7 @@ export const RouteOptimization: React.FC = () => {
   return (
     <PageContainer
       title="Route Optimization Center"
-      subtitle="Multi-objective Pareto-optimal Antarctic navigation paths, bunker fuel reduction, and dynamic ice hazard avoidance."
+      subtitle="Multi-objective Pareto-optimal North Atlantic navigation paths, bunker fuel reduction, and dynamic ice hazard avoidance."
       badge="PARETO OPTIMAL"
       badgeType="safe"
     >
@@ -85,13 +85,13 @@ export const RouteOptimization: React.FC = () => {
           onSelectRoute={handleSelectRoute}
         />
 
-        {/* 3. Interactive Antarctic Map with All 4 Candidate Routes */}
+        {/* 3. Interactive Atlantic Map with All 4 Candidate Routes */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
             <div className="flex items-center gap-2">
               <Compass className="w-4 h-4 text-[#0066cc]" />
               <h3 className="text-[14px] font-semibold text-[#1d1d1f]">
-                Multi-Route Polar Stereographic Chart
+                Multi-Route Atlantic Navigation Chart (WGS84)
               </h3>
             </div>
 

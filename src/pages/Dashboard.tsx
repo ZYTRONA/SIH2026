@@ -64,7 +64,7 @@ export const Dashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               <h2 className="text-[14px] font-semibold text-[#1d1d1f] tracking-tight">
-                Antarctic Tactical Maritime Chart
+                North Atlantic Tactical Maritime Chart
               </h2>
             </div>
             <span className="text-[12px] font-mono text-neutral-500">

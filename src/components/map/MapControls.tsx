@@ -248,7 +248,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
         className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between gap-2 pointer-events-none select-none"
       >
         {/* Left Action Buttons */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
+        <div className="flex items-center gap-1.5 sm:gap-2 pointer-events-auto shrink-0">
         {/* Chart Engine Switcher Pill */}
         <div className="relative">
           <button
@@ -463,108 +463,26 @@ export const MapControls: React.FC<MapControlsProps> = ({
             )}
           </AnimatePresence>
         </div>
-
-          {/* Icebergs Radar Focus Pill */}
-          {onFocusIcebergs && (
-            <button
-              onClick={onFocusIcebergs}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-white/95 backdrop-blur-md hover:bg-rose-50 text-[#1d1d1f] border border-rose-200 hover:border-rose-400 shadow-sm transition-all active:scale-95 cursor-pointer group"
-              title="Track 37 Active Atlantic Icebergs & Jump to Collision Risk Cluster"
-            >
-              <span className="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
-              <span className="text-[12px] font-semibold text-rose-950">🧊 {icebergsCount} Icebergs</span>
-              <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-800">
-                {criticalIcebergsCount} CRITICAL
-              </span>
-            </button>
-          )}
-
-          {/* Live Voyage Simulation Pill */}
-          {onToggleSimulation && (
-            <div className="relative">
-              <div className="flex items-center bg-white/95 backdrop-blur-md rounded-full border border-[#e0e0e0] shadow-sm p-0.5">
-                <button
-                  onClick={onToggleSimulation}
-                  className={`flex items-center gap-1.5 h-8 px-3 rounded-full text-[12px] font-semibold transition-all active:scale-95 cursor-pointer ${
-                    isSimulating
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f]'
-                  }`}
-                  title={isSimulating ? 'Pause Real-Time Voyage Simulation' : 'Start Real-Time Voyage Simulation'}
-                >
-                  {isSimulating ? (
-                    <>
-                      <Pause className="w-3 h-3" />
-                      <span>Sim Active</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-3 h-3 text-emerald-600" />
-                      <span>Simulate</span>
-                    </>
-                  )}
-                </button>
-
-                {onChangeSimulationSpeed && (
-                  <button
-                    onClick={() => {
-                      const nextSpeed = simulationSpeed === 1 ? 5 : simulationSpeed === 5 ? 20 : 1;
-                      onChangeSimulationSpeed(nextSpeed);
-                    }}
-                    className="h-8 px-2 text-[11px] font-mono font-bold text-neutral-600 hover:text-[#1d1d1f] transition-colors cursor-pointer"
-                    title="Cycle Simulation Speed Multiplier"
-                  >
-                    {simulationSpeed}x
-                  </button>
-                )}
-
-                {onResetSimulation && (
-                  <button
-                    onClick={onResetSimulation}
-                    className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
-                    title="Reset Simulation Progress to Origin"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Interactive Measurement Ruler Pill */}
-          {onToggleMeasure && (
-            <button
-              onClick={onToggleMeasure}
-              className={`flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold border shadow-sm transition-all active:scale-95 cursor-pointer ${
-                isMeasuring
-                  ? 'bg-[#0066cc] text-white border-[#0066cc]'
-                  : 'bg-white/95 backdrop-blur-md hover:bg-white text-[#1d1d1f] border-[#e0e0e0]'
-              }`}
-              title="Click any 2 points on the chart to measure distance (NM) and true bearing (°T)"
-            >
-              <Ruler className="w-3.5 h-3.5" />
-              <span className="inline">Ruler</span>
-            </button>
-          )}
         </div>
 
-        {/* Right Telemetry Badges (Integrated into Top Header Bar) */}
-        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
-          {/* Live Sailing Status Pill */}
+        {/* Right Telemetry Badges (Strictly pinned to the Top-Right Header) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 pointer-events-auto shrink-0">
+          {/* Flagship Vessel Status Pill (R/V Polar Sentinel) */}
           <div
             className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#e0e0e0] shadow-sm text-[11px] font-mono"
             title={vesselName ? `Active AIS Flagship: ${vesselName}` : 'Live Sailing AIS Transponder'}
           >
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-            <span className="font-bold text-[#0A2540]">{vesselName || 'LIVE SAILING'}</span>
+            <span className="font-bold text-[#0A2540]">{vesselName || 'R/V Polar Sentinel'}</span>
             <span className="text-neutral-300">•</span>
             <span className="text-neutral-600 font-semibold">{vesselSpeedKts !== undefined ? `${vesselSpeedKts.toFixed(1)} kts` : '13.2 kts'}</span>
             <span className="text-neutral-300">•</span>
             <span className="text-[#0A2540] font-bold">{vesselHeadingDeg !== undefined ? `${vesselHeadingDeg}°T` : '245°T'}</span>
           </div>
 
+          {/* Position Badge (POS) */}
           {vesselLat !== undefined && vesselLng !== undefined && (
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#e0e0e0] shadow-sm text-[11px] font-mono text-[#1d1d1f]">
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#e0e0e0] shadow-sm text-[11px] font-mono text-[#1d1d1f]">
               <Crosshair className="w-3.5 h-3.5 text-[#0066cc]" />
               <span className="font-semibold">POS:</span>
               <span>
@@ -573,11 +491,98 @@ export const MapControls: React.FC<MapControlsProps> = ({
             </div>
           )}
 
+          {/* Radar Status Badge (RADAR) */}
           <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/95 backdrop-blur-md border border-emerald-200 shadow-sm text-emerald-800 text-[11px] font-mono font-semibold">
             <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
             <span>RADAR: 48 NM ACTIVE</span>
           </div>
         </div>
+      </div>
+
+      {/* 2. Secondary Tactical Tool Strip (Row 2 on Left: Icebergs, Simulation, Ruler) */}
+      <div className="absolute top-14 left-3 z-30 flex items-center gap-1.5 sm:gap-2 pointer-events-auto select-none">
+        {/* Icebergs Radar Focus Pill */}
+        {onFocusIcebergs && (
+          <button
+            onClick={onFocusIcebergs}
+            className="flex items-center gap-1.5 h-8.5 px-3 rounded-full bg-white/95 backdrop-blur-md hover:bg-rose-50 text-[#1d1d1f] border border-rose-200 hover:border-rose-400 shadow-sm transition-all active:scale-95 cursor-pointer group"
+            title="Track 37 Active Atlantic Icebergs & Jump to Collision Risk Cluster"
+          >
+            <span className="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
+            <span className="text-[12px] font-semibold text-rose-950">🧊 {icebergsCount} Icebergs</span>
+            <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-800">
+              {criticalIcebergsCount} CRITICAL
+            </span>
+          </button>
+        )}
+
+        {/* Live Voyage Simulation Pill */}
+        {onToggleSimulation && (
+          <div className="relative">
+            <div className="flex items-center bg-white/95 backdrop-blur-md rounded-full border border-[#e0e0e0] shadow-sm p-0.5">
+              <button
+                onClick={onToggleSimulation}
+                className={`flex items-center gap-1.5 h-7.5 px-3 rounded-full text-[12px] font-semibold transition-all active:scale-95 cursor-pointer ${
+                  isSimulating
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f]'
+                }`}
+                title={isSimulating ? 'Pause Real-Time Voyage Simulation' : 'Start Real-Time Voyage Simulation'}
+              >
+                {isSimulating ? (
+                  <>
+                    <Pause className="w-3 h-3" />
+                    <span>Sim Active</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3 h-3 text-emerald-600" />
+                    <span>Simulate</span>
+                  </>
+                )}
+              </button>
+
+              {onChangeSimulationSpeed && (
+                <button
+                  onClick={() => {
+                    const nextSpeed = simulationSpeed === 1 ? 5 : simulationSpeed === 5 ? 20 : 1;
+                    onChangeSimulationSpeed(nextSpeed);
+                  }}
+                  className="h-7.5 px-2 text-[11px] font-mono font-bold text-neutral-600 hover:text-[#1d1d1f] transition-colors cursor-pointer"
+                  title="Cycle Simulation Speed Multiplier"
+                >
+                  {simulationSpeed}x
+                </button>
+              )}
+
+              {onResetSimulation && (
+                <button
+                  onClick={onResetSimulation}
+                  className="h-7.5 w-7.5 rounded-full flex items-center justify-center text-neutral-400 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
+                  title="Reset Simulation Progress to Origin"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Interactive Measurement Ruler Pill */}
+        {onToggleMeasure && (
+          <button
+            onClick={onToggleMeasure}
+            className={`flex items-center gap-1.5 h-8.5 px-3 rounded-full text-[12px] font-semibold border shadow-sm transition-all active:scale-95 cursor-pointer ${
+              isMeasuring
+                ? 'bg-[#0066cc] text-white border-[#0066cc]'
+                : 'bg-white/95 backdrop-blur-md hover:bg-white text-[#1d1d1f] border-[#e0e0e0]'
+            }`}
+            title="Click any 2 points on the chart to measure distance (NM) and true bearing (°T)"
+          >
+            <Ruler className="w-3.5 h-3.5" />
+            <span className="inline">Ruler</span>
+          </button>
+        )}
       </div>
 
       {/* 2. Vertically Centered Floating Tactical Zoom & Viewport Controls Dock */}

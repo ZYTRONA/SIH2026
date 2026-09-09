@@ -283,6 +283,21 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     setHudMessage('Voyage simulation reset to original Atlantic coordinates');
   };
 
+  // Helper to fit map bounds to the active route or Atlantic Fairway Corridor
+  const fitRouteOrAtlanticBounds = useCallback((animate = false) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    map.invalidateSize();
+
+    if (activeRoute && activeRoute.waypoints && activeRoute.waypoints.length > 0) {
+      const latLngs = activeRoute.waypoints.map((wp) => [wp.lat, wp.lng] as [number, number]);
+      const bounds = L.latLngBounds(latLngs);
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 6.5, animate });
+    } else {
+      map.fitBounds([[44.0, -58.0], [62.0, -28.0]], { padding: [50, 50], maxZoom: 6.5, animate });
+    }
+  }, [activeRoute]);
+
   // --------------------------------------------------------------------------
   // 2. Initialize Leaflet Map Instance at the Atlantic Ocean
   // --------------------------------------------------------------------------
@@ -306,13 +321,16 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     }
 
     const map = L.map(mapContainerRef.current, {
-      center: [currentVessel.lat, currentVessel.lng],
+      center: [53.0, -44.0],
       zoom: 5,
       zoomControl: false,
       attributionControl: true,
       minZoom: 2,
-      maxZoom: 18,
-      worldCopyJump: false,
+      maxZoom: 19,
+      worldCopyJump: true,
+      scrollWheelZoom: true,
+      inertia: true,
+      inertiaDeceleration: 3000,
     });
 
     const layerGroup = L.layerGroup().addTo(map);
@@ -328,7 +346,13 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     updateBasemapTiles(basemapMode);
 
     // Initial bounding box to view complete Atlantic voyage corridor (Greenland to Newfoundland)
-    map.fitBounds([[44.0, -58.0], [62.0, -28.0]], { padding: [50, 50], animate: false });
+    const timer1 = setTimeout(() => {
+      fitRouteOrAtlanticBounds(false);
+    }, 100);
+
+    const timer2 = setTimeout(() => {
+      fitRouteOrAtlanticBounds(false);
+    }, 350);
 
     // Direct click on map background clears all active inspector cards
     const handleMapClick = () => {
@@ -361,12 +385,20 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       map.invalidateSize();
     };
     window.addEventListener('resize', handleResize);
-    const timer = setTimeout(() => {
-      map.invalidateSize();
-    }, 250);
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    });
+    if (mapContainerRef.current) {
+      resizeObserver.observe(mapContainerRef.current);
+    }
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('keydown', handleKeyDown);
       if (mapInstanceRef.current) {
@@ -378,7 +410,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
         measureLayerGroupRef.current = null;
       }
     };
-  }, [basemapMode]);
+  }, [basemapMode, fitRouteOrAtlanticBounds]);
+
+  // Synchronize route view whenever the active route or candidates change
+  useEffect(() => {
+    if (mapInstanceRef.current && basemapMode !== 'polar') {
+      fitRouteOrAtlanticBounds(true);
+    }
+  }, [selectedRouteId, customRoutes, fitRouteOrAtlanticBounds, basemapMode]);
 
   // Helper to switch base tiles
   const updateBasemapTiles = (mode: BasemapMode) => {
@@ -1336,7 +1375,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
             }}
             onResetView={() => {
               if (mapInstanceRef.current && basemapMode !== 'polar') {
-                mapInstanceRef.current.fitBounds([[44.0, -58.0], [62.0, -28.0]], { padding: [50, 50] });
+                fitRouteOrAtlanticBounds(true);
               } else {
                 setZoomLevel(1);
               }
