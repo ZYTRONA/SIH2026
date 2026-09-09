@@ -62,10 +62,10 @@ export const CORE_REASONING_POINTS: ReasoningPoint[] = [
   {
     id: 'reason-sea-ice',
     title: 'Lower sea-ice exposure',
-    summary: 'Traverses outer open leads with 58% maximum concentration.',
+    summary: 'Traverses outer open leads with 48% maximum concentration.',
     detail:
-      'Avoids central Prydz Bay compression ridges (84% multi-year pack), reducing structural hull stress by 42% compared to the direct route.',
-    metric: 'Max 58% SIC (vs 84% direct)',
+      'Avoids heavy Labrador Sea compression pack (78% multi-year pack), reducing structural hull stress by 42% compared to the direct route.',
+    metric: 'Max 48% SIC (vs 78% direct)',
     iconName: 'Snowflake',
     badge: 'SAFE PACK TRANSIT',
     badgeType: 'safe',
@@ -75,7 +75,7 @@ export const CORE_REASONING_POINTS: ReasoningPoint[] = [
     title: 'Reduced iceberg encounter probability',
     summary: 'Maintains 18+ NM buffer from tracked tabular clusters.',
     detail:
-      'Trajectory avoids projected drift vector of giant tabular iceberg IB-023 and Cape Darnley bergy bit swarms, dropping collision risk from 7.4% to 1.8%.',
+      'Trajectory avoids projected drift vector of giant tabular iceberg IB-023 and Flemish Pass bergy bit swarms, dropping collision risk from 7.4% to 1.8%.',
     metric: '18 NM CPA (P_coll 1.8%)',
     iconName: 'Mountain',
     badge: 'COLLISION BUFFER',
@@ -108,7 +108,7 @@ export const CORE_REASONING_POINTS: ReasoningPoint[] = [
     title: 'Acceptable ETA',
     summary: 'Total transit duration of 41 hours 52 minutes.',
     detail:
-      'Arrives at Bharati Station within 3.2 hours of the high-risk direct cut, keeping research station resupply logistics on schedule.',
+      "Arrives at St. John's Maritime Base within 3.2 hours of the high-risk direct cut, keeping harbor logistics on schedule.",
     metric: '41h 52m (+3.2h vs Fastest)',
     iconName: 'Clock',
     badge: 'SCHEDULE COMPLIANT',

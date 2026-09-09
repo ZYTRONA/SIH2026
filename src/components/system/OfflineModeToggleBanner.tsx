@@ -60,10 +60,10 @@ export const OfflineModeToggleBanner: React.FC<OfflineModeToggleBannerProps> = (
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">
-                Network Telemetry & Edge Mode:
+                Network Telemetry &amp; Edge Mode
               </h3>
               <span
-                className={`px-3 py-0.5 rounded-full text-[11px] font-semibold border ${
+                className={`px-3 py-0.5 rounded-full text-[11px] font-medium border ${
                   isOffline
                     ? 'bg-amber-50 text-amber-900 border-amber-200'
                     : 'bg-emerald-50 text-emerald-900 border-emerald-200'

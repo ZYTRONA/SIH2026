@@ -33,7 +33,7 @@ export const SEA_ICE_SUMMARIES: Record<ForecastHorizonKey, SeaIceHorizonSummary>
     confidencePct: 94,
     expansionRatePctPerDay: 2.8,
     estimatedMeanThicknessM: 1.15,
-    insight: 'Current baseline concentration observed across Prydz Bay and Eastern Approach sectors.',
+    insight: 'Current baseline concentration observed across Labrador Sea and Flemish Pass sectors.',
   },
   '+24h': {
     horizon: '+24h',
@@ -44,7 +44,7 @@ export const SEA_ICE_SUMMARIES: Record<ForecastHorizonKey, SeaIceHorizonSummary>
     confidencePct: 92,
     expansionRatePctPerDay: 3.1,
     estimatedMeanThicknessM: 1.22,
-    insight: 'Katabatic wind event driving offshore pack convergence into shipping corridor Bravo.',
+    insight: 'Northwesterly wind event driving offshore pack convergence into shipping corridor Bravo.',
   },
   '+48h': {
     horizon: '+48h',
@@ -77,7 +77,7 @@ export const SEA_ICE_SUMMARIES: Record<ForecastHorizonKey, SeaIceHorizonSummary>
     confidencePct: 78,
     expansionRatePctPerDay: 1.5,
     estimatedMeanThicknessM: 1.55,
-    insight: 'Long-range ensemble suggests stable coastal fast-ice expansion across Larsemann Hills.',
+    insight: 'Long-range ensemble suggests stable coastal fast-ice expansion along Newfoundland Coast.',
   },
 };
 

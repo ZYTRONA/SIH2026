@@ -369,42 +369,42 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
               textAnchor="middle"
               className="select-none pointer-events-none"
             >
-              {/* SOUTHERN OCEAN */}
+              {/* NORTH ATLANTIC OCEAN */}
               <text x="500" y="115">
-                SOUTHERN OCEAN
+                NORTH ATLANTIC OCEAN
               </text>
 
-              {/* WEDDELL SEA */}
+              {/* LABRADOR SEA */}
               <text x="404" y="270">
-                WEDDELL SEA
+                LABRADOR SEA
               </text>
 
-              {/* SCOTIA SEA */}
+              {/* FLEMISH PASS */}
               <text x="690" y="270">
-                SCOTIA SEA
+                FLEMISH PASS
               </text>
 
-              {/* AMUNDSEN SEA */}
+              {/* GRAND BANKS */}
               <text x="345" y="535">
-                AMUNDSEN
+                GRAND
               </text>
               <text x="345" y="552">
-                SEA
+                BANKS
               </text>
 
               {/* Inner SEA label */}
               <text x="445" y="420" fontSize="10" opacity="0.75">
-                SEA
+                ICE ALLEY
               </text>
 
-              {/* DAVIS SEA */}
+              {/* CAPE FAREWELL */}
               <text x="704" y="638">
-                DAVIS SEA
+                CAPE FAREWELL
               </text>
 
-              {/* ROSS SEA */}
+              {/* DAVIS STRAIT */}
               <text x="675" y="770">
-                ROSS SEA
+                DAVIS STRAIT
               </text>
             </g>
           )}

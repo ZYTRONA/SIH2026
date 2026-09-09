@@ -52,23 +52,23 @@ export const RISK_SCALE_TIERS: RiskScaleItem[] = [
   { range: '80–100', tier: 'CRITICAL', color: '#EF4444', badgeBg: 'bg-rose-500/15', badgeBorder: 'border-rose-500/40', textColor: 'text-rose-300', description: 'Extreme structural hazard. Immediate avoidance mandatory.' },
 ];
 
-// Mission Risk Summary requested by Prompt
+// Mission Risk Summary for Atlantic Ocean Corridor
 export const MISSION_RISK_SUMMARY = {
   overallScore: 24, // 24 / 100 (LOW)
   overallTier: 'LOW' as RiskTier,
-  rioMargin: '+18 NOMINAL',
+  rioMargin: '+16 NOMINAL',
   vesselCapability: 'PC3 Ice-Class',
   lastEvaluated: '12 min ago',
   subsystems: [
     {
       id: 'sub-weather',
       name: 'Weather Risk',
-      score: 37,
+      score: 34,
       tier: 'LOW' as RiskTier,
       weightPct: 25,
       trend: 'increasing' as const,
-      trendDelta: '+8 in 24h',
-      description: 'Crosswind 24 kts SSE with gusts up to 34 kts.',
+      trendDelta: '+6 in 24h',
+      description: 'North Atlantic westerlies 20 kts NW with gusts up to 30 kts.',
       iconName: 'Wind' as const,
     },
     {
@@ -78,19 +78,19 @@ export const MISSION_RISK_SUMMARY = {
       tier: 'LOW' as RiskTier,
       weightPct: 15,
       trend: 'stable' as const,
-      trendDelta: '±0.5 kts',
-      description: 'Antarctic Divergence boundary current with 1.8m swell.',
+      trendDelta: '±0.4 kts',
+      description: 'Labrador Current southbound streamline with 2.2m swell.',
       iconName: 'Compass' as const,
     },
     {
       id: 'sub-iceberg',
       name: 'Iceberg Risk',
-      score: 21,
+      score: 26,
       tier: 'LOW' as RiskTier,
       weightPct: 25,
       trend: 'increasing' as const,
       trendDelta: '+4 detected',
-      description: 'IB-023 trajectory 12 km from planned corridor Bravo.',
+      description: 'IB-023 trajectory 3.4 NM from planned corridor Bravo.',
       iconName: 'Mountain' as const,
     },
     {
@@ -99,54 +99,54 @@ export const MISSION_RISK_SUMMARY = {
       score: 18,
       tier: 'SAFE' as RiskTier,
       weightPct: 25,
-      trend: 'increasing' as const,
-      trendDelta: '+3.2% conc',
-      description: 'First-year open pack (82.4% max concentration).',
+      trend: 'stable' as const,
+      trendDelta: '+1.8% conc',
+      description: 'Flemish Pass open lead (48.2% max concentration).',
       iconName: 'Snowflake' as const,
     },
     {
       id: 'sub-bathy',
       name: 'Bathymetry Risk',
-      score: 11,
+      score: 10,
       tier: 'SAFE' as RiskTier,
       weightPct: 10,
       trend: 'stable' as const,
       trendDelta: 'Deep water',
-      description: 'Mean sounding &gt; 850m along transit corridor.',
+      description: 'Mean sounding > 1200m along Atlantic transit corridor.',
       iconName: 'Anchor' as const,
     },
   ],
 };
 
-// Active Hazards requested by Prompt
+// Active Hazards in Atlantic Ocean Corridor
 export const ACTIVE_HAZARDS_DATA: ActiveHazardItem[] = [
   {
     id: 'haz-01',
     severity: 'HIGH',
     title: 'Iceberg Proximity Incursion',
-    detail: 'Iceberg IB-023 projected drift vector closes to 12 km from route corridor Bravo.',
-    sector: 'Prydz Bay Sector 7B (68.5°S, 69.1°E)',
-    proximityInfo: '12 km from route',
-    mitigation: 'Adjust waypoint Bravo 8 NM West; lock continuous radar tracker.',
+    detail: 'Iceberg IB-023 projected drift vector closes to 3.4 NM from route corridor Bravo.',
+    sector: 'Grand Banks Sector 4A (53.2°N, -46.8°W)',
+    proximityInfo: '3.4 NM from route',
+    mitigation: 'Adjust waypoint Bravo 6 NM East; lock continuous radar tracker.',
     timestamp: '14 min ago',
   },
   {
     id: 'haz-02',
     severity: 'WARNING',
     title: 'Increasing Sea-Ice Concentration',
-    detail: 'Katabatic wind pushing multi-year floes into outer shipping lane.',
-    sector: 'Eastern Approach Corridor (68.9°S, 72.8°E)',
+    detail: 'Labrador Current pushing first-year floes into outer shipping lane.',
+    sector: 'Labrador Shelf Margin (54.8°N, -49.2°W)',
     proximityInfo: 'Expected +24h',
-    mitigation: 'Traverse open pack leads before 18:00 UTC.',
+    mitigation: 'Traverse Flemish Pass open lead before 18:00 UTC.',
     timestamp: '28 min ago',
   },
   {
     id: 'haz-03',
     severity: 'MODERATE',
     title: 'Crosswind Atmospheric Front',
-    detail: 'Sustained SSE gale force crosswind with gusts reaching 38 knots.',
-    sector: 'Southern Ocean Grid 4',
-    proximityInfo: '24 knots',
+    detail: 'Sustained NW gale force crosswind with gusts reaching 32 knots.',
+    sector: 'North Atlantic Grid 3',
+    proximityInfo: '20 knots',
     mitigation: 'Ballast trim adjusted; dynamic positioning ready.',
     timestamp: '1 hr ago',
   },
@@ -154,13 +154,13 @@ export const ACTIVE_HAZARDS_DATA: ActiveHazardItem[] = [
 
 // 72-Hour Risk Dynamics Chart Data
 export const RISK_TIMELINE_72H: RiskChartPoint[] = [
-  { timeLabel: 'T+00h', hourOffset: 0, compositeRisk: 24, seaIceRisk: 18, icebergRisk: 21, weatherRisk: 37, oceanRisk: 22, bathymetryRisk: 11 },
-  { timeLabel: 'T+12h', hourOffset: 12, compositeRisk: 27, seaIceRisk: 20, icebergRisk: 24, weatherRisk: 42, oceanRisk: 24, bathymetryRisk: 11 },
-  { timeLabel: 'T+24h', hourOffset: 24, compositeRisk: 34, seaIceRisk: 26, icebergRisk: 31, weatherRisk: 52, oceanRisk: 26, bathymetryRisk: 12 },
-  { timeLabel: 'T+36h', hourOffset: 36, compositeRisk: 41, seaIceRisk: 32, icebergRisk: 38, weatherRisk: 58, oceanRisk: 28, bathymetryRisk: 12 },
-  { timeLabel: 'T+48h', hourOffset: 48, compositeRisk: 38, seaIceRisk: 30, icebergRisk: 34, weatherRisk: 48, oceanRisk: 26, bathymetryRisk: 11 },
-  { timeLabel: 'T+60h', hourOffset: 60, compositeRisk: 29, seaIceRisk: 24, icebergRisk: 26, weatherRisk: 36, oceanRisk: 23, bathymetryRisk: 11 },
-  { timeLabel: 'T+72h', hourOffset: 72, compositeRisk: 22, seaIceRisk: 19, icebergRisk: 20, weatherRisk: 28, oceanRisk: 20, bathymetryRisk: 10 },
+  { timeLabel: 'T+00h', hourOffset: 0, compositeRisk: 24, seaIceRisk: 18, icebergRisk: 26, weatherRisk: 34, oceanRisk: 22, bathymetryRisk: 10 },
+  { timeLabel: 'T+12h', hourOffset: 12, compositeRisk: 27, seaIceRisk: 20, icebergRisk: 28, weatherRisk: 38, oceanRisk: 24, bathymetryRisk: 10 },
+  { timeLabel: 'T+24h', hourOffset: 24, compositeRisk: 33, seaIceRisk: 24, icebergRisk: 33, weatherRisk: 46, oceanRisk: 25, bathymetryRisk: 11 },
+  { timeLabel: 'T+36h', hourOffset: 36, compositeRisk: 38, seaIceRisk: 28, icebergRisk: 36, weatherRisk: 50, oceanRisk: 26, bathymetryRisk: 11 },
+  { timeLabel: 'T+48h', hourOffset: 48, compositeRisk: 34, seaIceRisk: 26, icebergRisk: 32, weatherRisk: 42, oceanRisk: 24, bathymetryRisk: 10 },
+  { timeLabel: 'T+60h', hourOffset: 60, compositeRisk: 26, seaIceRisk: 20, icebergRisk: 24, weatherRisk: 32, oceanRisk: 22, bathymetryRisk: 10 },
+  { timeLabel: 'T+72h', hourOffset: 72, compositeRisk: 20, seaIceRisk: 16, icebergRisk: 18, weatherRisk: 24, oceanRisk: 18, bathymetryRisk: 9 },
 ];
 
 export const RISK_ENGINE_SPEC = {
@@ -173,6 +173,6 @@ export const RISK_ENGINE_SPEC = {
     { name: 'Weather', source: 'ECMWF HRES 10m Wind & Temp', weight: '25%', formula: 'Wind_{drag} + Superstructure_{icing}' },
     { name: 'Ocean', source: 'HYCOM Currents & Wave Swell', weight: '15%', formula: 'Swell_{drift} + Divergence_{shear}' },
     { name: 'Bathymetry', source: 'GEBCO High-Latitude Soundings', weight: '10%', formula: 'Underkeel_{clearance} / Depth_{min}' },
-    { name: 'Vessel Capability', source: 'PC3 Ice-Class Hull Specification', weight: 'Constraint', formula: 'Hull Limit RIO &gt; 0' },
+    { name: 'Vessel Capability', source: 'PC3 Ice-Class Hull Specification', weight: 'Constraint', formula: 'Hull Limit RIO > 0' },
   ],
 };

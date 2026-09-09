@@ -34,7 +34,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-export type BasemapMode = 'openseamap' | 'esriOcean' | 'osm' | 'polar';
+export type BasemapMode = 'voyager' | 'openseamap' | 'esriOcean' | 'satellite' | 'polar' | 'osm';
 
 export interface MapControlsProps {
   layers: MapLayerVisibility;
@@ -54,6 +54,14 @@ export interface MapControlsProps {
   simulationSpeed?: 1 | 5 | 20;
   onChangeSimulationSpeed?: (speed: 1 | 5 | 20) => void;
   onResetSimulation?: () => void;
+  vesselLat?: number;
+  vesselLng?: number;
+  vesselSpeedKts?: number;
+  vesselHeadingDeg?: number;
+  vesselName?: string;
+  onFocusIcebergs?: () => void;
+  icebergsCount?: number;
+  criticalIcebergsCount?: number;
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
@@ -64,7 +72,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
   onZoomOut,
   onResetView,
   onCenterVessel,
-  basemapMode = 'openseamap',
+  basemapMode = 'voyager',
   onSelectBasemap,
   isMeasuring = false,
   onToggleMeasure,
@@ -73,6 +81,14 @@ export const MapControls: React.FC<MapControlsProps> = ({
   simulationSpeed = 5,
   onChangeSimulationSpeed,
   onResetSimulation,
+  vesselLat,
+  vesselLng,
+  vesselSpeedKts,
+  vesselHeadingDeg,
+  vesselName,
+  onFocusIcebergs,
+  icebergsCount = 37,
+  criticalIcebergsCount = 7,
 }) => {
   const [basemapOpen, setBasemapOpen] = useState<boolean>(false);
   const [layersOpen, setLayersOpen] = useState<boolean>(false);
@@ -101,14 +117,14 @@ export const MapControls: React.FC<MapControlsProps> = ({
   }> = [
     {
       key: 'seaIce',
-      label: 'Sea Ice Concentration',
-      sublabel: 'Sentinel-1 SAR Radar & WMO Egg Code',
+      label: 'Labrador & Greenland Sea Ice',
+      sublabel: 'Sentinel-1 SAR 0–100% Concentration',
       icon: Snowflake,
       color: 'text-sky-600',
     },
     {
       key: 'icebergs',
-      label: 'Iceberg Radar Targets',
+      label: 'Atlantic Iceberg Targets',
       sublabel: '37 Tracked + 72h Drift Trajectories',
       icon: Mountain,
       color: 'text-amber-600',
@@ -116,14 +132,14 @@ export const MapControls: React.FC<MapControlsProps> = ({
     },
     {
       key: 'risk',
-      label: 'POLARIS Risk Corridors',
-      sublabel: 'RIO Structural Limit Contours',
+      label: 'POLARIS RIO Hazard Zones',
+      sublabel: 'Structural Limit & Ice Incursion Contours',
       icon: ShieldAlert,
       color: 'text-rose-600',
     },
     {
       key: 'routes',
-      label: 'Pareto Navigation Paths',
+      label: 'Pareto Navigation Corridors',
       sublabel: 'A* Multi-Objective Solvers',
       icon: Route,
       color: 'text-[#0066cc]',
@@ -132,44 +148,44 @@ export const MapControls: React.FC<MapControlsProps> = ({
     {
       key: 'aisTargets',
       label: 'AIS Marine Traffic',
-      sublabel: '6 Polar Vessels & Closest Approach (CPA)',
+      sublabel: '6 Atlantic Vessels & CPA Vectors',
       icon: Ship,
       color: 'text-blue-600',
       badge: '6 SHIPS',
     },
     {
       key: 'stations',
-      label: 'Antarctic Research Bases',
-      sublabel: '12 Scientific Stations & Radio Comms',
+      label: 'Atlantic Ports & Research Bases',
+      sublabel: '12 Scientific Stations & CCG Terminals',
       icon: MapPin,
       color: 'text-emerald-700',
-      badge: '12 BASES',
+      badge: '12 PORTS',
     },
     {
       key: 'navAids',
-      label: 'Nautical Aids to Navigation',
-      sublabel: 'Lights, Fairway Buoys & Virtual AtoN',
+      label: 'Aids to Navigation (AtoN)',
+      sublabel: 'Fairway Buoys, Lighthouses & AIS Virtual',
       icon: Sparkles,
       color: 'text-amber-700',
     },
     {
       key: 'oceanCurrents',
-      label: 'Ocean Currents & Gyres',
-      sublabel: 'Circumpolar & Coastal Streamlines',
+      label: 'Atlantic Ocean Currents',
+      sublabel: 'Labrador Current & North Atlantic Drift',
       icon: Compass,
       color: 'text-emerald-600',
     },
     {
       key: 'bathymetry',
       label: 'Seabed Bathymetry',
-      sublabel: 'Isobaths (-100m to -3000m)',
+      sublabel: 'Grand Banks & Flemish Pass Isobaths',
       icon: Anchor,
       color: 'text-indigo-600',
     },
     {
       key: 'weather',
       label: 'Wind & Swell Vectors',
-      sublabel: 'ECMWF & Katabatic Wind Barbs',
+      sublabel: 'NOAA GFS & Transatlantic Wave Vectors',
       icon: CloudRain,
       color: 'text-blue-500',
     },
@@ -184,33 +200,40 @@ export const MapControls: React.FC<MapControlsProps> = ({
     isPrimary?: boolean;
   }> = [
     {
-      id: 'openseamap',
-      name: 'OpenSeaMap Nautical',
-      subtitle: 'Official nautical seamarks, buoys, beacons & depth soundings',
-      tag: 'OPENSEAMAP',
+      id: 'voyager',
+      name: 'Google-Style Marine Topo',
+      subtitle: 'Crisp vector topographic basemap + OpenSeaMap nautical marks (No Watermark)',
+      tag: 'GOOGLE-STYLE',
       icon: Navigation,
       isPrimary: true,
     },
     {
       id: 'esriOcean',
-      name: 'ESRI Ocean Floor',
-      subtitle: 'High-definition bathymetric depth & continental shelf relief',
+      name: 'ESRI Ocean Floor Bathymetry',
+      subtitle: 'GEBCO & NOAA oceanic depth contours & continental shelf',
       tag: 'BATHYMETRY',
       icon: Anchor,
     },
     {
-      id: 'osm',
-      name: 'OpenStreetMap Marine',
-      subtitle: 'Global maritime baseline, coastlines, research bases & ports',
-      tag: 'OSM BASE',
+      id: 'satellite',
+      name: 'Satellite True-Color Marine',
+      subtitle: 'High-res true color imagery + OpenSeaMap fairway marks',
+      tag: 'SATELLITE',
       icon: MapIcon,
     },
     {
-      id: 'polar',
-      name: 'Polar Stereographic HUD',
-      subtitle: 'Tactical EPSG:3031 radar sweep projection with ice shelf leads',
-      tag: 'EPSG:3031',
+      id: 'openseamap',
+      name: 'OpenSeaMap Open Source',
+      subtitle: 'OpenStreetMap + OpenSeaMap seamarks, lighthouses & buoys',
+      tag: 'OPEN SEA',
       icon: Radio,
+    },
+    {
+      id: 'polar',
+      name: 'Tactical Radar HUD',
+      subtitle: 'Polar stereographic radar sweep & ice lead scanner',
+      tag: 'TACTICAL',
+      icon: Sparkles,
     },
   ];
 
@@ -219,11 +242,13 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
   return (
     <TooltipProvider delayDuration={150}>
-      {/* 1. Top-Left Floating Command Islands: Chart Selector, Layers, Simulation, Ruler */}
+      {/* 1. Unified Top Command Toolbar (Left Action Pills + Right Telemetry) */}
       <div
         ref={topControlsRef}
-        className="absolute top-3 left-3 z-30 flex flex-wrap items-center gap-2 pointer-events-auto select-none max-w-[calc(100%-120px)]"
+        className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between gap-2 pointer-events-none select-none"
       >
+        {/* Left Action Buttons */}
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
         {/* Chart Engine Switcher Pill */}
         <div className="relative">
           <button
@@ -439,77 +464,121 @@ export const MapControls: React.FC<MapControlsProps> = ({
           </AnimatePresence>
         </div>
 
-        {/* Live Voyage Simulation Pill */}
-        {onToggleSimulation && (
-          <div className="relative">
-            <div className="flex items-center bg-white/95 backdrop-blur-md rounded-full border border-[#e0e0e0] shadow-md p-0.5">
-              <button
-                onClick={onToggleSimulation}
-                className={`flex items-center gap-1.5 h-8 px-3 rounded-full text-[12px] font-semibold transition-all active:scale-95 cursor-pointer ${
-                  isSimulating
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f]'
-                }`}
-                title={isSimulating ? 'Pause Real-Time Voyage Simulation' : 'Start Real-Time Voyage Simulation'}
-              >
-                {isSimulating ? (
-                  <>
-                    <Pause className="w-3 h-3" />
-                    <span>Sim Active</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3 h-3 text-emerald-600" />
-                    <span>Simulate</span>
-                  </>
+          {/* Icebergs Radar Focus Pill */}
+          {onFocusIcebergs && (
+            <button
+              onClick={onFocusIcebergs}
+              className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-white/95 backdrop-blur-md hover:bg-rose-50 text-[#1d1d1f] border border-rose-200 hover:border-rose-400 shadow-sm transition-all active:scale-95 cursor-pointer group"
+              title="Track 37 Active Atlantic Icebergs & Jump to Collision Risk Cluster"
+            >
+              <span className="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
+              <span className="text-[12px] font-semibold text-rose-950">🧊 {icebergsCount} Icebergs</span>
+              <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-800">
+                {criticalIcebergsCount} CRITICAL
+              </span>
+            </button>
+          )}
+
+          {/* Live Voyage Simulation Pill */}
+          {onToggleSimulation && (
+            <div className="relative">
+              <div className="flex items-center bg-white/95 backdrop-blur-md rounded-full border border-[#e0e0e0] shadow-sm p-0.5">
+                <button
+                  onClick={onToggleSimulation}
+                  className={`flex items-center gap-1.5 h-8 px-3 rounded-full text-[12px] font-semibold transition-all active:scale-95 cursor-pointer ${
+                    isSimulating
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-[#f5f5f7] hover:bg-[#e0e0e0] text-[#1d1d1f]'
+                  }`}
+                  title={isSimulating ? 'Pause Real-Time Voyage Simulation' : 'Start Real-Time Voyage Simulation'}
+                >
+                  {isSimulating ? (
+                    <>
+                      <Pause className="w-3 h-3" />
+                      <span>Sim Active</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3 h-3 text-emerald-600" />
+                      <span>Simulate</span>
+                    </>
+                  )}
+                </button>
+
+                {onChangeSimulationSpeed && (
+                  <button
+                    onClick={() => {
+                      const nextSpeed = simulationSpeed === 1 ? 5 : simulationSpeed === 5 ? 20 : 1;
+                      onChangeSimulationSpeed(nextSpeed);
+                    }}
+                    className="h-8 px-2 text-[11px] font-mono font-bold text-neutral-600 hover:text-[#1d1d1f] transition-colors cursor-pointer"
+                    title="Cycle Simulation Speed Multiplier"
+                  >
+                    {simulationSpeed}x
+                  </button>
                 )}
-              </button>
 
-              {onChangeSimulationSpeed && (
-                <button
-                  onClick={() => {
-                    const nextSpeed = simulationSpeed === 1 ? 5 : simulationSpeed === 5 ? 20 : 1;
-                    onChangeSimulationSpeed(nextSpeed);
-                  }}
-                  className="h-8 px-2 text-[11px] font-mono font-bold text-neutral-600 hover:text-[#1d1d1f] transition-colors cursor-pointer"
-                  title="Cycle Simulation Speed Multiplier"
-                >
-                  {simulationSpeed}x
-                </button>
-              )}
-
-              {onResetSimulation && (
-                <button
-                  onClick={onResetSimulation}
-                  className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
-                  title="Reset Simulation Progress to Origin"
-                >
-                  <RotateCcw className="w-3 h-3" />
-                </button>
-              )}
+                {onResetSimulation && (
+                  <button
+                    onClick={onResetSimulation}
+                    className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
+                    title="Reset Simulation Progress to Origin"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Interactive Measurement Ruler Pill */}
-        {onToggleMeasure && (
-          <button
-            onClick={onToggleMeasure}
-            className={`flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold border shadow-md transition-all active:scale-95 cursor-pointer ${
-              isMeasuring
-                ? 'bg-[#0066cc] text-white border-[#0066cc]'
-                : 'bg-white/95 backdrop-blur-md hover:bg-white text-[#1d1d1f] border-[#e0e0e0]'
-            }`}
-            title="Click any 2 points on the chart to measure distance (NM) and true bearing (°T)"
-          >
-            <Ruler className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Ruler</span>
-          </button>
-        )}
+          {/* Interactive Measurement Ruler Pill */}
+          {onToggleMeasure && (
+            <button
+              onClick={onToggleMeasure}
+              className={`flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold border shadow-sm transition-all active:scale-95 cursor-pointer ${
+                isMeasuring
+                  ? 'bg-[#0066cc] text-white border-[#0066cc]'
+                  : 'bg-white/95 backdrop-blur-md hover:bg-white text-[#1d1d1f] border-[#e0e0e0]'
+              }`}
+              title="Click any 2 points on the chart to measure distance (NM) and true bearing (°T)"
+            >
+              <Ruler className="w-3.5 h-3.5" />
+              <span className="inline">Ruler</span>
+            </button>
+          )}
+        </div>
+
+        {/* Right Telemetry Badges (Integrated into Top Header Bar) */}
+        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
+          {/* Live Sailing Status Pill */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#e0e0e0] shadow-sm text-[11px] font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+            <span className="font-bold text-[#0A2540]">LIVE SAILING</span>
+            <span className="text-neutral-300">•</span>
+            <span className="text-neutral-600 font-semibold">{vesselSpeedKts !== undefined ? `${vesselSpeedKts.toFixed(1)} kts` : '13.2 kts'}</span>
+            <span className="text-neutral-300">•</span>
+            <span className="text-[#0A2540] font-bold">{vesselHeadingDeg !== undefined ? `${vesselHeadingDeg}°T` : '245°T'}</span>
+          </div>
+
+          {vesselLat !== undefined && vesselLng !== undefined && (
+            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#e0e0e0] shadow-sm text-[11px] font-mono text-[#1d1d1f]">
+              <Crosshair className="w-3.5 h-3.5 text-[#0066cc]" />
+              <span className="font-semibold">POS:</span>
+              <span>
+                {Math.abs(vesselLat).toFixed(2)}°{vesselLat >= 0 ? 'N' : 'S'}, {Math.abs(vesselLng).toFixed(2)}°{vesselLng >= 0 ? 'E' : 'W'}
+              </span>
+            </div>
+          )}
+
+          <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/95 backdrop-blur-md border border-emerald-200 shadow-sm text-emerald-800 text-[11px] font-mono font-semibold">
+            <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+            <span>RADAR: 48 NM ACTIVE</span>
+          </div>
+        </div>
       </div>
 
-      {/* 2. Bottom-Right Floating Tactical Zoom & Viewport Controls Dock */}
-      <div className="absolute bottom-11 right-3 z-30 flex flex-col items-center bg-white/95 backdrop-blur-md rounded-[16px] border border-[#e0e0e0] shadow-lg p-1 space-y-1 pointer-events-auto select-none">
+      {/* 2. Vertically Centered Floating Tactical Zoom & Viewport Controls Dock */}
+      <div className="absolute top-1/2 -translate-y-1/2 right-3.5 z-30 flex flex-col items-center bg-white/95 backdrop-blur-md rounded-[16px] border border-[#d2d2d7] shadow-xl p-1.5 space-y-1 pointer-events-auto select-none">
         {/* Zoom In */}
         <Tooltip>
           <TooltipTrigger asChild>

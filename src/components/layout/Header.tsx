@@ -10,11 +10,10 @@ import {
   Search,
   ChevronDown,
   Database,
-  Radio,
   Compass,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CommandSearch } from '@/components/ui/command-search';
 import {
@@ -94,7 +93,7 @@ export const Header: React.FC = () => {
       <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/90 border-b border-[#e0e0e0] select-none shadow-xs transition-all">
         <div className="w-full max-w-[1920px] mx-auto h-14 px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-4">
           {/* Left: Mobile hamburger + Page Title + Mission Badge */}
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
               onClick={() => setMobileSidebarOpen(true)}
               className="flex lg:hidden items-center justify-center h-8 w-8 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-[#1d1d1f] transition-colors active:scale-95 shrink-0 cursor-pointer"
@@ -103,15 +102,8 @@ export const Header: React.FC = () => {
               <Menu className="w-4 h-4" />
             </button>
 
-            {/* Compact Brand Icon for mobile view */}
-            <Link to="/" className="flex lg:hidden items-center gap-1.5 shrink-0 group mr-1">
-              <div className="h-7 w-7 rounded-[8px] bg-[#1d1d1f] text-white flex items-center justify-center font-bold shadow-xs">
-                <Radio className="w-3.5 h-3.5" />
-              </div>
-            </Link>
-
-            <div className="flex items-center gap-2.5 min-w-0">
-              <h1 className="text-[16px] sm:text-[18px] font-semibold text-[#1d1d1f] tracking-tight leading-none truncate">
+            <div className="flex items-center gap-2 min-w-0">
+              <h1 className="text-[15px] sm:text-[18px] font-semibold text-[#1d1d1f] tracking-tight leading-none truncate">
                 {currentMeta.title}
               </h1>
 
@@ -285,10 +277,10 @@ export const Header: React.FC = () => {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.94 }}
               onClick={() => navigate(currentMeta.ctaPath)}
-              className="btn-apple-primary !min-h-[34px] !h-[34px] !px-3.5 sm:!px-4 !py-1 !text-[12px] sm:!text-[13px] whitespace-nowrap shadow-xs cursor-pointer"
+              className="btn-apple-primary !min-h-[32px] sm:!min-h-[34px] !h-[32px] sm:!h-[34px] !px-2.5 sm:!px-4 !py-1 !text-[12px] sm:!text-[13px] whitespace-nowrap shadow-xs cursor-pointer flex items-center gap-1.5"
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>{currentMeta.ctaText}</span>
+              <span className="hidden sm:inline">{currentMeta.ctaText}</span>
             </motion.button>
           </div>
         </div>

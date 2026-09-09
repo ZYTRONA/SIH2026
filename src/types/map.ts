@@ -27,7 +27,7 @@ export interface IcebergFeature {
   name: string;
   lat: number;
   lng: number;
-  x: number; // 0-100 percentage in projected Antarctic chart
+  x: number; // 0-100 percentage in projected Antarctic/Atlantic chart
   y: number;
   sizeClass: IcebergSizeClass;
   areaKm2: number;
@@ -40,7 +40,7 @@ export interface IcebergFeature {
   nearestStation?: string;
   detectionSource: 'Sentinel-1 SAR' | 'Landsat-9 Optical' | 'Shipboard Radar' | 'CryoSat-2';
   closestApproachNm: number;
-  firstObserved: string;
+  firstObserved?: string;
   trajectory?: IcebergTrajectoryPoint[];
   dimensionsM?: { length: number; width: number; height: number };
   waterTempC?: number;
@@ -93,7 +93,7 @@ export interface AisVesselFeature {
   eta: string;
   cpaNm: number; // Closest point of approach
   tcpaHours: number; // Time to CPA
-  status: 'Underway using engine' | 'Moored / Ice Bound' | 'Scientific Operations' | 'Icebreaking Escort';
+  status: 'Underway using engine' | 'Moored / Ice Bound' | 'Scientific Operations' | 'Icebreaking Escort' | string;
   lengthM: number;
   beamM: number;
   draftM: number;
@@ -105,7 +105,7 @@ export interface AntarcticStationFeature {
   country: string;
   countryCode: string;
   flag: string;
-  type: 'Permanent Scientific Base' | 'Summer Research Base' | 'Automated Observatory';
+  type: 'Permanent Scientific Base' | 'Summer Research Base' | 'Automated Observatory' | string;
   lat: number;
   lng: number;
   elevationM: number;
@@ -125,12 +125,12 @@ export interface AntarcticStationFeature {
 export interface NavigationalAidFeature {
   id: string;
   name: string;
-  type: 'Safe Water Buoy' | 'Cardinal Mark (East)' | 'Cardinal Mark (North)' | 'Lighthouse Beacon' | 'Virtual AIS AtoN' | 'Subsurface Acoustic Beacon';
+  type: 'Safe Water Buoy' | 'Cardinal Mark (East)' | 'Cardinal Mark (North)' | 'Cardinal Mark (South)' | 'Lighthouse Beacon' | 'Virtual AIS AtoN' | 'Subsurface Acoustic Beacon' | string;
   lat: number;
   lng: number;
   lightCharacter: string; // e.g. 'Iso W 4s', 'Fl(3) W 10s'
   nominalRangeNm: number;
-  status: 'Active / Operational' | 'Radio Synced';
+  status: 'Active / Operational' | 'Radio Synced' | string;
   depthM?: number;
   frequencyMhz?: number;
 }

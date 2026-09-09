@@ -200,7 +200,7 @@ export const PolarCodeMatrix: React.FC<PolarCodeMatrixProps> = ({
         <div className="flex items-center gap-1.5">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
           <span>
-            R/V Polar Sentinel (PC3) is certified for all forecasted horizons up to +7 Days in Prydz Bay.
+            R/V Polar Sentinel (PC3) is certified for all forecasted horizons up to +7 Days in Labrador Sea corridor.
           </span>
         </div>
         <span className="font-mono text-neutral-500">

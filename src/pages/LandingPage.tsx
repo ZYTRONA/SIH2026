@@ -23,8 +23,8 @@ export const LandingPage: React.FC = () => {
     name: '',
     role: '',
     organization: '',
-    vesselClass: 'PC4 Ice-Class Expedition',
-    destination: 'Bharati Antarctic Station (69.41°S, 76.19°E)',
+    vesselClass: 'PC3 Ice-Class Hull',
+    destination: "St. John's Maritime Base (47.57°N, 52.71°W)",
   });
 
   const handleFormSubmit = (e: React.FormEvent) => {

@@ -14,7 +14,7 @@ export const MapLegend: React.FC = () => {
         title={isExpanded ? 'Collapse map legend' : 'Expand map legend'}
       >
         <div className="flex items-center gap-2">
-          <Info className="w-4 h-4 text-[#0066cc]" />
+          <Info className="w-4 h-4 text-[#0A2540]" />
           <span>Map Telemetry Legend</span>
         </div>
         <div className="p-0.5 rounded text-neutral-400 group-hover:text-[#1d1d1f] transition-colors">
@@ -37,9 +37,52 @@ export const MapLegend: React.FC = () => {
             transition={{ duration: 0.15 }}
             className="overflow-hidden border-t border-[#f0f0f0]"
           >
-            <div className="p-4 space-y-3 text-[11px] font-mono max-h-64 overflow-y-auto">
-              {/* 1. Sea Ice Concentration */}
+            <div className="p-4 space-y-3 text-[11px] font-mono max-h-72 overflow-y-auto">
+              {/* 1. Navigation Routes (Dark Palette) */}
               <div className="space-y-1.5">
+                <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
+                  Navigation Routes
+                </span>
+                <div className="space-y-1 text-[#1d1d1f]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-1 rounded bg-[#0A2540]" />
+                    <span className="font-bold text-[#0A2540]">Recommended (Navy)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-1 rounded bg-[#991B1B] border-t border-dashed" />
+                    <span>Fastest Cut (Crimson)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-1 rounded bg-[#064E3B] border-t border-dotted" />
+                    <span>Max Safety (Pine)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-1 rounded bg-[#155E75] border-t border-dashed" />
+                    <span>Current Stream (Teal)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Tracked Icebergs */}
+              <div className="space-y-1.5 pt-2.5 border-t border-[#f0f0f0]">
+                <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
+                  Tracked Icebergs (Sentinel-1 SAR)
+                </span>
+                <div className="flex items-center justify-between text-[#1d1d1f] font-normal">
+                  <span className="flex items-center gap-1 text-rose-700 font-semibold">
+                    <span className="w-2 h-2 rounded-full bg-rose-600" /> Critical
+                  </span>
+                  <span className="flex items-center gap-1 text-amber-700 font-semibold">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" /> Advisory
+                  </span>
+                  <span className="flex items-center gap-1 text-emerald-700 font-semibold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" /> Nominal
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. Sea Ice Concentration */}
+              <div className="space-y-1.5 pt-2.5 border-t border-[#f0f0f0]">
                 <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
                   Sea-Ice Concentration (SAR)
                 </span>
@@ -53,7 +96,7 @@ export const MapLegend: React.FC = () => {
                     <span>20–50% Thin</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#0066cc] border border-[#0071e3]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#0284C7] border border-[#0369A1]" />
                     <span>50–80% Pack</span>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -63,7 +106,7 @@ export const MapLegend: React.FC = () => {
                 </div>
               </div>
 
-              {/* 2. Colorblind-Safe Risk Scale */}
+              {/* 4. Colorblind-Safe Risk Scale */}
               <div className="space-y-1.5 pt-2.5 border-t border-[#f0f0f0]">
                 <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
                   Navigation Risk Score (RIO)
@@ -84,24 +127,6 @@ export const MapLegend: React.FC = () => {
                   <div className="py-1 rounded-full bg-rose-50 text-rose-800 border border-rose-200">
                     CRIT
                   </div>
-                </div>
-              </div>
-
-              {/* 3. Tracked Icebergs */}
-              <div className="space-y-1.5 pt-2.5 border-t border-[#f0f0f0]">
-                <span className="text-neutral-500 font-semibold uppercase tracking-wider block text-[10px]">
-                  Tracked Icebergs (Sentinel-1)
-                </span>
-                <div className="flex items-center justify-between text-[#1d1d1f] font-normal">
-                  <span className="flex items-center gap-1 text-rose-700">
-                    <span className="w-2 h-2 rounded-full bg-rose-600" /> Critical
-                  </span>
-                  <span className="flex items-center gap-1 text-amber-700">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" /> Advisory
-                  </span>
-                  <span className="flex items-center gap-1 text-emerald-700">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" /> Nominal
-                  </span>
                 </div>
               </div>
             </div>

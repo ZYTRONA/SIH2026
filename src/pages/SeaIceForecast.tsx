@@ -95,7 +95,7 @@ export const SeaIceForecast: React.FC = () => {
       },
       {
         id: 'ice-tier-3',
-        zoneName: 'Prydz Bay High-Density Pack',
+        zoneName: 'Labrador Sea High-Density Pack',
         concentrationTier: '50–80%',
         concentrationPct: summary.easternApproachPct,
         iceStage: 'First-Year Medium/Thick Pack',
@@ -105,7 +105,7 @@ export const SeaIceForecast: React.FC = () => {
       },
       {
         id: 'ice-tier-4',
-        zoneName: 'Coastal Fast Ice & Amery Shelf',
+        zoneName: 'Coastal Fast Ice & Cape Farewell Shelf',
         concentrationTier: '80–100%',
         concentrationPct: summary.amerySectorPct,
         iceStage: 'Consolidated Multi-Year Fast Ice',

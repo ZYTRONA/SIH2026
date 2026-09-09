@@ -62,12 +62,12 @@ export const RouteOptimization: React.FC = () => {
             <div className="hidden sm:inline-block text-[#e0e0e0]">|</div>
             <div className="flex items-center gap-2 text-[#424245]">
               <MapPin className="w-3.5 h-3.5 text-[#86868b]" />
-              <span>ORIGIN: 60.10°S, 58.20°E</span>
+              <span>ORIGIN: Atlantic Fairway (59.00°N, 32.00°W)</span>
             </div>
             <div className="hidden sm:inline-block text-[#e0e0e0]">|</div>
             <div className="flex items-center gap-2 text-[#424245]">
               <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-              <span>DEST: Bharati Station (69.41°S, 76.19°E)</span>
+              <span>DEST: St. John's Maritime Base (47.57°N, 52.71°W)</span>
             </div>
           </div>
 

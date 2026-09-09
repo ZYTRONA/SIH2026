@@ -39,14 +39,14 @@ export const TacticalDecisionBanner: React.FC = () => {
             </div>
 
             <h2 className="text-[18px] sm:text-[22px] font-semibold text-white tracking-[-0.28px]">
-              Primary Transit: Cape Town Port &rarr; Bharati Research Station
+              Primary Transit: North Atlantic Fairway &rarr; St. John's Maritime Base
             </h2>
 
             {/* Waypoint Stepper */}
             <div className="hidden sm:flex items-center gap-2 text-[12px] font-mono text-[#cccccc] pt-0.5">
               <span className="flex items-center gap-1">
                 <Anchor className="w-3.5 h-3.5 text-[#2997ff]" />
-                Cape Town
+                Atlantic Entry
               </span>
               <span className="text-neutral-500">&rarr;</span>
               <span>WP-Alpha</span>
@@ -58,7 +58,7 @@ export const TacticalDecisionBanner: React.FC = () => {
               <span className="text-neutral-500">&rarr;</span>
               <span className="flex items-center gap-1">
                 <Flag className="w-3.5 h-3.5 text-[#2997ff]" />
-                Bharati Station
+                St. John's Base
               </span>
             </div>
           </div>
