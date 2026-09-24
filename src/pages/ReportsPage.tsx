@@ -75,22 +75,33 @@ export const ReportsPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
+              onClick={() => {
+                setExportMessage('Mission log transmitted directly to NCPOR Goa Command Centre via Iridium SBD satellite link.');
+              }}
+              className="px-4 py-2 rounded-full bg-[#f5f5f7] hover:bg-[#ebebed] text-[#0066cc] text-xs font-semibold border border-[#0066cc]/30 flex items-center gap-2 transition-all cursor-pointer active:scale-95"
+            >
+              <ShieldCheck className="w-4 h-4 text-[#0066cc]" />
+              <span>Share with NCPOR</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => handleExport('csv')}
               disabled={isExporting}
-              className="px-4 py-2 rounded-full bg-[#f5f5f7] hover:bg-[#ebebed] text-[#1d1d1f] text-xs font-semibold border border-[#e0e0e0] flex items-center gap-2 transition-all cursor-pointer"
+              className="px-4 py-2 rounded-full bg-[#f5f5f7] hover:bg-[#ebebed] text-[#1d1d1f] text-xs font-semibold border border-[#e0e0e0] flex items-center gap-2 transition-all cursor-pointer active:scale-95"
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>Export CSV Telemetry</span>
+              <span>Export CSV</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleExport('pdf')}
               disabled={isExporting}
-              className="px-5 py-2 rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              className="px-5 py-2 rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer active:scale-95"
             >
               <Printer className="w-4 h-4" />
-              <span>Print / Save PDF Report</span>
+              <span>Download PDF</span>
             </button>
           </div>
         </div>

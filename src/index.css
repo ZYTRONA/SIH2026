@@ -38,6 +38,10 @@
     --apple-surface-black: #000000;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--apple-canvas-parchment);
     color: var(--apple-ink);

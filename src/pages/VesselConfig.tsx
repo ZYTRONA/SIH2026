@@ -341,10 +341,10 @@ export const VesselConfig: React.FC = () => {
             <div className="pt-3">
               <button
                 type="submit"
-                className="w-full py-3 px-5 rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white font-medium text-[13px] flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                className="w-full h-12 rounded-full bg-[#0066cc] hover:bg-[#0055b3] active:scale-95 text-white font-semibold text-[15px] flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Initialize & Compile Mission Profile</span>
+                <CheckCircle2 className="w-5 h-5 text-white" />
+                <span>Initialize Mission</span>
               </button>
             </div>
           </form>

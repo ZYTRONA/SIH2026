@@ -41,7 +41,6 @@ const navigationItems: NavItem[] = [
   { path: '/explainable-ai', label: 'Explainable AI (SHAP)', icon: Radio },
   { path: '/edge-console', label: 'Edge Console (Offline)', icon: Server, dot: 'warning' },
   { path: '/reports', label: 'Reports & Export', icon: ChevronRight },
-  { path: '/login', label: 'Access & Login', icon: ChevronLeft },
 ];
 
 const dotColors = {

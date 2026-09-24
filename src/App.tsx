@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { LandingPage } from '@/pages/LandingPage';
-import { LoginPage } from '@/pages/LoginPage';
 import { VesselConfig } from '@/pages/VesselConfig';
 import { Dashboard } from '@/pages/Dashboard';
 import { SeaIceForecast } from '@/pages/SeaIceForecast';
@@ -20,9 +19,9 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public & Access Routes */}
+        {/* Public Landing & Direct Entry */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<Navigate to="/dashboard" replace />} />
 
         {/* Mission Control Deck (Authenticated / Operational Layout) */}
         <Route element={<AppLayout />}>
