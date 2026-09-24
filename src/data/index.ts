@@ -1,8 +1,8 @@
 // Initial mock data & static datasets placeholder
 export const INITIAL_MISSION_CONFIG = {
-  id: 'MISSION-POLARIS-01',
-  vesselName: 'R/V Polar Sentinel',
+  id: 'MISSION-NCPOR-44-01',
+  vesselName: 'SA Agulhas II',
   iceClass: 'PC3 (Year-round operation in second-year ice)',
-  departure: 'North Atlantic Fairway Entry (59.0000, -32.0000)',
-  destination: "St. John's Maritime Base (47.5675, -52.7072)",
+  departure: 'Maitri Station Offshore Fairway (-70.7700, 11.7300)',
+  destination: 'Bharati Station (Larsemann Hills) (-69.4100, 76.1900)',
 };

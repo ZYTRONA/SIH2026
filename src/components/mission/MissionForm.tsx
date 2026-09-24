@@ -29,17 +29,17 @@ interface MissionFormProps {
 }
 
 const START_PRESETS = [
-  { name: 'North Atlantic Fairway Entry (59.0°N, 32.0°W)', lat: 59.0, lng: -32.0 },
-  { name: 'Reykjavik Port (64.14°N, 21.94°W)', lat: 64.1466, lng: -21.9426 },
-  { name: 'Nuuk Offshore Gateway (64.18°N, 51.72°W)', lat: 64.1814, lng: -51.7214 },
-  { name: 'Halifax Harbor (44.65°N, 63.58°W)', lat: 44.6488, lng: -63.5752 },
+  { name: 'Maitri Station Offshore Fairway (-70.77°S, 11.73°E)', lat: -70.7700, lng: 11.7300 },
+  { name: 'Novolazarevskaya Station (-70.77°S, 11.83°E)', lat: -70.7700, lng: 11.8300 },
+  { name: 'Showa Station / Queen Maud Land (-69.00°S, 39.58°E)', lat: -69.0042, lng: 39.5819 },
+  { name: 'Molodezhnaya Base (-67.66°S, 45.85°E)', lat: -67.6644, lng: 45.8500 },
 ];
 
 const DESTINATION_PRESETS = [
-  { name: "St. John's Maritime Base (47.57°N, 52.71°W)", lat: 47.5675, lng: -52.7072 },
-  { name: 'Cape Farewell Outpost (59.77°N, 43.91°W)', lat: 59.7731, lng: -43.9125 },
-  { name: 'Qaqortoq Research Station (60.72°N, 46.03°W)', lat: 60.7186, lng: -46.0366 },
-  { name: 'Sydney Marine Terminal (46.14°N, 60.19°W)', lat: 46.1368, lng: -60.1831 },
+  { name: 'Bharati Station (Larsemann Hills) (-69.41°S, 76.19°E)', lat: -69.4100, lng: 76.1900 },
+  { name: 'Zhongshan Station / Prydz Bay (-69.37°S, 76.38°E)', lat: -69.3731, lng: 76.3781 },
+  { name: 'Progress Station (-69.38°S, 76.39°E)', lat: -69.3783, lng: 76.3889 },
+  { name: 'Mawson Station (-67.60°S, 62.87°E)', lat: -67.6044, lng: 62.8739 },
 ];
 
 export const MissionForm: React.FC<MissionFormProps> = ({
@@ -48,12 +48,12 @@ export const MissionForm: React.FC<MissionFormProps> = ({
 }) => {
   const [vessel, setVessel] = useState<MissionConfig['vessel']>('Polar Research Vessel');
   const [polarCapability, setPolarCapability] = useState<PolarCapability>('PC3');
-  const [startName, setStartName] = useState('North Atlantic Fairway Entry');
-  const [startLat, setStartLat] = useState(59.0);
-  const [startLng, setStartLng] = useState(-32.0);
-  const [destName, setDestName] = useState("St. John's Maritime Base (Newfoundland)");
-  const [destLat, setDestLat] = useState(47.5675);
-  const [destLng, setDestLng] = useState(-52.7072);
+  const [startName, setStartName] = useState('Maitri Station Offshore Fairway');
+  const [startLat, setStartLat] = useState(-70.7700);
+  const [startLng, setStartLng] = useState(11.7300);
+  const [destName, setDestName] = useState('Bharati Station (Larsemann Hills)');
+  const [destLat, setDestLat] = useState(-69.4100);
+  const [destLng, setDestLng] = useState(76.1900);
   const [missionDate, setMissionDate] = useState('2026-09-15');
   const [departureTime, setDepartureTime] = useState('06:00 UTC');
   const [navigationPriority, setNavigationPriority] = useState<NavigationPriority>('Balanced');

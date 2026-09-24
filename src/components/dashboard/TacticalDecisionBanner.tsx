@@ -39,14 +39,14 @@ export const TacticalDecisionBanner: React.FC = () => {
             </div>
 
             <h2 className="text-[18px] sm:text-[22px] font-semibold text-white tracking-[-0.28px]">
-              Primary Transit: North Atlantic Fairway &rarr; St. John's Maritime Base
+              Primary Transit: Maitri Station &rarr; Bharati Station (East Antarctica)
             </h2>
 
             {/* Waypoint Stepper */}
             <div className="hidden sm:flex items-center gap-2 text-[12px] font-mono text-[#cccccc] pt-0.5">
               <span className="flex items-center gap-1">
                 <Anchor className="w-3.5 h-3.5 text-[#2997ff]" />
-                Atlantic Entry
+                Maitri Outpost
               </span>
               <span className="text-neutral-500">&rarr;</span>
               <span>WP-Alpha</span>
@@ -58,7 +58,7 @@ export const TacticalDecisionBanner: React.FC = () => {
               <span className="text-neutral-500">&rarr;</span>
               <span className="flex items-center gap-1">
                 <Flag className="w-3.5 h-3.5 text-[#2997ff]" />
-                St. John's Base
+                Bharati Station
               </span>
             </div>
           </div>
@@ -69,11 +69,11 @@ export const TacticalDecisionBanner: React.FC = () => {
           <div className="bg-[#2a2a2c] border border-neutral-700 px-4 py-3 rounded-[14px] space-y-1 font-mono text-[12px]">
             <div className="flex items-center justify-between gap-4 text-[#cccccc]">
               <span>NEXT WAYPOINT:</span>
-              <strong className="text-white">WP-BRAVO (2.4h)</strong>
+              <strong className="text-white">WP-BRAVO (4.2h)</strong>
             </div>
             <div className="flex items-center justify-between gap-4 text-[#2997ff]">
-              <span>IB-023 DISTANCE:</span>
-              <span className="text-white font-semibold">4.2 NM CLEAR</span>
+              <span>A-76A DISTANCE:</span>
+              <span className="text-white font-semibold">4.8 NM CLEAR</span>
             </div>
           </div>
 

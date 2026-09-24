@@ -21,6 +21,11 @@ from backend.models.schemas import (
     RouteResult,
     ReportExportRequest,
 )
+from backend.database.supabase_client import (
+    db_manager,
+    is_supabase_configured,
+    SUPABASE_URL,
+)
 
 app = FastAPI(
     title="POLARIS AI — Polar Maritime Platform API",
@@ -38,7 +43,7 @@ app.add_middleware(
 )
 
 # =====================================================================
-# 1. ROOT & HEALTH
+# 1. ROOT, HEALTH & SUPABASE STATUS
 # =====================================================================
 @app.get("/")
 def read_root():
@@ -60,9 +65,58 @@ def health_check():
             "xgboost_iceberg_drift": "LOADED",
             "nsga2_solver": "READY",
         },
-        "spatial_db": "PostGIS Connected (EPSG:4326 / EPSG:3031)",
+        "spatial_db": "PostGIS Connected (EPSG:4326 / EPSG:3031)" if is_supabase_configured() else "Local PostGIS / Mock Grid",
+        "supabase": {
+            "configured": is_supabase_configured(),
+            "url": SUPABASE_URL if is_supabase_configured() else "Local / Offline Mode",
+        },
         "offline_cache_sync": "SYNCHRONIZED",
     }
+
+@app.get("/api/db/status")
+def get_db_status():
+    return {
+        "supabase_configured": is_supabase_configured(),
+        "url": SUPABASE_URL or "Not Configured (Running in Offline Fallback Mode)",
+        "tables": ["vessels", "missions", "sea_ice_forecasts", "iceberg_predictions", "risk_maps", "routes"],
+        "postgis_enabled": True,
+    }
+
+@app.get("/api/vessels")
+def get_vessels():
+    db_vessels = db_manager.get_vessels()
+    if db_vessels:
+        return db_vessels
+    return [
+        {
+            "id": "vessel-sa-agulhas-ii",
+            "name": "SA Agulhas II",
+            "polar_class": "PC3",
+            "speed": 14.5,
+            "fuel_capacity": 1850.0,
+            "engine_power": 12000.0,
+        }
+    ]
+
+@app.get("/api/missions")
+def get_missions():
+    db_missions = db_manager.get_missions()
+    if db_missions:
+        return db_missions
+    return [
+        {
+            "id": "mission-maitri-bharati-2026",
+            "vessel_id": "vessel-sa-agulhas-ii",
+            "source_name": "Maitri Station (Queen Maud Land)",
+            "source_lat": -70.77,
+            "source_lng": 11.73,
+            "dest_name": "Bharati Station (Larsemann Hills / Prydz Bay)",
+            "dest_lat": -69.41,
+            "dest_lng": 76.19,
+            "status": "ACTIVE_NAVIGATION",
+            "created_at": datetime.datetime.utcnow().isoformat(),
+        }
+    ]
 
 # =====================================================================
 # 2. DATA APIS (/api/seaice, /api/iceberg, /api/weather, /api/ocean)

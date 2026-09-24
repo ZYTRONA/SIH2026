@@ -27,7 +27,7 @@ export interface IcebergFeature {
   name: string;
   lat: number;
   lng: number;
-  x: number; // 0-100 percentage in projected Antarctic/Atlantic chart
+  x: number; // 0-100 percentage in projected East Antarctic chart
   y: number;
   sizeClass: IcebergSizeClass;
   areaKm2: number;
@@ -192,28 +192,34 @@ export interface RiskZoneFeature {
   id: string;
   name: string;
   tier: 'SAFE (0-20)' | 'LOW (20-40)' | 'MODERATE (40-60)' | 'HIGH (60-80)' | 'CRITICAL (80-100)';
-  riskScoreRange: string;
+  riskScoreRange?: string;
   riskScore: number;
   color: string;
-  borderColor: string;
-  polygonPoints: string;
+  borderColor?: string;
+  strokeColor?: string;
+  polygonPoints?: string;
   description: string;
   iceType?: string;
   ridgeHeightM?: number;
+  rioIndex?: number;
+  fillOpacity?: number;
 }
 
 export interface SeaIceConcentrationFeature {
   id: string;
   zoneName: string;
   concentrationTier: '0–20%' | '20–50%' | '50–80%' | '80–100%';
-  concentrationPct: number;
+  concentrationPct?: number;
   iceStage: string;
   color: string;
   fillOpacity: number;
-  polygonPoints: string;
+  polygonPoints?: string;
   eggCodeNotation?: string;
   thicknessM?: number;
+  avgThicknessM?: number;
   floeSizeClassification?: string;
+  areaKm2?: number;
+  fastIce?: boolean;
 }
 
 export interface OceanCurrentVector {

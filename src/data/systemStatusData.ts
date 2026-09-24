@@ -321,7 +321,7 @@ export const INITIAL_AUDIT_LOGS: SystemAuditLogEntry[] = [
     timestamp: '07:50:12 UTC',
     level: 'SUCCESS',
     module: 'POLARIS Engine',
-    message: 'RIO compliance checks passed for PC3 hull class across Labrador Sea fairway leads.',
+    message: 'RIO compliance checks passed for PC3 hull class across East Antarctic fairway leads.',
   },
 ];
 

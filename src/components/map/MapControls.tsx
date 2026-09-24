@@ -117,14 +117,14 @@ export const MapControls: React.FC<MapControlsProps> = ({
   }> = [
     {
       key: 'seaIce',
-      label: 'Labrador & Greenland Sea Ice',
+      label: 'Princess Astrid & Prydz Sea Ice',
       sublabel: 'Sentinel-1 SAR 0–100% Concentration',
       icon: Snowflake,
       color: 'text-sky-600',
     },
     {
       key: 'icebergs',
-      label: 'Atlantic Iceberg Targets',
+      label: 'East Antarctic Icebergs',
       sublabel: '37 Tracked + 72h Drift Trajectories',
       icon: Mountain,
       color: 'text-amber-600',
@@ -148,44 +148,44 @@ export const MapControls: React.FC<MapControlsProps> = ({
     {
       key: 'aisTargets',
       label: 'AIS Marine Traffic',
-      sublabel: '6 Atlantic Vessels & CPA Vectors',
+      sublabel: '6 Polar Vessels & CPA Vectors',
       icon: Ship,
       color: 'text-blue-600',
       badge: '6 SHIPS',
     },
     {
       key: 'stations',
-      label: 'Atlantic Ports & Research Bases',
-      sublabel: '12 Scientific Stations & CCG Terminals',
+      label: 'Antarctic Research Stations',
+      sublabel: 'Maitri, Bharati & International Bases',
       icon: MapPin,
       color: 'text-emerald-700',
-      badge: '12 PORTS',
+      badge: '12 BASES',
     },
     {
       key: 'navAids',
       label: 'Aids to Navigation (AtoN)',
-      sublabel: 'Fairway Buoys, Lighthouses & AIS Virtual',
+      sublabel: 'Fairway Beacons, Coastal Radiomarks & AIS Virtual',
       icon: Sparkles,
       color: 'text-amber-700',
     },
     {
       key: 'oceanCurrents',
-      label: 'Atlantic Ocean Currents',
-      sublabel: 'Labrador Current & North Atlantic Drift',
+      label: 'Antarctic Ocean Currents',
+      sublabel: 'East Wind Drift & Coastal Jet Vectors',
       icon: Compass,
       color: 'text-emerald-600',
     },
     {
       key: 'bathymetry',
       label: 'Seabed Bathymetry',
-      sublabel: 'Grand Banks & Flemish Pass Isobaths',
+      sublabel: 'Prydz Bay & Continental Shelf Isobaths',
       icon: Anchor,
       color: 'text-indigo-600',
     },
     {
       key: 'weather',
       label: 'Wind & Swell Vectors',
-      sublabel: 'NOAA GFS & Transatlantic Wave Vectors',
+      sublabel: 'ECMWF & Southern Ocean Swell Vectors',
       icon: CloudRain,
       color: 'text-blue-500',
     },
@@ -389,9 +389,46 @@ export const MapControls: React.FC<MapControlsProps> = ({
                 transition={{ duration: 0.15 }}
                 className="absolute top-11 left-0 z-50 w-80 rounded-[18px] bg-white border border-[#e0e0e0] shadow-2xl p-2.5 space-y-1.5"
               >
-                <div className="px-2 py-1 flex items-center justify-between border-b border-[#f0f0f0] text-[11px] font-mono text-neutral-500 font-semibold uppercase tracking-wider">
-                  <span>Overlay Intelligence</span>
-                  <span className="text-emerald-700">{activeLayersCount} Visible</span>
+                <div className="px-2 py-1.5 flex items-center justify-between border-b border-[#f0f0f0] text-[11px] font-mono text-neutral-500">
+                  <span className="font-semibold uppercase tracking-wider">Map Layers ({activeLayersCount}/{layerItems.length})</span>
+                  <div className="flex items-center gap-1.5 text-[10px]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        layerItems.forEach((item) => {
+                          if (!layers[item.key]) onToggleLayer(item.key);
+                        });
+                      }}
+                      className="text-[#0066cc] font-semibold hover:underline cursor-pointer"
+                    >
+                      All
+                    </button>
+                    <span>&bull;</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        layerItems.forEach((item) => {
+                          if (layers[item.key]) onToggleLayer(item.key);
+                        });
+                      }}
+                      className="text-neutral-500 hover:text-[#1d1d1f] hover:underline cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                    <span>&bull;</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        layerItems.forEach((item) => {
+                          const shouldBeOn = item.key === 'routes' || item.key === 'stations';
+                          if (Boolean(layers[item.key]) !== shouldBeOn) onToggleLayer(item.key);
+                        });
+                      }}
+                      className="text-emerald-700 font-semibold hover:underline cursor-pointer"
+                    >
+                      Default
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-1 pt-1 max-h-80 overflow-y-auto pr-0.5">
@@ -506,7 +543,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
           <button
             onClick={onFocusIcebergs}
             className="flex items-center gap-1.5 h-8.5 px-3 rounded-full bg-white/95 backdrop-blur-md hover:bg-rose-50 text-[#1d1d1f] border border-rose-200 hover:border-rose-400 shadow-sm transition-all active:scale-95 cursor-pointer group"
-            title="Track 37 Active Atlantic Icebergs & Jump to Collision Risk Cluster"
+            title="Track 37 Active East Antarctic Icebergs & Jump to Collision Risk Cluster"
           >
             <span className="w-2 h-2 rounded-full bg-rose-600 animate-pulse"></span>
             <span className="text-[12px] font-semibold text-rose-950">🧊 {icebergsCount} Icebergs</span>

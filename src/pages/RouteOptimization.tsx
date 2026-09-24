@@ -46,7 +46,7 @@ export const RouteOptimization: React.FC = () => {
   return (
     <PageContainer
       title="Route Optimization Center"
-      subtitle="Multi-objective Pareto-optimal North Atlantic navigation paths, bunker fuel reduction, and dynamic ice hazard avoidance."
+      subtitle="Multi-objective Pareto-optimal East Antarctic navigation paths, bunker fuel reduction, and dynamic ice hazard avoidance."
       badge="PARETO OPTIMAL"
       badgeType="safe"
     >
@@ -57,17 +57,17 @@ export const RouteOptimization: React.FC = () => {
             <div className="flex items-center gap-2 text-[#1d1d1f] font-semibold">
               <Ship className="w-4 h-4 text-[#0066cc]" />
               <span className="text-[#86868b] font-normal">VESSEL:</span>
-              <span>RV Polar Sentinel (PC3 Icebreaker)</span>
+              <span>SA Agulhas II (PC3 Polar Research Vessel)</span>
             </div>
             <div className="hidden sm:inline-block text-[#e0e0e0]">|</div>
             <div className="flex items-center gap-2 text-[#424245]">
               <MapPin className="w-3.5 h-3.5 text-[#86868b]" />
-              <span>ORIGIN: Atlantic Fairway (59.00°N, 32.00°W)</span>
+              <span>ORIGIN: Maitri Station (-70.77°S, 11.73°E)</span>
             </div>
             <div className="hidden sm:inline-block text-[#e0e0e0]">|</div>
             <div className="flex items-center gap-2 text-[#424245]">
               <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-              <span>DEST: St. John's Maritime Base (47.57°N, 52.71°W)</span>
+              <span>DEST: Bharati Station (-69.41°S, 76.19°E)</span>
             </div>
           </div>
 
@@ -85,13 +85,13 @@ export const RouteOptimization: React.FC = () => {
           onSelectRoute={handleSelectRoute}
         />
 
-        {/* 3. Interactive Atlantic Map with All 4 Candidate Routes */}
+        {/* 3. Interactive East Antarctic Map with All 4 Candidate Routes */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
             <div className="flex items-center gap-2">
               <Compass className="w-4 h-4 text-[#0066cc]" />
               <h3 className="text-[14px] font-semibold text-[#1d1d1f]">
-                Multi-Route Atlantic Navigation Chart (WGS84)
+                Multi-Route East Antarctic Tactical Chart (WGS84)
               </h3>
             </div>
 

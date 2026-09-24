@@ -141,7 +141,7 @@ export const DigitalTwin: React.FC = () => {
   return (
     <PageContainer
       title="Dynamic Simulation"
-      subtitle="Interactive dynamic multi-day simulation of North Atlantic ice, iceberg kinematics, vessel telemetry, and route adaptation."
+      subtitle="Interactive dynamic multi-day simulation of East Antarctic ice, iceberg kinematics, SA Agulhas II telemetry, and route adaptation."
       badge="SIMULATION ACTIVE"
       badgeType="active"
     >
@@ -158,13 +158,13 @@ export const DigitalTwin: React.FC = () => {
           onChangeSpeed={handleChangeSpeed}
         />
 
-        {/* 3. Main Atlantic Simulation Map View */}
+        {/* 3. Main East Antarctic Simulation Map View */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
               <Compass className="w-4 h-4 text-[#0066cc]" />
               <h3 className="text-[14px] font-semibold text-[#1d1d1f]">
-                Dynamic Atlantic Voyage Simulation Chart (WGS84)
+                Dynamic East Antarctic Voyage Simulation Chart (WGS84)
               </h3>
             </div>
 

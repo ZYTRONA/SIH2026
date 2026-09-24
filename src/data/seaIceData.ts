@@ -33,7 +33,7 @@ export const SEA_ICE_SUMMARIES: Record<ForecastHorizonKey, SeaIceHorizonSummary>
     confidencePct: 94,
     expansionRatePctPerDay: 2.8,
     estimatedMeanThicknessM: 1.15,
-    insight: 'Current baseline concentration observed across Labrador Sea and Flemish Pass sectors.',
+    insight: 'Current baseline concentration observed across Princess Astrid and Prydz Bay sectors.',
   },
   '+24h': {
     horizon: '+24h',

@@ -34,12 +34,12 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.2, 0.8));
   const handleResetZoom = () => setZoomLevel(1);
 
-  // Map nodes corresponding directly to the screenshot mockup
+  // Map nodes corresponding directly to East Antarctic high-priority bergs
   const mapMarkers = [
     {
-      id: 'ib-023-red',
-      code: 'IB-023',
-      iceberg: icebergs.find((i) => i.code === 'IB-023') || icebergs[0],
+      id: 'ib-a76a-red',
+      code: 'A-76A',
+      iceberg: icebergs.find((i) => i.code === 'A-76A') || icebergs[0],
       x: 430,
       y: 325,
       color: '#DC2626', // Red
@@ -50,9 +50,9 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
       trajectoryStart: { x: 380, y: 610 },
     },
     {
-      id: 'ib-041-orange',
-      code: 'IB-041',
-      iceberg: icebergs.find((i) => i.code === 'IB-041') || icebergs[1],
+      id: 'ib-prydz-orange',
+      code: 'IB-PRYDZ-09',
+      iceberg: icebergs.find((i) => i.code === 'IB-PRYDZ-09') || icebergs[1],
       x: 510,
       y: 290,
       color: '#EA580C', // Orange
@@ -62,9 +62,9 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
       vectorTarget: { x: 570, y: 280 },
     },
     {
-      id: 'ib-023-blue',
-      code: 'IB-023',
-      iceberg: icebergs.find((i) => i.code === 'IB-023') || icebergs[0],
+      id: 'ib-d30-gold',
+      code: 'D-30',
+      iceberg: icebergs.find((i) => i.code === 'D-30') || icebergs[2],
       x: 636,
       y: 300,
       color: '#0284C7', // Blue
@@ -73,9 +73,9 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
       hasVector: false,
     },
     {
-      id: 'ib-055-blue',
-      code: 'IB-055',
-      iceberg: icebergs.find((i) => i.code === 'IB-055') || icebergs[3],
+      id: 'ib-amery-green',
+      code: 'IB-AMERY-04',
+      iceberg: icebergs.find((i) => i.code === 'IB-AMERY-04') || icebergs[3],
       x: 704,
       y: 512,
       color: '#0284C7', // Blue
@@ -84,9 +84,9 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
       hasVector: false,
     },
     {
-      id: 'ib-062-blue',
-      code: 'IB-062',
-      iceberg: icebergs.find((i) => i.code === 'IB-062') || icebergs[6],
+      id: 'ib-prydz-giant',
+      code: 'IB-PRYDZ-01',
+      iceberg: icebergs.find((i) => i.code === 'IB-PRYDZ-01') || icebergs[6],
       x: 568,
       y: 765,
       color: '#0284C7', // Blue
@@ -95,9 +95,9 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
       hasVector: false,
     },
     {
-      id: 'ib-037-blue',
-      code: 'IB-037',
-      iceberg: icebergs.find((i) => i.code === 'IB-037') || icebergs[5],
+      id: 'ib-astrid-blue',
+      code: 'IB-ASTRID-07',
+      iceberg: icebergs.find((i) => i.code === 'IB-ASTRID-07') || icebergs[5],
       x: 478,
       y: 728,
       color: '#0284C7', // Blue
@@ -106,9 +106,9 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
       hasVector: false,
     },
     {
-      id: 'ib-009-blue',
-      code: 'IB-009',
-      iceberg: icebergs.find((i) => i.code === 'IB-009') || icebergs[4],
+      id: 'ib-cosmo-blue',
+      code: 'IB-COSMO-02',
+      iceberg: icebergs.find((i) => i.code === 'IB-COSMO-02') || icebergs[4],
       x: 406,
       y: 642,
       color: '#0284C7', // Blue
@@ -369,42 +369,42 @@ export const PolarStereographicMap: React.FC<PolarStereographicMapProps> = ({
               textAnchor="middle"
               className="select-none pointer-events-none"
             >
-              {/* NORTH ATLANTIC OCEAN */}
+              {/* SOUTHERN OCEAN */}
               <text x="500" y="115">
-                NORTH ATLANTIC OCEAN
+                SOUTHERN OCEAN (EAST ANTARCTIC SECTOR)
               </text>
 
-              {/* LABRADOR SEA */}
+              {/* LAZAREV SEA */}
               <text x="404" y="270">
-                LABRADOR SEA
+                LAZAREV SEA
               </text>
 
-              {/* FLEMISH PASS */}
+              {/* PRYDZ BAY */}
               <text x="690" y="270">
-                FLEMISH PASS
+                PRYDZ BAY
               </text>
 
-              {/* GRAND BANKS */}
+              {/* AMERY ICE SHELF */}
               <text x="345" y="535">
-                GRAND
+                AMERY ICE
               </text>
               <text x="345" y="552">
-                BANKS
+                SHELF
               </text>
 
               {/* Inner SEA label */}
               <text x="445" y="420" fontSize="10" opacity="0.75">
-                ICE ALLEY
+                COASTAL DRIFT
               </text>
 
-              {/* CAPE FAREWELL */}
+              {/* COSMONAUT SEA */}
               <text x="704" y="638">
-                CAPE FAREWELL
+                COSMONAUT SEA
               </text>
 
-              {/* DAVIS STRAIT */}
+              {/* RIISER-LARSEN SEA */}
               <text x="675" y="770">
-                DAVIS STRAIT
+                RIISER-LARSEN SEA
               </text>
             </g>
           )}

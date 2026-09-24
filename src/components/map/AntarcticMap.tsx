@@ -61,65 +61,65 @@ export interface AntarcticMapProps {
   customOverlay?: React.ReactNode;
 }
 
-// LatLng polygon definitions for Atlantic Ocean Risk Zones
+// LatLng polygon definitions for East Antarctic Risk Zones (Maitri to Bharati Corridor)
 const RISK_ZONE_COORDS: Record<string, L.LatLngExpression[]> = {
   'risk-critical': [
-    [53.8, -48.0],
-    [53.5, -45.0],
-    [51.0, -46.5],
-    [51.2, -50.0],
+    [-67.2, 22.0],
+    [-67.0, 26.5],
+    [-68.5, 27.0],
+    [-68.8, 22.5],
   ],
   'risk-high': [
-    [57.5, -53.0],
-    [57.0, -48.5],
-    [54.0, -50.5],
-    [54.5, -55.0],
+    [-68.0, 68.0],
+    [-67.5, 73.5],
+    [-69.8, 74.0],
+    [-70.2, 68.5],
   ],
   'risk-moderate': [
-    [51.0, -49.5],
-    [50.8, -46.0],
-    [48.2, -47.5],
-    [48.5, -51.0],
+    [-66.5, 66.0],
+    [-66.0, 72.0],
+    [-68.0, 73.0],
+    [-68.5, 67.0],
   ],
   'risk-low': [
-    [48.0, -52.0],
-    [47.8, -48.0],
-    [45.5, -49.5],
-    [45.8, -53.5],
+    [-65.0, 30.0],
+    [-64.8, 38.0],
+    [-66.5, 39.0],
+    [-66.8, 31.0],
   ],
   'risk-safe': [
-    [59.5, -34.0],
-    [59.0, -28.0],
-    [55.0, -31.0],
-    [55.5, -38.0],
+    [-66.0, 15.0],
+    [-65.5, 60.0],
+    [-67.0, 60.0],
+    [-67.5, 15.0],
   ],
 };
 
-// LatLng polygon definitions for Atlantic Sea Ice Concentration Heatmap
+// LatLng polygon definitions for East Antarctic Sea Ice Concentration Heatmap
 const SEA_ICE_TIER_COORDS: Record<string, L.LatLngExpression[]> = {
   'ice-tier-1': [
-    [61.0, -48.0],
-    [60.5, -30.0],
-    [55.0, -32.0],
-    [55.5, -49.0],
+    [-65.0, 10.0],
+    [-64.5, 45.0],
+    [-68.0, 46.0],
+    [-68.5, 11.0],
   ],
   'ice-tier-2': [
-    [58.5, -56.0],
-    [58.0, -48.0],
-    [53.0, -49.5],
-    [53.5, -57.0],
+    [-67.0, 20.0],
+    [-66.5, 55.0],
+    [-69.5, 56.0],
+    [-70.0, 21.0],
   ],
   'ice-tier-3': [
-    [63.0, -58.0],
-    [62.5, -49.0],
-    [58.0, -51.0],
-    [58.5, -59.0],
+    [-68.5, 50.0],
+    [-68.0, 78.0],
+    [-70.5, 78.5],
+    [-71.0, 51.0],
   ],
   'ice-tier-4': [
-    [65.0, -54.0],
-    [64.5, -46.0],
-    [60.0, -48.0],
-    [60.5, -56.0],
+    [-69.0, 65.0],
+    [-68.5, 77.0],
+    [-71.2, 77.5],
+    [-71.5, 66.0],
   ],
 };
 
@@ -207,16 +207,16 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   const [simVesselPos, setSimVesselPos] = useState<{ lat: number; lng: number; heading: number } | null>(null);
   const simProgressRef = useRef<number>(0);
 
-  // 10 Independent Layer Toggles
+  // 10 Independent Layer Toggles (Default: Clean view with Routes & Stations; user selects additional layers)
   const [internalLayers, setInternalLayers] = useState<MapLayerVisibility>({
-    seaIce: true,
-    icebergs: true,
-    risk: true,
     routes: true,
-    aisTargets: true,
     stations: true,
-    navAids: true,
-    oceanCurrents: true,
+    seaIce: false,
+    icebergs: false,
+    risk: false,
+    aisTargets: false,
+    navAids: false,
+    oceanCurrents: false,
     bathymetry: false,
     weather: false,
     ...initialLayers,
@@ -280,11 +280,11 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     setIsSimulating(false);
     simProgressRef.current = 0;
     setSimVesselPos(null);
-    setHudMessage('Voyage simulation reset to original Atlantic coordinates');
+    setHudMessage('Voyage simulation reset to original East Antarctic coordinates');
   };
 
-  // Helper to fit map bounds to the active route or Atlantic Fairway Corridor
-  const fitRouteOrAtlanticBounds = useCallback((animate = false) => {
+  // Helper to fit map bounds to the active route or East Antarctic Maitri-Bharati Corridor
+  const fitRouteOrAntarcticBounds = useCallback((animate = false) => {
     const map = mapInstanceRef.current;
     if (!map) return;
     map.invalidateSize();
@@ -294,12 +294,12 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       const bounds = L.latLngBounds(latLngs);
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 6.5, animate });
     } else {
-      map.fitBounds([[44.0, -58.0], [62.0, -28.0]], { padding: [50, 50], maxZoom: 6.5, animate });
+      map.fitBounds([[-72.0, 10.0], [-64.0, 78.0]], { padding: [50, 50], maxZoom: 6.5, animate });
     }
   }, [activeRoute]);
 
   // --------------------------------------------------------------------------
-  // 2. Initialize Leaflet Map Instance at the Atlantic Ocean
+  // 2. Initialize Leaflet Map Instance at East Antarctica
   // --------------------------------------------------------------------------
   useEffect(() => {
     if (basemapMode === 'polar') {
@@ -321,7 +321,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     }
 
     const map = L.map(mapContainerRef.current, {
-      center: [53.0, -44.0],
+      center: [-68.5, 45.0],
       zoom: 5,
       zoomControl: false,
       attributionControl: true,
@@ -345,13 +345,13 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     // Initial base tiles
     updateBasemapTiles(basemapMode);
 
-    // Initial bounding box to view complete Atlantic voyage corridor (Greenland to Newfoundland)
+    // Initial bounding box to view complete East Antarctic corridor (Maitri to Bharati)
     const timer1 = setTimeout(() => {
-      fitRouteOrAtlanticBounds(false);
+      fitRouteOrAntarcticBounds(false);
     }, 100);
 
     const timer2 = setTimeout(() => {
-      fitRouteOrAtlanticBounds(false);
+      fitRouteOrAntarcticBounds(false);
     }, 350);
 
     // Direct click on map background clears all active inspector cards
@@ -410,14 +410,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
         measureLayerGroupRef.current = null;
       }
     };
-  }, [basemapMode, fitRouteOrAtlanticBounds]);
+  }, [basemapMode, fitRouteOrAntarcticBounds]);
 
   // Synchronize route view whenever the active route or candidates change
   useEffect(() => {
     if (mapInstanceRef.current && basemapMode !== 'polar') {
-      fitRouteOrAtlanticBounds(true);
+      fitRouteOrAntarcticBounds(true);
     }
-  }, [selectedRouteId, customRoutes, fitRouteOrAtlanticBounds, basemapMode]);
+  }, [selectedRouteId, customRoutes, fitRouteOrAntarcticBounds, basemapMode]);
 
   // Helper to switch base tiles
   const updateBasemapTiles = (mode: BasemapMode) => {
@@ -603,7 +603,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   }, [measurePoints, currentVessel.speedKts]);
 
   // --------------------------------------------------------------------------
-  // 4. Render and Synchronize All 10 Leaflet Layers (Atlantic Ocean)
+  // 4. Render and Synchronize All 10 Leaflet Layers (East Antarctica)
   // --------------------------------------------------------------------------
   const syncLeafletLayers = useCallback(() => {
     const group = layersGroupRef.current;
@@ -611,7 +611,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
     group.clearLayers();
 
-    // 1. Sea-Ice Concentration Heatmap Layer (Atlantic / Labrador Sea)
+    // 1. Sea-Ice Concentration Heatmap Layer (East Antarctica / Princess Astrid to Prydz Bay)
     if (activeLayers.seaIce) {
       seaIceTiers.forEach((tier) => {
         const coords = SEA_ICE_TIER_COORDS[tier.id];
@@ -633,15 +633,15 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       });
     }
 
-    // 2. Bathymetry Isobaths & Depth Contours
+    // 2. Bathymetry Isobaths & Depth Contours (East Antarctica / Prydz Bay Margin)
     if (activeLayers.bathymetry) {
       const bathyContourCoords: Array<{ label: string; coords: L.LatLngExpression[]; danger?: boolean }> = [
-        { label: '-100m Coastal Shoal Sounding', coords: [[47.2, -54.0], [48.5, -52.5], [51.5, -55.5]], danger: true },
-        { label: '-200m Grand Banks Shelf Break', coords: [[46.5, -48.0], [49.0, -49.5], [52.5, -51.5]], danger: true },
-        { label: '-500m Flemish Pass Margin', coords: [[47.0, -46.5], [49.5, -48.0], [53.5, -49.5]] },
-        { label: '-1000m Continental Slope', coords: [[48.0, -44.0], [51.5, -46.0], [55.0, -47.5], [58.0, -44.0]] },
-        { label: '-2000m Continental Rise', coords: [[49.5, -41.0], [53.0, -43.0], [56.5, -42.0], [59.5, -38.0]] },
-        { label: '-3000m Atlantic Abyssal Plain', coords: [[51.0, -38.0], [54.5, -39.0], [58.0, -36.0], [61.0, -32.0]] },
+        { label: '-100m Maitri Fast Ice Shoal', coords: [[-70.8, 11.0], [-70.2, 13.0], [-69.8, 16.0]], danger: true },
+        { label: '-200m Prydz Bay Shelf Break', coords: [[-69.5, 74.0], [-68.8, 75.5], [-68.2, 77.0]], danger: true },
+        { label: '-500m Amery Trench Margin', coords: [[-69.0, 71.0], [-68.2, 72.5], [-67.5, 74.0]] },
+        { label: '-1000m Enderby Continental Slope', coords: [[-67.5, 40.0], [-67.0, 48.0], [-66.5, 55.0]] },
+        { label: '-2000m Riiser-Larsen Continental Rise', coords: [[-66.0, 25.0], [-65.5, 35.0], [-65.0, 45.0]] },
+        { label: '-3000m Southern Ocean Abyssal Plain', coords: [[-64.5, 15.0], [-64.0, 35.0], [-63.5, 55.0], [-63.0, 75.0]] },
       ];
 
       bathyContourCoords.forEach((bathy) => {
@@ -658,13 +658,13 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       });
     }
 
-    // 3. Ocean Currents Streamlines (Labrador Current & North Atlantic Drift)
+    // 3. Ocean Currents Streamlines (Antarctic Coastal Current & Circumpolar Drift)
     if (activeLayers.oceanCurrents) {
       const currentVectors: Array<{ start: [number, number]; end: [number, number]; label: string; speed: number; temp: string }> = [
-        { start: [58.5, -48.0], end: [52.5, -47.0], label: 'Labrador Current (Southbound Polar Drift)', speed: 2.2, temp: '-0.8°C' },
-        { start: [47.5, -44.0], end: [53.0, -36.0], label: 'North Atlantic Drift (Gulf Stream Margin)', speed: 1.8, temp: '+8.5°C' },
-        { start: [61.0, -41.0], end: [57.5, -44.5], label: 'East Greenland Current', speed: 1.4, temp: '-1.2°C' },
-        { start: [49.5, -49.5], end: [47.0, -48.0], label: 'Grand Banks Gyre', speed: 0.9, temp: '+3.5°C' },
+        { start: [-68.5, 75.0], end: [-69.5, 20.0], label: 'Antarctic Coastal Current (East Wind Drift)', speed: 1.8, temp: '-1.8°C' },
+        { start: [-63.5, 15.0], end: [-63.0, 75.0], label: 'Antarctic Circumpolar Current (West Wind Drift)', speed: 2.4, temp: '+0.5°C' },
+        { start: [-68.8, 74.0], end: [-67.0, 70.0], label: 'Prydz Bay Cyclonic Gyre', speed: 1.2, temp: '-1.5°C' },
+        { start: [-66.5, 30.0], end: [-67.2, 50.0], label: 'Weddell-Enderby Polar Gyre', speed: 1.4, temp: '-1.2°C' },
       ];
 
       currentVectors.forEach((vec) => {
@@ -928,7 +928,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       });
     }
 
-    // 9. Atlantic Ports & Marine Bases Layer (12 Bases)
+    // 9. Antarctic Research Stations & Outposts Layer (12 Bases)
     if (activeLayers.stations) {
       ANTARCTIC_STATIONS_DATA.forEach((st) => {
         const isDest = st.isDest;
@@ -1128,7 +1128,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   const toSvg = (pct: number) => pct * 10;
 
   return (
-    <div className={`relative flex flex-col ${heightClass} overflow-hidden rounded-[18px] border border-[#e0e0e0] bg-[#EAF4F9] select-none`}>
+    <div className={`relative flex flex-col ${heightClass} overflow-hidden rounded-[18px] border border-[#e0e0e0] bg-[#EAF4F9] select-none shadow-xs`}>
       {/* 1. Map Viewport Canvas */}
       <div className="flex-1 relative w-full h-full bg-[#EAF4F9] overflow-hidden">
         {basemapMode !== 'polar' ? (
@@ -1176,15 +1176,15 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
                 {/* Grid Text Labels */}
                 <g fill="#475569" fontSize="10" fontFamily="monospace" fontWeight="600" textAnchor="middle">
-                  <text x="500" y="52">60°N (GREENLAND ICE MARGIN)</text>
-                  <text x="500" y="172">53°N (ICEBERG ALLEY CORRIDOR)</text>
-                  <text x="500" y="292">47°N (GRAND BANKS / FLEMISH PASS)</text>
-                  <text x="500" y="505" fill="#0A2540" fontWeight="bold">NORTH ATLANTIC OCEAN</text>
-                  <text x="910" y="505">30°W</text>
-                  <text x="90" y="505">60°W</text>
+                  <text x="500" y="52">65°S (SOUTHERN OCEAN ACC MARGIN)</text>
+                  <text x="500" y="172">68°S (PRIMITIVE ICE EDGE / PRYDZ BAY)</text>
+                  <text x="500" y="292">70°S (ANTARCTIC CONTINENTAL MARGIN)</text>
+                  <text x="500" y="505" fill="#0A2540" fontWeight="bold">EAST ANTARCTICA (MAITRI - BHARATI)</text>
+                  <text x="910" y="505">80°E</text>
+                  <text x="90" y="505">10°E</text>
                 </g>
 
-                {/* Atlantic Coast Silhouette */}
+                {/* Antarctic Coast Silhouette */}
                 <path
                   d="M 500,260 C 620,270 740,340 820,440 C 890,530 870,680 780,780 C 700,870 540,920 420,890 C 310,860 210,770 170,640 C 130,520 180,390 280,310 C 360,250 440,255 500,260 Z"
                   fill="#FFFFFF"
@@ -1192,7 +1192,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
                   strokeWidth="2.5"
                 />
 
-                {/* Flemish Pass & Grand Banks Detail */}
+                {/* Prydz Bay & Amery Shelf Detail */}
                 <path
                   d="M 680,620 C 720,600 780,640 800,720 C 760,740 710,710 680,620 Z"
                   fill="#E0F2FE"
@@ -1201,7 +1201,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
                   strokeDasharray="2,2"
                 />
                 <text x="760" y="650" fill="#0A2540" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                  GRAND BANKS / FLEMISH PASS
+                  PRYDZ BAY / AMERY ICE SHELF
                 </text>
 
                 {/* Bathymetry Contours Layer */}
@@ -1308,18 +1308,18 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
                 {/* Custom Simulation Overlay */}
                 {customOverlay}
 
-                {/* Destination Marker: St. John's Maritime Base */}
+                {/* Destination Marker: Bharati Station */}
                 <g
                   transform={`translate(${toSvg(currentVessel.destX)}, ${toSvg(currentVessel.destY)})`}
                   className="cursor-pointer"
                   onClick={() =>
-                    setHudMessage("Destination: St. John's Maritime Base [47.57°N, 52.71°W]")
+                    setHudMessage("Destination: Bharati Station [69.41°S, 76.19°E] - Larsemann Hills")
                   }
                 >
                   <circle cx="0" cy="0" r="16" fill="rgba(10, 37, 64, 0.15)" stroke="#0A2540" strokeWidth="1.5" />
                   <circle cx="0" cy="0" r="5" fill="#0A2540" />
                   <text x="14" y="4" fill="#0A2540" fontSize="11" fontFamily="monospace" fontWeight="bold">
-                    ST. JOHN'S BASE [DEST]
+                    BHARATI STATION [DEST]
                   </text>
                 </g>
 
@@ -1375,7 +1375,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
             }}
             onResetView={() => {
               if (mapInstanceRef.current && basemapMode !== 'polar') {
-                fitRouteOrAtlanticBounds(true);
+                fitRouteOrAntarcticBounds(true);
               } else {
                 setZoomLevel(1);
               }
@@ -1420,18 +1420,18 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
             criticalIcebergsCount={7}
             onFocusIcebergs={() => {
               if (mapInstanceRef.current && basemapMode !== 'polar') {
-                mapInstanceRef.current.flyTo([53.20, -46.80], 6.5, { duration: 1.2 });
+                mapInstanceRef.current.flyTo([-68.20, 24.50], 6.5, { duration: 1.2 });
               }
-              const targetBerg = icebergs.find((ib) => ib.code === 'IB-023') || icebergs[0];
+              const targetBerg = icebergs.find((ib) => ib.code === 'A-76A') || icebergs[0];
               setSelectedIceberg(targetBerg);
-              setHudMessage(`Radar Tracking Locked on ${targetBerg.name} [53.20°N, 46.80°W] - 42.6 km² Tabular`);
+              setHudMessage(`Radar Tracking Locked on ${targetBerg.name} [${formatCoord(targetBerg.lat, targetBerg.lng)}] - ${targetBerg.areaKm2} km² Tabular`);
             }}
           />
         )}
 
         {/* 4. Bottom-Left Map Legend Overlay */}
         <div className="absolute bottom-11 left-3 z-30 pointer-events-auto">
-          <MapLegend />
+          <MapLegend layers={activeLayers} />
         </div>
 
         {/* 5. HUD Interactive Notification Bar */}
@@ -1861,7 +1861,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
           <div className="hidden md:flex items-center gap-1.5 text-neutral-400">
             <span>&bull;</span>
             <Zap className="w-3 h-3 text-[#0A2540]" />
-            <span className="text-neutral-700 font-normal">ATLANTIC CORRIDOR: 840 NM &bull; 94% SAFETY</span>
+            <span className="text-neutral-700 font-normal">CORRIDOR: 1,850 NM &bull; 94% SAFETY</span>
           </div>
         </div>
 
