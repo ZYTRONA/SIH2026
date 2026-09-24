@@ -32,12 +32,16 @@ interface NavItem {
 }
 
 const navigationItems: NavItem[] = [
-  { path: '/mission-planner', label: 'Mission Planner', icon: Compass },
+  { path: '/vessel-config', label: 'Vessel Setup', icon: Compass },
   { path: '/sea-ice', label: 'Sea-Ice Forecast', icon: Snowflake, dot: 'default' },
-  { path: '/icebergs', label: 'Iceberg Intelligence', icon: TriangleAlert, dot: 'warning' },
-  { path: '/risk', label: 'Risk Intelligence', icon: ShieldAlert },
+  { path: '/icebergs', label: 'Iceberg Trajectory', icon: TriangleAlert, dot: 'warning' },
+  { path: '/risk', label: 'Risk Engine', icon: ShieldAlert },
   { path: '/routes', label: 'Route Optimization', icon: Route, dot: 'teal' },
-  { path: '/system', label: 'System Status', icon: Server },
+  { path: '/route-comparison', label: 'Route Comparison', icon: LayoutGrid },
+  { path: '/explainable-ai', label: 'Explainable AI (SHAP)', icon: Radio },
+  { path: '/edge-console', label: 'Edge Console (Offline)', icon: Server, dot: 'warning' },
+  { path: '/reports', label: 'Reports & Export', icon: ChevronRight },
+  { path: '/login', label: 'Access & Login', icon: ChevronLeft },
 ];
 
 const dotColors = {

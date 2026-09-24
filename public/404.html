@@ -5,8 +5,8 @@
     <title>POLARIS AI | Loading...</title>
     <script>
       // SPA redirect for GitHub Pages & static web servers:
-      // Stores requested path into sessionStorage and redirects to root index.html
-      sessionStorage.redirect = location.href;
+      // Stores relative path into sessionStorage and redirects to root index.html
+      sessionStorage.redirect = location.pathname + location.search + location.hash;
     </script>
     <meta http-equiv="refresh" content="0;URL='/'" />
   </head>

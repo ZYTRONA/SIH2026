@@ -47,7 +47,14 @@
         var redirect = sessionStorage.redirect;
         delete sessionStorage.redirect;
         if (redirect && redirect !== location.href) {
-          history.replaceState(null, null, redirect);
+          try {
+            var target = new URL(redirect, location.origin);
+            if (target.origin === location.origin) {
+              history.replaceState(null, null, target.pathname + target.search + target.hash);
+            }
+          } catch (e) {
+            // Invalid URL format ignored
+          }
         }
       })();
     </script>
