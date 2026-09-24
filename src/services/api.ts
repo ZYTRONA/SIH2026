@@ -9,7 +9,8 @@ import {
   WEATHER_POINTS_DATA,
 } from '@/data/mapData';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const RAW_API_URL = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000') as string;
+const API_BASE = RAW_API_URL.replace(/\/api\/?$/, '').replace(/\/+$/, '');
 
 export interface RouteOptimizationRequest {
   vesselName: string;
@@ -41,7 +42,8 @@ export interface RouteOptionResult {
 }
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const url = `${API_BASE}${path}`;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const url = `${API_BASE}${cleanPath}`;
   const response = await fetch(url, {
     ...options,
     headers: {
