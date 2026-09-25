@@ -1,7 +1,13 @@
-"""
-POLARIS Platform — FastAPI Production Backend Service
-Polar Adaptive Route Intelligence System (NCPOR & IMO Polar Code Calibrated)
-"""
+import sys
+import os
+from pathlib import Path
+
+# Add project root and backend directory to sys.path for Render / Uvicorn compatibility
+_current_dir = Path(__file__).resolve().parent
+_root_dir = _current_dir.parent
+for _p in [str(_root_dir), str(_current_dir)]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,21 +17,68 @@ import datetime
 import math
 import uuid
 
-from backend.models.schemas import (
-    VesselBase,
-    MissionRequest,
-    SeaIcePredictionRequest,
-    IcebergPredictionRequest,
-    RouteOptimizationRequest,
-    RouteOptimizationResponse,
-    RouteResult,
-    ReportExportRequest,
-)
-from backend.database.supabase_client import (
-    db_manager,
-    is_supabase_configured,
-    SUPABASE_URL,
-)
+try:
+    from backend.models.schemas import (
+        VesselBase,
+        MissionRequest,
+        SeaIcePredictionRequest,
+        IcebergPredictionRequest,
+        RouteOptimizationRequest,
+        RouteOptimizationResponse,
+        RouteResult,
+        ReportExportRequest,
+    )
+    from backend.database.supabase_client import (
+        db_manager,
+        is_supabase_configured,
+        SUPABASE_URL,
+    )
+    from backend.data_pipeline.collectors.sea_ice import SeaIceCollector
+    from backend.data_pipeline.collectors.ice_motion import IceMotionCollector
+    from backend.data_pipeline.collectors.iceberg import IcebergCollector
+    from backend.data_pipeline.collectors.currents import OceanCurrentCollector
+    from backend.data_pipeline.collectors.waves import OceanWaveCollector
+    from backend.data_pipeline.collectors.wind import WindCollector
+    from backend.data_pipeline.collectors.weather import PolarWeatherCollector
+    from backend.data_pipeline.collectors.gebco import GebcoBathymetryCollector
+    from backend.data_pipeline.main import pipeline_engine, run_pipeline
+    from backend.data_pipeline.scheduler import pipeline_scheduler
+except ImportError:
+    from models.schemas import (
+        VesselBase,
+        MissionRequest,
+        SeaIcePredictionRequest,
+        IcebergPredictionRequest,
+        RouteOptimizationRequest,
+        RouteOptimizationResponse,
+        RouteResult,
+        ReportExportRequest,
+    )
+    from database.supabase_client import (
+        db_manager,
+        is_supabase_configured,
+        SUPABASE_URL,
+    )
+    from data_pipeline.collectors.sea_ice import SeaIceCollector
+    from data_pipeline.collectors.ice_motion import IceMotionCollector
+    from data_pipeline.collectors.iceberg import IcebergCollector
+    from data_pipeline.collectors.currents import OceanCurrentCollector
+    from data_pipeline.collectors.waves import OceanWaveCollector
+    from data_pipeline.collectors.wind import WindCollector
+    from data_pipeline.collectors.weather import PolarWeatherCollector
+    from data_pipeline.collectors.gebco import GebcoBathymetryCollector
+    from data_pipeline.main import pipeline_engine, run_pipeline
+    from data_pipeline.scheduler import pipeline_scheduler
+
+# Instantiate singleton collectors
+_sea_ice_col = SeaIceCollector()
+_ice_motion_col = IceMotionCollector()
+_iceberg_col = IcebergCollector()
+_currents_col = OceanCurrentCollector()
+_waves_col = OceanWaveCollector()
+_wind_col = WindCollector()
+_weather_col = PolarWeatherCollector()
+_gebco_col = GebcoBathymetryCollector()
 
 app = FastAPI(
     title="POLARIS AI — Polar Maritime Platform API",
@@ -43,7 +96,7 @@ app.add_middleware(
 )
 
 # =====================================================================
-# 1. ROOT, HEALTH & SUPABASE STATUS
+# 1. ROOT, HEALTH, PIPELINE & SUPABASE STATUS
 # =====================================================================
 @app.get("/")
 def read_root():
@@ -52,7 +105,7 @@ def read_root():
         "organization": "National Centre for Polar & Ocean Research (NCPOR)",
         "compliance": "IMO Polar Code (POLARIS Risk Index Outcome)",
         "status": "OPERATIONAL",
-        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "edge_ready": True,
     }
 
@@ -70,6 +123,10 @@ def health_check():
             "configured": is_supabase_configured(),
             "url": SUPABASE_URL if is_supabase_configured() else "Local / Offline Mode",
         },
+        "data_pipeline": {
+            "scheduler": pipeline_scheduler.get_status(),
+            "streams_active": 8
+        },
         "offline_cache_sync": "SYNCHRONIZED",
     }
 
@@ -80,6 +137,18 @@ def get_db_status():
         "url": SUPABASE_URL or "Not Configured (Running in Offline Fallback Mode)",
         "tables": ["vessels", "missions", "sea_ice_forecasts", "iceberg_predictions", "risk_maps", "routes"],
         "postgis_enabled": True,
+    }
+
+@app.post("/api/pipeline/run")
+def trigger_pipeline_run():
+    """Triggers an end-to-end multi-sensor ingestion cycle."""
+    return pipeline_engine.execute_ingestion_cycle()
+
+@app.get("/api/pipeline/status")
+def get_pipeline_status():
+    return {
+        "scheduler": pipeline_scheduler.get_status(),
+        "latest_metrics": pipeline_engine.db.get_latest_metrics(),
     }
 
 @app.get("/api/vessels")
@@ -114,22 +183,23 @@ def get_missions():
             "dest_lat": -69.41,
             "dest_lng": 76.19,
             "status": "ACTIVE_NAVIGATION",
-            "created_at": datetime.datetime.utcnow().isoformat(),
+            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         }
     ]
 
 # =====================================================================
-# 2. DATA APIS (/api/seaice, /api/iceberg, /api/weather, /api/ocean)
+# 2. LIVE SENSOR & ENVIRONMENTAL APIS
 # =====================================================================
 @app.get("/api/seaice")
 def get_sea_ice_data():
+    live_res = _sea_ice_col.fetch()
     return {
-        "source": "Copernicus Sentinel-1 SAR + AMSR2 Passive Microwave",
-        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "source": live_res["source"],
+        "timestamp": live_res["timestamp"],
         "resolution_km": 1.0,
-        "mean_concentration_pct": 34.8,
+        "mean_concentration_pct": live_res["average_ice_density_pct"],
         "coverage_region": "Antarctic Sector: Weddell Sea to Prydz Bay",
-        "grid_points_count": 240,
+        "grid_points_count": live_res["data_points_count"],
         "features": [
             {"tier": "tier-1", "name": "Open Water Leads (< 10%)", "color": "#0284c7"},
             {"tier": "tier-2", "name": "Very Open Drift Ice (10-30%)", "color": "#38bdf8"},
@@ -137,74 +207,79 @@ def get_sea_ice_data():
             {"tier": "tier-4", "name": "Close Pack Ice (70-80%)", "color": "#f97316"},
             {"tier": "tier-5", "name": "Compact Multi-Year Ice (90-100%)", "color": "#ef4444"},
         ],
+        "grid_sample": live_res["data"][:15]
     }
 
 @app.get("/api/iceberg")
 def get_iceberg_data():
+    live_res = _iceberg_col.fetch()
     return {
-        "source": "Sentinel-1 Synthetic Aperture Radar Ingestion",
-        "count": 37,
-        "high_threat_count": 4,
+        "source": live_res["source"],
+        "count": live_res["total_icebergs"],
+        "high_threat_count": live_res["critical_count"] + live_res["high_count"],
         "icebergs": [
             {
-                "id": "ib-a76a",
-                "name": "A-76A (Tabular Fragment)",
-                "lat": -68.45,
-                "lng": 18.30,
-                "drift_speed_kts": 1.4,
-                "drift_dir_deg": 245,
-                "threat_level": "High",
-                "length_m": 3200,
-                "height_m": 42,
-            },
-            {
-                "id": "ib-2026-44",
-                "name": "IB-2026-44 (Bergy Bit)",
-                "lat": -69.20,
-                "lng": 42.10,
-                "drift_speed_kts": 0.9,
-                "drift_dir_deg": 210,
-                "threat_level": "Medium",
-                "length_m": 850,
-                "height_m": 18,
-            },
-            {
-                "id": "ib-2026-89",
-                "name": "IB-2026-89 (Pinnacled)",
-                "lat": -70.10,
-                "lng": 65.50,
-                "drift_speed_kts": 1.1,
-                "drift_dir_deg": 280,
-                "threat_level": "Low",
-                "length_m": 420,
-                "height_m": 26,
-            },
+                "id": b["iceberg_code"],
+                "name": b["name"],
+                "lat": b["lat"],
+                "lng": b["lon"],
+                "future_lat": b["future_lat"],
+                "future_lng": b["future_lon"],
+                "drift_speed_kts": b["drift_speed_kts"],
+                "drift_dir_deg": b["drift_direction_deg"],
+                "threat_level": b["risk_level"].capitalize(),
+                "length_m": int(b["length_km"] * 1000),
+                "height_m": int(b["draft_depth_m"] * 0.15),
+                "draft_depth_m": b["draft_depth_m"],
+                "size_km2": b["size_km2"],
+                "confidence": b["confidence"]
+            }
+            for b in live_res["data"]
         ],
     }
 
 @app.get("/api/weather")
 def get_weather_data():
+    live_res = _weather_col.fetch()
+    first_cell = live_res["data"][0] if live_res["data"] else {}
     return {
-        "source": "ECMWF ERA5 Atmospheric Reanalysis & Re-forecast",
-        "timestamp": datetime.datetime.utcnow().isoformat(),
-        "pressure_hpa": 982.4,
-        "air_temp_c": -6.8,
-        "wind_speed_kts": 24.5,
-        "wind_dir_deg": 195,
-        "visibility_nm": 6.5,
-        "icing_risk": "Moderate Structural Rime Accumulation",
+        "source": live_res["source"],
+        "timestamp": live_res["timestamp"],
+        "pressure_hpa": first_cell.get("pressure_hpa", 982.4),
+        "air_temp_c": first_cell.get("air_temperature_c", -14.2),
+        "visibility_km": first_cell.get("visibility_km", 10.0),
+        "icing_risk": first_cell.get("icing_hazard_level", "Moderate Freezing Spray"),
+        "icing_accumulation_rate_cm_hr": first_cell.get("icing_accumulation_rate_cm_hr", 0.8),
+        "min_temperature_c": live_res["min_temperature_c"]
     }
 
 @app.get("/api/ocean")
 def get_ocean_data():
+    live_currents = _currents_col.fetch()
+    live_waves = _waves_col.fetch()
+    first_c = live_currents["data"][0] if live_currents["data"] else {}
+    first_w = live_waves["data"][0] if live_waves["data"] else {}
     return {
-        "source": "CMEMS Global Ocean Physics Analysis & Forecast",
-        "sea_surface_temp_c": -1.2,
-        "current_velocity_kts": 0.85,
-        "current_dir_deg": 85,
-        "significant_wave_height_m": 2.8,
-        "swell_period_s": 9.4,
+        "source": "CMEMS Global Ocean Physics & WW3 Wave Engine",
+        "sea_surface_temp_c": first_c.get("sst_celsius", -1.4),
+        "current_velocity_kts": first_c.get("current_speed_kts", 0.65),
+        "current_dir_deg": first_c.get("current_direction_deg", 90.0),
+        "significant_wave_height_m": first_w.get("significant_wave_height_m", 3.2),
+        "swell_period_s": first_w.get("peak_period_s", 11.5),
+        "max_wave_height_m": live_waves.get("max_wave_height_m", 6.5)
     }
+
+@app.get("/api/gebco")
+def get_bathymetry_data():
+    return _gebco_col.fetch()
+
+@app.get("/api/wind")
+def get_wind_data():
+    return _wind_col.fetch()
+
+@app.get("/api/ice-motion")
+def get_ice_motion_data():
+    return _ice_motion_col.fetch()
 
 # =====================================================================
 # 3. AI PREDICTION APIS (/api/predict/seaice, /api/predict/iceberg)
