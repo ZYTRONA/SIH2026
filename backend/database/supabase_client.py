@@ -9,26 +9,31 @@ from typing import Optional, Dict, Any, List
 
 # Safely load .env
 def _load_env_file():
+    paths = [
+        Path(__file__).resolve().parent.parent / '.env',
+        Path(__file__).resolve().parent.parent.parent / '.env',
+    ]
     try:
         from dotenv import load_dotenv
-        env_path = Path(__file__).resolve().parent.parent.parent / '.env'
-        if env_path.exists():
-            load_dotenv(dotenv_path=env_path)
-        else:
-            load_dotenv()
+        for env_path in paths:
+            if env_path.exists():
+                load_dotenv(dotenv_path=env_path)
+                return
+        load_dotenv()
     except ImportError:
         # Simple pure Python .env parser fallback
-        env_path = Path(__file__).resolve().parent.parent.parent / '.env'
-        if env_path.exists():
-            try:
-                with open(env_path, 'r', encoding='utf-8') as f:
-                    for line in f:
-                        line = line.strip()
-                        if line and not line.startswith('#') and '=' in line:
-                            k, v = line.split('=', 1)
-                            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
-            except Exception:
-                pass
+        for env_path in paths:
+            if env_path.exists():
+                try:
+                    with open(env_path, 'r', encoding='utf-8') as f:
+                        for line in f:
+                            line = line.strip()
+                            if line and not line.startswith('#') and '=' in line:
+                                k, v = line.split('=', 1)
+                                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+                    return
+                except Exception:
+                    pass
 
 _load_env_file()
 
