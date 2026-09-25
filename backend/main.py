@@ -109,6 +109,10 @@ def read_root():
         "edge_ready": True,
     }
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 @app.get("/health")
 def health_check():
     return {
