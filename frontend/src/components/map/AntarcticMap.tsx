@@ -27,6 +27,7 @@ import {
 } from '@/data/mapData';
 import { MapControls, BasemapMode } from './MapControls';
 import { MapLegend } from './MapLegend';
+import { useAppStore } from '@/store/useAppStore';
 import { VesselMarker } from './VesselMarker';
 import { IcebergMarker } from './IcebergMarker';
 import { RouteLayer } from './RouteLayer';
@@ -59,10 +60,30 @@ export interface AntarcticMapProps {
   customSeaIce?: SeaIceConcentrationFeature[];
   customRiskZones?: RiskZoneFeature[];
   customOverlay?: React.ReactNode;
+  controlledBasemap?: BasemapMode;
+  onBasemapChange?: (mode: BasemapMode) => void;
+  onMapClickCoordinate?: (lat: number, lng: number) => void;
+  isPickingLocation?: 'origin' | 'dest' | null;
+  region?: 'Antarctica' | 'Arctic' | 'Global';
+  mapTitle?: string;
+  onCenterChange?: (center: { lat: number; lng: number; zoom: number }) => void;
+  externalCenter?: { lat: number; lng: number; zoom?: number } | null;
 }
 
 // LatLng polygon definitions for East Antarctic Risk Zones (Maitri to Bharati Corridor)
 const RISK_ZONE_COORDS: Record<string, L.LatLngExpression[]> = {
+  'risk-bouvet-gateway': [
+    [-50.0, 4.0],
+    [-50.0, 24.0],
+    [-57.0, 25.0],
+    [-57.0, 3.0],
+  ],
+  'risk-agulhas-drift': [
+    [-44.0, 16.0],
+    [-44.0, 31.0],
+    [-49.0, 32.0],
+    [-49.0, 15.0],
+  ],
   'risk-critical': [
     [-67.2, 22.0],
     [-67.0, 26.5],
@@ -97,6 +118,12 @@ const RISK_ZONE_COORDS: Record<string, L.LatLngExpression[]> = {
 
 // LatLng polygon definitions for East Antarctic Sea Ice Concentration Heatmap
 const SEA_ICE_TIER_COORDS: Record<string, L.LatLngExpression[]> = {
+  'ice-tier-south-africa': [
+    [-57.0, -8.0],
+    [-56.0, 30.0],
+    [-66.0, 32.0],
+    [-66.5, -8.0],
+  ],
   'ice-tier-1': [
     [-65.0, 10.0],
     [-64.5, 45.0],
@@ -172,6 +199,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   customSeaIce,
   customRiskZones,
   customOverlay,
+  controlledBasemap,
+  onBasemapChange,
+  onMapClickCoordinate,
+  isPickingLocation = null,
+  region = 'Antarctica',
+  mapTitle,
+  onCenterChange,
+  externalCenter,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -179,7 +214,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   const measureLayerGroupRef = useRef<L.LayerGroup | null>(null);
   const tileLayersRef = useRef<{ base?: L.TileLayer; seamarks?: L.TileLayer; ref?: L.TileLayer }>({});
 
-  const [basemapMode, setBasemapMode] = useState<BasemapMode>('voyager');
+  const [internalBasemapMode, setInternalBasemapMode] = useState<BasemapMode>('voyager');
+  const basemapMode = controlledBasemap || internalBasemapMode;
+
+  const handleSelectBasemap = (mode: BasemapMode) => {
+    setInternalBasemapMode(mode);
+    onBasemapChange?.(mode);
+    updateBasemapTiles(mode);
+  };
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [hudMessage, setHudMessage] = useState<string | null>(null);
   const [cursorCoords, setCursorCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -232,19 +274,37 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     }
   };
 
-  const initialVessel = customVessel || VESSEL_STATE_DATA;
+  // Connect to Global Mission Store (Source of Truth configured in Vessel Setup)
+  const storeRoutes = useAppStore((s) => s.activeRoutes);
+  const storeSelectedRouteId = useAppStore((s) => s.selectedRouteId);
+  const setStoreSelectedRouteId = useAppStore((s) => s.setSelectedRouteId);
+  const storeOrigin = useAppStore((s) => s.departureLocation);
+  const storeDest = useAppStore((s) => s.destinationLocation);
+
+  const seaIceTiers = customSeaIce || SEA_ICE_LAYERS_DATA;
+  const riskZones = customRiskZones || RISK_ZONES_DATA;
+  const icebergs = customIcebergs || ICEBERGS_DATA;
+
+  // Use explicitly passed customRoutes, or fallback to the destinated routes from the global store
+  const routes = (customRoutes && customRoutes.length > 0)
+    ? customRoutes
+    : (storeRoutes && storeRoutes.length > 0 ? storeRoutes : ROUTE_PATHS_DATA);
+  const activeRouteId = selectedRouteId || storeSelectedRouteId;
+  const activeRoute = routes.find((r) => r.id === activeRouteId) || routes[0];
+
+  const defaultVesselLat = activeRoute?.waypoints?.[0]?.lat ?? VESSEL_STATE_DATA.lat;
+  const defaultVesselLng = activeRoute?.waypoints?.[0]?.lng ?? VESSEL_STATE_DATA.lng;
+  const initialVessel = customVessel || {
+    ...VESSEL_STATE_DATA,
+    lat: defaultVesselLat,
+    lng: defaultVesselLng,
+  };
   const currentVessel = {
     ...initialVessel,
     lat: simVesselPos ? simVesselPos.lat : initialVessel.lat,
     lng: simVesselPos ? simVesselPos.lng : initialVessel.lng,
     headingDeg: simVesselPos ? simVesselPos.heading : initialVessel.headingDeg,
   };
-
-  const seaIceTiers = customSeaIce || SEA_ICE_LAYERS_DATA;
-  const riskZones = customRiskZones || RISK_ZONES_DATA;
-  const icebergs = customIcebergs || ICEBERGS_DATA;
-  const routes = customRoutes || ROUTE_PATHS_DATA;
-  const activeRoute = routes.find((r) => r.id === selectedRouteId) || routes[0];
 
   // --------------------------------------------------------------------------
   // 1. Live Simulation Engine: Interpolate Vessel Along Route Waypoints
@@ -283,7 +343,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     setHudMessage('Voyage simulation reset to original East Antarctic coordinates');
   };
 
-  // Helper to fit map bounds to the active route or East Antarctic Maitri-Bharati Corridor
+  // Helper to fit map bounds to the active route or Region
   const fitRouteOrAntarcticBounds = useCallback((animate = false) => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -292,14 +352,23 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     if (activeRoute && activeRoute.waypoints && activeRoute.waypoints.length > 0) {
       const latLngs = activeRoute.waypoints.map((wp) => [wp.lat, wp.lng] as [number, number]);
       const bounds = L.latLngBounds(latLngs);
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 6.5, animate });
+      const isTransOceanicRoute = bounds.getNorth() - bounds.getSouth() > 30;
+      map.fitBounds(bounds, {
+        padding: isTransOceanicRoute ? [35, 35] : [50, 50],
+        maxZoom: isTransOceanicRoute ? 4 : 6.5,
+        animate,
+      });
+    } else if (region === 'Arctic') {
+      map.fitBounds([[66.0, -25.0], [82.0, 60.0]], { padding: [40, 40], maxZoom: 5.5, animate });
+    } else if (region === 'Global') {
+      map.setView([-20, 20], 2, { animate });
     } else {
       map.fitBounds([[-72.0, 10.0], [-64.0, 78.0]], { padding: [50, 50], maxZoom: 6.5, animate });
     }
-  }, [activeRoute]);
+  }, [activeRoute, region]);
 
   // --------------------------------------------------------------------------
-  // 2. Initialize Leaflet Map Instance at East Antarctica
+  // 2. Initialize Leaflet Map Instance at Selected Region
   // --------------------------------------------------------------------------
   useEffect(() => {
     if (basemapMode === 'polar') {
@@ -320,9 +389,17 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       return;
     }
 
+    const initialCenter: [number, number] =
+      region === 'Arctic'
+        ? [76.0, 25.0]
+        : region === 'Global'
+        ? [-20.0, 20.0]
+        : [-68.5, 45.0];
+    const initialZoom = region === 'Global' ? 2 : region === 'Arctic' ? 3.5 : 5;
+
     const map = L.map(mapContainerRef.current, {
-      center: [-68.5, 45.0],
-      zoom: 5,
+      center: initialCenter,
+      zoom: initialZoom,
       zoomControl: false,
       attributionControl: true,
       minZoom: 2,
@@ -345,7 +422,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     // Initial base tiles
     updateBasemapTiles(basemapMode);
 
-    // Initial bounding box to view complete East Antarctic corridor (Maitri to Bharati)
+    // Initial bounding box to view complete route or region
     const timer1 = setTimeout(() => {
       fitRouteOrAntarcticBounds(false);
     }, 100);
@@ -354,8 +431,11 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       fitRouteOrAntarcticBounds(false);
     }, 350);
 
-    // Direct click on map background clears all active inspector cards
-    const handleMapClick = () => {
+    // Direct click on map background clears all active inspector cards or picks coords
+    const handleMapClick = (e: L.LeafletMouseEvent) => {
+      if (onMapClickCoordinate) {
+        onMapClickCoordinate(e.latlng.lat, e.latlng.lng);
+      }
       setSelectedIceberg(null);
       setSelectedAisVessel(null);
       setSelectedStation(null);
@@ -364,6 +444,15 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       setSelectedVesselDetail(null);
     };
     map.on('click', handleMapClick);
+
+    const handleMoveEnd = () => {
+      if (onCenterChange && mapInstanceRef.current) {
+        const center = mapInstanceRef.current.getCenter();
+        const zoom = mapInstanceRef.current.getZoom();
+        onCenterChange({ lat: center.lat, lng: center.lng, zoom });
+      }
+    };
+    map.on('moveend', handleMoveEnd);
 
     const handleMouseMove = (e: L.LeafletMouseEvent) => {
       setCursorCoords({ lat: e.latlng.lat, lng: e.latlng.lng });
@@ -417,7 +506,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     if (mapInstanceRef.current && basemapMode !== 'polar') {
       fitRouteOrAntarcticBounds(true);
     }
-  }, [selectedRouteId, customRoutes, fitRouteOrAntarcticBounds, basemapMode]);
+  }, [selectedRouteId, customRoutes, routes, fitRouteOrAntarcticBounds, basemapMode]);
 
   // Helper to switch base tiles
   const updateBasemapTiles = (mode: BasemapMode) => {
@@ -491,6 +580,25 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       ).addTo(map);
 
       tileLayersRef.current = { base, seamarks };
+    } else if (mode === 'dark') {
+      const base = L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 20,
+        }
+      ).addTo(map);
+
+      const seamarks = L.tileLayer(
+        'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+        {
+          attribution: 'Nautical data &copy; <a href="https://www.openseamap.org">OpenSeaMap</a>',
+          maxZoom: 18,
+        }
+      ).addTo(map);
+
+      tileLayersRef.current = { base, seamarks };
     } else {
       // Default: Google-Style High-Resolution Marine Topographic Map (ESRI World Topo + OpenSeaMap) - 100% Free & Zero Watermarks
       const base = L.tileLayer(
@@ -513,6 +621,29 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       tileLayersRef.current = { base, seamarks };
     }
   };
+
+  // Sync external center and zoom across multi-map instances
+  useEffect(() => {
+    if (mapInstanceRef.current && externalCenter) {
+      const current = mapInstanceRef.current.getCenter();
+      const dist = Math.abs(current.lat - externalCenter.lat) + Math.abs(current.lng - externalCenter.lng);
+      if (dist > 0.05 || (externalCenter.zoom && mapInstanceRef.current.getZoom() !== externalCenter.zoom)) {
+        mapInstanceRef.current.setView(
+          [externalCenter.lat, externalCenter.lng],
+          externalCenter.zoom ?? mapInstanceRef.current.getZoom(),
+          { animate: true }
+        );
+      }
+    }
+  }, [externalCenter]);
+
+  // Sync controlled basemap
+  useEffect(() => {
+    if (controlledBasemap && controlledBasemap !== internalBasemapMode) {
+      setInternalBasemapMode(controlledBasemap);
+      updateBasemapTiles(controlledBasemap);
+    }
+  }, [controlledBasemap, internalBasemapMode]);
 
   // --------------------------------------------------------------------------
   // 3. Handle Interactive Distance Measuring Tool Clicks
@@ -730,7 +861,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     // 6. Navigation Routes Layer with Proper Dark Color Scheme
     if (activeLayers.routes) {
       routes.forEach((route) => {
-        const isSelected = route.id === (selectedRouteId || routes[0].id);
+        const isSelected = route.id === (activeRouteId || routes[0].id);
         const latLngs: L.LatLngExpression[] = route.waypoints.map((wp) => [wp.lat, wp.lng]);
         const routeColor = route.color || '#0A2540';
 
@@ -756,13 +887,55 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
         line.on('click', () => {
           if (onSelectRoute) onSelectRoute(route.id);
+          setStoreSelectedRouteId(route.id);
           setHudMessage(`Corridor Selected: ${route.name} (${route.totalDistanceNm} NM, Safety Score: ${route.safetyScore}%)`);
         });
 
         group.addLayer(line);
 
         // Waypoints for selected route
-        if (isSelected) {
+        if (isSelected && route.waypoints.length > 0) {
+          // 1. Origin Departure Badge
+          const startWp = route.waypoints[0];
+          const originLabel = storeOrigin?.name || startWp.name || 'Departure';
+          const originIcon = L.divIcon({
+            className: 'custom-origin-badge',
+            html: `
+              <div style="cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 2.5px 8px; border-radius: 8px; font-family: monospace; font-size: 10px; font-weight: 800; background-color: #064E3B; border: 2px solid #34D399; color: #FFFFFF; box-shadow: 0 4px 10px rgba(0,0,0,0.3); white-space: nowrap;">
+                <span style="font-size: 11px;">🟢</span>
+                <span>ORIGIN: ${originLabel}</span>
+              </div>
+            `,
+            iconSize: [140, 24],
+            iconAnchor: [70, 12],
+          });
+          const startMarker = L.marker([startWp.lat, startWp.lng], { icon: originIcon, zIndexOffset: 2500 });
+          startMarker.on('click', () => {
+            setHudMessage(`Departure Point: ${originLabel} [${startWp.lat.toFixed(2)}°, ${startWp.lng.toFixed(2)}°]`);
+          });
+          group.addLayer(startMarker);
+
+          // 2. Destination Arrival Badge
+          const endWp = route.waypoints[route.waypoints.length - 1];
+          const destLabel = storeDest?.name || endWp.name || 'Destination';
+          const destIcon = L.divIcon({
+            className: 'custom-dest-badge',
+            html: `
+              <div style="cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 2.5px 8px; border-radius: 8px; font-family: monospace; font-size: 10px; font-weight: 800; background-color: #0A2540; border: 2px solid #F59E0B; color: #FFFFFF; box-shadow: 0 4px 10px rgba(0,0,0,0.3); white-space: nowrap;">
+                <span style="font-size: 11px;">🏁</span>
+                <span>DEST: ${destLabel}</span>
+              </div>
+            `,
+            iconSize: [150, 24],
+            iconAnchor: [75, 12],
+          });
+          const endMarker = L.marker([endWp.lat, endWp.lng], { icon: destIcon, zIndexOffset: 2500 });
+          endMarker.on('click', () => {
+            setHudMessage(`Target Destination: ${destLabel} [${endWp.lat.toFixed(2)}°, ${endWp.lng.toFixed(2)}°]`);
+          });
+          group.addLayer(endMarker);
+
+          // 3. Intermediate Waypoints
           route.waypoints.forEach((wp, idx, arr) => {
             if (idx === 0 || idx === arr.length - 1) return;
             const wpIcon = L.divIcon({
@@ -1105,12 +1278,15 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     group.addLayer(vesselMarker);
   }, [
     routes,
+    activeRouteId,
     icebergs,
     currentVessel,
     selectedIceberg,
-    selectedRouteId,
     activeLayers,
     onSelectRoute,
+    setStoreSelectedRouteId,
+    storeOrigin,
+    storeDest,
     riskZones,
     seaIceTiers,
     selectedAisVessel,
@@ -1123,7 +1299,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     if (mapInstanceRef.current && basemapMode !== 'polar') {
       syncLeafletLayers();
     }
-  }, [syncLeafletLayers, basemapMode, activeLayers, selectedRouteId, selectedIceberg, simVesselPos]);
+  }, [syncLeafletLayers, basemapMode, activeLayers, activeRouteId, selectedIceberg, simVesselPos]);
 
   const toSvg = (pct: number) => pct * 10;
 
@@ -1131,8 +1307,24 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     <div className={`relative flex flex-col ${heightClass} overflow-hidden rounded-[18px] border border-[#e0e0e0] bg-[#EAF4F9] select-none shadow-xs`}>
       {/* 1. Map Viewport Canvas */}
       <div className="flex-1 relative w-full h-full bg-[#EAF4F9] overflow-hidden">
+        {/* Floating Map Title Banner (for Multi-Map Split Screen) */}
+        {mapTitle && (
+          <div className="absolute top-3 left-3 z-[400] px-3.5 py-1.5 rounded-full bg-[#1d1d1f]/90 text-white text-[12px] font-semibold border border-neutral-700 backdrop-blur-md flex items-center gap-2 shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-[#2997ff]" />
+            <span>{mapTitle}</span>
+          </div>
+        )}
+
+        {/* Floating Map Coordinate Picking Indicator */}
+        {isPickingLocation && (
+          <div className="absolute top-3 right-3 sm:right-16 z-[400] px-4 py-1.5 rounded-full bg-amber-500 text-white text-[12px] font-semibold shadow-lg animate-pulse flex items-center gap-2">
+            <Crosshair className="w-3.5 h-3.5" />
+            <span>Click map to set {isPickingLocation === 'origin' ? 'Departure (Origin)' : 'Arrival (Destination)'}</span>
+          </div>
+        )}
+
         {basemapMode !== 'polar' ? (
-          <div ref={mapContainerRef} className="absolute inset-0 w-full h-full z-0" />
+          <div ref={mapContainerRef} className={`absolute inset-0 w-full h-full z-0 ${isPickingLocation ? 'cursor-crosshair' : ''}`} />
         ) : (
           /* Tactical Polar Vector Projection Canvas */
           <div className="absolute inset-0 w-full h-full flex items-center justify-center p-2 bg-[#EAF4F9] overflow-hidden z-0">
@@ -1308,18 +1500,18 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
                 {/* Custom Simulation Overlay */}
                 {customOverlay}
 
-                {/* Destination Marker: Bharati Station */}
+                {/* Destination Marker */}
                 <g
                   transform={`translate(${toSvg(currentVessel.destX)}, ${toSvg(currentVessel.destY)})`}
                   className="cursor-pointer"
                   onClick={() =>
-                    setHudMessage("Destination: Bharati Station [69.41°S, 76.19°E] - Larsemann Hills")
+                    setHudMessage(`Destination: ${storeDest?.name || 'Target Station'}`)
                   }
                 >
                   <circle cx="0" cy="0" r="16" fill="rgba(10, 37, 64, 0.15)" stroke="#0A2540" strokeWidth="1.5" />
                   <circle cx="0" cy="0" r="5" fill="#0A2540" />
                   <text x="14" y="4" fill="#0A2540" fontSize="11" fontFamily="monospace" fontWeight="bold">
-                    BHARATI STATION [DEST]
+                    {(storeDest?.name || 'BHARATI STATION').toUpperCase()} [DEST]
                   </text>
                 </g>
 
@@ -1390,7 +1582,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
             }}
             engineMode={basemapMode !== 'polar' ? 'mapbox' : 'tactical-fallback'}
             basemapMode={basemapMode}
-            onSelectBasemap={(mode) => setBasemapMode(mode)}
+            onSelectBasemap={handleSelectBasemap}
             isMeasuring={isMeasuring}
             onToggleMeasure={() => {
               setIsMeasuring(!isMeasuring);

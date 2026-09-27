@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '@/components/layout/PageContainer';
+import { useAppStore } from '@/store/useAppStore';
+import { AntarcticMap } from '@/components/map/AntarcticMap';
 import {
   Ship,
   Compass,
@@ -17,15 +19,31 @@ interface PresetStation {
   lat: number;
   lng: number;
   description: string;
+  category?: 'India' | 'Antarctica' | 'Gateway';
 }
 
 const POLAR_STATIONS: PresetStation[] = [
-  { name: 'Maitri Station (India)', lat: -70.77, lng: 11.73, description: 'Queen Maud Land Antarctic Research Base' },
-  { name: 'Bharati Station (India)', lat: -69.41, lng: 76.19, description: 'Larsemann Hills Research Facility' },
-  { name: 'Cape Town Port (South Africa)', lat: -33.92, lng: 18.42, description: 'Primary Antarctic Gateway Hub' },
-  { name: 'Prydz Bay Anchorage', lat: -68.50, lng: 74.00, description: 'Deepwater Icebreaker Rendezvous' },
-  { name: 'Neumayer Station III (Germany)', lat: -70.67, lng: -8.27, description: 'Ekström Ice Shelf' },
-  { name: 'McMurdo Station (USA)', lat: -77.85, lng: 166.67, description: 'Ross Island Logistics Base' },
+  // Indian Departure Ports (NCPOR / MoES Base)
+  { name: 'Mormugao Port, Goa (India)', lat: 15.40, lng: 73.80, description: 'NCPOR Indian Antarctic Expedition Embarkation Port, Goa', category: 'India' },
+  { name: 'Cochin Port & Shipyard (India)', lat: 9.96, lng: 76.27, description: 'Southern Ocean Logistics & Polar Vessel Service Base, Kerala', category: 'India' },
+  { name: 'Mumbai Port / JNPT (India)', lat: 18.95, lng: 72.85, description: 'Western Naval & Polar Expedition Staging Terminal, Maharashtra', category: 'India' },
+  { name: 'Chennai Port (India)', lat: 13.08, lng: 80.30, description: 'Bay of Bengal Deepwater Port & NIOT Staging Hub, Tamil Nadu', category: 'India' },
+
+  // Indian Antarctic Research Stations & Bases
+  { name: 'Bharati Station (India)', lat: -69.41, lng: 76.19, description: 'Larsemann Hills Research Facility & Deepwater Anchorage', category: 'Antarctica' },
+  { name: 'Maitri Station (India)', lat: -70.77, lng: 11.73, description: 'Queen Maud Land Antarctic Research Base', category: 'Antarctica' },
+  { name: 'Dakshin Gangotri Ice Shelf Hub', lat: -70.08, lng: 12.00, description: 'Historical 1st Indian Antarctic Station Site', category: 'Antarctica' },
+  { name: 'Prydz Bay Anchorage', lat: -68.50, lng: 74.00, description: 'Deepwater Icebreaker Rendezvous', category: 'Antarctica' },
+
+  // International Gateway Hubs & Other Stations
+  { name: 'Port Louis Harbor (Mauritius)', lat: -20.16, lng: 57.50, description: 'Indian Ocean Mid-Voyage Bunkering & Logistics Stop', category: 'Gateway' },
+  { name: 'Cape Town Port (South Africa)', lat: -33.92, lng: 18.42, description: 'Primary Antarctic Gateway Hub', category: 'Gateway' },
+  { name: 'Syowa Station (Japan)', lat: -69.00, lng: 39.58, description: 'East Ongul Island Research Base', category: 'Antarctica' },
+  { name: 'Neumayer Station III (Germany)', lat: -70.67, lng: -8.27, description: 'Ekström Ice Shelf', category: 'Antarctica' },
+  { name: 'Troll Station (Norway)', lat: -72.01, lng: 2.53, description: 'Jutulsessen Blue Ice Hub', category: 'Antarctica' },
+  { name: 'McMurdo Station (USA)', lat: -77.85, lng: 166.67, description: 'Ross Island Logistics Base', category: 'Antarctica' },
+  { name: 'Hobart Port (Australia)', lat: -42.88, lng: 147.33, description: 'Southern Ocean Maritime Gateway', category: 'Gateway' },
+  { name: 'Punta Arenas Port (Chile)', lat: -53.16, lng: -70.91, description: 'Strait of Magellan Polar Gateway', category: 'Gateway' },
 ];
 
 const POLAR_CLASSES = [
@@ -41,24 +59,51 @@ const POLAR_CLASSES = [
 export const VesselConfig: React.FC = () => {
   const navigate = useNavigate();
 
-  // Form State
-  const [name, setName] = useState('SA Agulhas II');
-  const [selectedPolarClass, setSelectedPolarClass] = useState('PC3');
-  const [speedKts, setSpeedKts] = useState<number>(14.5);
+  // Connect to Global Mission Store
+  const storeOrigin = useAppStore((s) => s.departureLocation);
+  const storeDest = useAppStore((s) => s.destinationLocation);
+  const storePolarClass = useAppStore((s) => s.polarClass);
+  const storeSpeedKts = useAppStore((s) => s.vesselSpeedKts);
+  const storeVesselName = useAppStore((s) => s.vesselName);
+  const activeRoutes = useAppStore((s) => s.activeRoutes);
+  const setVoyageEndpoints = useAppStore((s) => s.setVoyageEndpoints);
+
+  // Form State initialized from Global Store
+  const [name, setName] = useState(storeVesselName || 'SA Agulhas II');
+  const [selectedPolarClass, setSelectedPolarClass] = useState(storePolarClass || 'PC3');
+  const [speedKts, setSpeedKts] = useState<number>(storeSpeedKts || 14.5);
   const [fuelCapacityMt, setFuelCapacityMt] = useState<number>(1850);
   const [currentFuelPct] = useState<number>(88);
   const [enginePowerMw, setEnginePowerMw] = useState<number>(24.0);
 
-  // Waypoints
-  const [startStation, setStartStation] = useState<PresetStation>(POLAR_STATIONS[0]); // Maitri
-  const [destStation, setDestStation] = useState<PresetStation>(POLAR_STATIONS[1]); // Bharati
+  // Waypoints initialized from Global Store
+  const [startStation, setStartStation] = useState<PresetStation>(() => {
+    const match = POLAR_STATIONS.find((s) => s.name === storeOrigin.name);
+    return match || {
+      name: storeOrigin.name || 'Maitri Station (India)',
+      lat: storeOrigin.lat,
+      lng: storeOrigin.lng,
+      description: storeOrigin.description || 'Custom Origin',
+    };
+  });
 
-  const [startLat, setStartLat] = useState<number>(POLAR_STATIONS[0].lat);
-  const [startLng, setStartLng] = useState<number>(POLAR_STATIONS[0].lng);
-  const [destLat, setDestLat] = useState<number>(POLAR_STATIONS[1].lat);
-  const [destLng, setDestLng] = useState<number>(POLAR_STATIONS[1].lng);
+  const [destStation, setDestStation] = useState<PresetStation>(() => {
+    const match = POLAR_STATIONS.find((s) => s.name === storeDest.name);
+    return match || {
+      name: storeDest.name || 'Bharati Station (India)',
+      lat: storeDest.lat,
+      lng: storeDest.lng,
+      description: storeDest.description || 'Custom Destination',
+    };
+  });
+
+  const [startLat, setStartLat] = useState<number>(storeOrigin.lat);
+  const [startLng, setStartLng] = useState<number>(storeOrigin.lng);
+  const [destLat, setDestLat] = useState<number>(storeDest.lat);
+  const [destLng, setDestLng] = useState<number>(storeDest.lng);
 
   const [createdProfile, setCreatedProfile] = useState<any>(null);
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
 
   const handleStartStationChange = (stationName: string) => {
     const found = POLAR_STATIONS.find((s) => s.name === stationName);
@@ -66,6 +111,14 @@ export const VesselConfig: React.FC = () => {
       setStartStation(found);
       setStartLat(found.lat);
       setStartLng(found.lng);
+      setVoyageEndpoints(
+        { name: found.name, lat: found.lat, lng: found.lng, description: found.description },
+        { name: destStation.name, lat: destLat, lng: destLng, description: destStation.description },
+        selectedPolarClass,
+        speedKts,
+        name
+      );
+      setSaveSuccessMsg(`Starting point updated to ${found.name}. Destinated routes recalculated across all maps.`);
     }
   };
 
@@ -75,6 +128,14 @@ export const VesselConfig: React.FC = () => {
       setDestStation(found);
       setDestLat(found.lat);
       setDestLng(found.lng);
+      setVoyageEndpoints(
+        { name: startStation.name, lat: startLat, lng: startLng, description: startStation.description },
+        { name: found.name, lat: found.lat, lng: found.lng, description: found.description },
+        selectedPolarClass,
+        speedKts,
+        name
+      );
+      setSaveSuccessMsg(`Destination updated to ${found.name}. Destinated routes recalculated across all maps.`);
     }
   };
 
@@ -96,6 +157,12 @@ export const VesselConfig: React.FC = () => {
     const estDays = Number((distNm / (speedKts * 24)).toFixed(1));
     const estFuelTons = Number(((estDays * 24 * (enginePowerMw * 0.22)) * 0.85).toFixed(1));
 
+    const originObj = { name: startStation.name, lat: startLat, lng: startLng, description: startStation.description };
+    const destObj = { name: destStation.name, lat: destLat, lng: destLng, description: destStation.description };
+
+    // Update global store so all maps across all pages display ONLY the destinated routes
+    setVoyageEndpoints(originObj, destObj, selectedPolarClass, speedKts, name);
+
     const profile = {
       profileId: `MISSION-POLAR-${Date.now().toString().slice(-6)}`,
       vesselName: name,
@@ -104,8 +171,8 @@ export const VesselConfig: React.FC = () => {
       fuelCapacityMt,
       currentFuelPct,
       enginePowerMw,
-      source: { name: startStation.name, lat: startLat, lng: startLng },
-      destination: { name: destStation.name, lat: destLat, lng: destLng },
+      source: originObj,
+      destination: destObj,
       distanceNm: distNm || 1845,
       estimatedTimeDays: estDays || 5.2,
       estimatedFuelMt: estFuelTons || 146.4,
@@ -114,7 +181,7 @@ export const VesselConfig: React.FC = () => {
     };
 
     setCreatedProfile(profile);
-    sessionStorage.setItem('polaris_active_mission', JSON.stringify(profile));
+    setSaveSuccessMsg(`Mission Initialized! Destinated routes from ${startStation.name.split(' ')[0]} to ${destStation.name.split(' ')[0]} are now active on all maps.`);
   };
 
   return (
@@ -263,11 +330,27 @@ export const VesselConfig: React.FC = () => {
                     onChange={(e) => handleStartStationChange(e.target.value)}
                     className="w-full p-2 bg-white border border-[#e0e0e0] rounded-lg text-[12px] text-[#1d1d1f] font-medium"
                   >
-                    {POLAR_STATIONS.map((st) => (
-                      <option key={st.name} value={st.name}>
-                        {st.name}
-                      </option>
-                    ))}
+                    <optgroup label="🇮🇳 Indian Departure Ports (NCPOR Base)">
+                      {POLAR_STATIONS.filter((s) => s.category === 'India').map((st) => (
+                        <option key={st.name} value={st.name}>
+                          {st.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="❄️ Antarctic Research Stations">
+                      {POLAR_STATIONS.filter((s) => s.category === 'Antarctica').map((st) => (
+                        <option key={st.name} value={st.name}>
+                          {st.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="⚓ Oceanic Gateways & Staging Hubs">
+                      {POLAR_STATIONS.filter((s) => s.category === 'Gateway').map((st) => (
+                        <option key={st.name} value={st.name}>
+                          {st.name}
+                        </option>
+                      ))}
+                    </optgroup>
                   </select>
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-neutral-600">
                     <div>
@@ -305,11 +388,27 @@ export const VesselConfig: React.FC = () => {
                     onChange={(e) => handleDestStationChange(e.target.value)}
                     className="w-full p-2 bg-white border border-[#e0e0e0] rounded-lg text-[12px] text-[#1d1d1f] font-medium"
                   >
-                    {POLAR_STATIONS.map((st) => (
-                      <option key={st.name} value={st.name}>
-                        {st.name}
-                      </option>
-                    ))}
+                    <optgroup label="❄️ Antarctic Research Stations">
+                      {POLAR_STATIONS.filter((s) => s.category === 'Antarctica').map((st) => (
+                        <option key={st.name} value={st.name}>
+                          {st.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="🇮🇳 Indian Departure Ports (NCPOR Base)">
+                      {POLAR_STATIONS.filter((s) => s.category === 'India').map((st) => (
+                        <option key={st.name} value={st.name}>
+                          {st.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="⚓ Oceanic Gateways & Staging Hubs">
+                      {POLAR_STATIONS.filter((s) => s.category === 'Gateway').map((st) => (
+                        <option key={st.name} value={st.name}>
+                          {st.name}
+                        </option>
+                      ))}
+                    </optgroup>
                   </select>
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-neutral-600">
                     <div>
@@ -337,14 +436,22 @@ export const VesselConfig: React.FC = () => {
               </div>
             </div>
 
+            {/* Feedback Notification Banner */}
+            {saveSuccessMsg && (
+              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[12px] flex items-center gap-2.5 animate-fadeIn">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span className="font-medium">{saveSuccessMsg}</span>
+              </div>
+            )}
+
             {/* Submit Action */}
-            <div className="pt-3">
+            <div className="pt-2">
               <button
                 type="submit"
-                className="w-full h-12 rounded-full bg-[#0066cc] hover:bg-[#0055b3] active:scale-95 text-white font-semibold text-[15px] flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full h-12 rounded-full bg-[#0066cc] hover:bg-[#0055b3] active:scale-95 text-white font-semibold text-[15px] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
               >
                 <CheckCircle2 className="w-5 h-5 text-white" />
-                <span>Initialize Mission</span>
+                <span>Initialize Mission & Set Routes for All Maps</span>
               </button>
             </div>
           </form>
@@ -362,7 +469,7 @@ export const VesselConfig: React.FC = () => {
                 </h3>
               </div>
               <span className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
-                READY FOR OPTIMIZATION
+                ACTIVE ON ALL CHARTS
               </span>
             </div>
 
@@ -385,19 +492,19 @@ export const VesselConfig: React.FC = () => {
                 <div className="p-2 rounded bg-slate-800/80">
                   <span className="text-[10px] text-slate-400 block">Est. Distance</span>
                   <span className="font-bold text-white">
-                    {createdProfile?.distanceNm || 1845} nm
+                    {createdProfile?.distanceNm || activeRoutes[0]?.totalDistanceNm || 1845} nm
                   </span>
                 </div>
                 <div className="p-2 rounded bg-slate-800/80">
                   <span className="text-[10px] text-slate-400 block">Travel Time</span>
                   <span className="font-bold text-white">
-                    {createdProfile?.estimatedTimeDays || 5.2} Days
+                    {createdProfile?.estimatedTimeDays || (activeRoutes[0]?.estDurationHours ? Number((activeRoutes[0].estDurationHours / 24).toFixed(1)) : 5.2)} Days
                   </span>
                 </div>
                 <div className="p-2 rounded bg-slate-800/80">
                   <span className="text-[10px] text-slate-400 block">Est. Fuel</span>
                   <span className="font-bold text-amber-400">
-                    {createdProfile?.estimatedFuelMt || 146.4} MT
+                    {createdProfile?.estimatedFuelMt || activeRoutes[0]?.fuelBurnTons || 146.4} MT
                   </span>
                 </div>
               </div>
@@ -408,9 +515,9 @@ export const VesselConfig: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/routes')}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#1d1d1f] hover:bg-black text-white text-xs font-medium flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#0066cc] hover:bg-[#0055b3] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
               >
-                <span>Proceed to Route Optimization Engine (Screen 7)</span>
+                <span>Open in Route Optimization Engine</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
 
@@ -419,8 +526,29 @@ export const VesselConfig: React.FC = () => {
                 onClick={() => navigate('/dashboard')}
                 className="w-full py-2 px-4 rounded-xl bg-[#f5f5f7] hover:bg-[#ebebed] text-[#1d1d1f] text-xs font-medium flex items-center justify-center gap-2 transition-all cursor-pointer border border-[#e0e0e0]"
               >
-                <span>Return to Mission Control Dashboard</span>
+                <span>Return to Tactical ECDIS Dashboard</span>
               </button>
+            </div>
+          </div>
+
+          {/* Live Destinated Routes Preview Map */}
+          <div className="bg-white border border-[#e0e0e0] rounded-[18px] p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#0066cc]" />
+                <h3 className="text-[14px] font-semibold text-[#1d1d1f]">
+                  Destinated Corridor Preview
+                </h3>
+              </div>
+              <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                GLOBAL ECDIS SYNC
+              </span>
+            </div>
+            <p className="text-[12px] text-neutral-500">
+              Only routes calculated between <strong>{startStation.name.split(' ')[0]}</strong> and <strong>{destStation.name.split(' ')[0]}</strong> are displayed across all maps.
+            </p>
+            <div className="rounded-xl overflow-hidden border border-[#e0e0e0]">
+              <AntarcticMap heightClass="h-[300px]" customRoutes={activeRoutes} hideControls={true} />
             </div>
           </div>
 
@@ -428,10 +556,10 @@ export const VesselConfig: React.FC = () => {
           <div className="p-4 rounded-[18px] bg-[#fafafc] border border-[#e0e0e0] text-xs space-y-2 text-[#424245]">
             <div className="flex items-center gap-2 font-semibold text-[#1d1d1f]">
               <Info className="w-4 h-4 text-[#0066cc]" />
-              <span>Scientific Note on Polar Class 3 (PC3)</span>
+              <span>Scientific Note on Polar Class ({selectedPolarClass})</span>
             </div>
             <p className="leading-relaxed font-normal text-[12px]">
-              PC3 vessels (such as South Africa's <em>SA Agulhas II</em> and India's proposed Polar Research Vessel) maintain continuous year-round icebreaking capability in thick first-year ice up to 1.8m with RIO values exceeding +10 in moderate floe densities.
+              Vessels classified under {selectedPolarClass} operate with dedicated ice-strengthened hull structures designed to safely traverse second-year and medium first-year sea ice with autonomous risk index outcome (RIO) verification.
             </p>
           </div>
         </div>

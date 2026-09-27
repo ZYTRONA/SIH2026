@@ -17,6 +17,7 @@ import {
 import {
   ROUTE_CANDIDATES,
   ROUTE_RADAR_DATA,
+  RouteCandidateDetail,
   RouteKey,
 } from '@/data/routeOptimizationData';
 import {
@@ -34,13 +35,16 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 interface RouteComparisonViewProps {
   selectedRouteKey: RouteKey;
   onSelectRoute: (key: RouteKey) => void;
+  customCandidates?: RouteCandidateDetail[];
 }
 
 export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
   selectedRouteKey,
   onSelectRoute,
+  customCandidates,
 }) => {
   const [activeTab, setActiveTab] = useState<'metrics' | 'radar' | 'table'>('metrics');
+  const candidates = customCandidates || ROUTE_CANDIDATES;
 
   // Chart data for normalized comparison bars (0 - 100 higher is better score)
   const normalizedBarData = [
@@ -310,7 +314,7 @@ export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
             <thead>
               <tr className="border-b border-[#e0e0e0] text-[#1d1d1f] bg-[#fafafc]">
                 <th className="p-3 text-left font-semibold">Evaluation Dimension</th>
-                {ROUTE_CANDIDATES.map((r) => (
+                {candidates.map((r) => (
                   <th
                     key={r.key}
                     onClick={() => onSelectRoute(r.key)}
@@ -335,12 +339,11 @@ export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
                   <Gauge className="w-3.5 h-3.5 text-[#86868b]" />
                   <span>Voyage Distance</span>
                 </td>
-                <td className="p-3 text-right text-[#424245]">1,342 km (+68 km)</td>
-                <td className="p-3 text-right text-amber-700 font-semibold">1,214 km (MIN)</td>
-                <td className="p-3 text-right text-[#424245]">1,280 km (+6 km)</td>
-                <td className="p-3 text-right text-[#0066cc] font-semibold bg-[#fafafc]">
-                  1,274 km (Baseline)
-                </td>
+                {candidates.map((r) => (
+                  <td key={r.key} className={`p-3 text-right ${r.key === selectedRouteKey ? 'font-semibold text-[#0066cc] bg-[#0066cc]/5' : ''}`}>
+                    {r.distanceFormatted || `${r.distanceKm} km`}
+                  </td>
+                ))}
               </tr>
 
               {/* ETA Row */}
@@ -349,12 +352,11 @@ export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
                   <Clock className="w-3.5 h-3.5 text-[#86868b]" />
                   <span>Estimated Transit Time</span>
                 </td>
-                <td className="p-3 text-right text-[#424245]">45h 12m (+3h 20m)</td>
-                <td className="p-3 text-right text-amber-700 font-semibold">38h 40m (FASTEST)</td>
-                <td className="p-3 text-right text-[#424245]">42h 10m (+18m)</td>
-                <td className="p-3 text-right text-[#0066cc] font-semibold bg-[#fafafc]">
-                  41h 52m (Balanced)
-                </td>
+                {candidates.map((r) => (
+                  <td key={r.key} className={`p-3 text-right ${r.key === selectedRouteKey ? 'font-semibold text-[#0066cc] bg-[#0066cc]/5' : ''}`}>
+                    {r.etaFormatted}
+                  </td>
+                ))}
               </tr>
 
               {/* Fuel Row */}
@@ -363,12 +365,11 @@ export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
                   <Fuel className="w-3.5 h-3.5 text-[#86868b]" />
                   <span>Fuel Consumption</span>
                 </td>
-                <td className="p-3 text-right text-[#424245]">88.2 m³ (+5.6 m³)</td>
-                <td className="p-3 text-right text-[#424245]">84.7 m³ (+2.1 m³)</td>
-                <td className="p-3 text-right text-emerald-700 font-semibold">79.4 m³ (LOWEST)</td>
-                <td className="p-3 text-right text-[#0066cc] font-semibold bg-[#fafafc]">
-                  82.6 m³ (Optimal)
-                </td>
+                {candidates.map((r) => (
+                  <td key={r.key} className={`p-3 text-right ${r.key === selectedRouteKey ? 'font-semibold text-[#0066cc] bg-[#0066cc]/5' : ''}`}>
+                    {r.fuelFormatted || `${r.fuelM3} m³`}
+                  </td>
+                ))}
               </tr>
 
               {/* Risk Row */}
@@ -377,12 +378,11 @@ export const RouteComparisonView: React.FC<RouteComparisonViewProps> = ({
                   <Shield className="w-3.5 h-3.5 text-[#86868b]" />
                   <span>POLARIS Risk Index</span>
                 </td>
-                <td className="p-3 text-right text-emerald-700 font-semibold">12 / 100 (SAFEST)</td>
-                <td className="p-3 text-right text-rose-700 font-semibold">41 / 100 (HIGH)</td>
-                <td className="p-3 text-right text-[#1d1d1f] font-normal">26 / 100 (LOW)</td>
-                <td className="p-3 text-right text-[#0066cc] font-semibold bg-[#fafafc]">
-                  24 / 100 (LOW)
-                </td>
+                {candidates.map((r) => (
+                  <td key={r.key} className={`p-3 text-right ${r.key === selectedRouteKey ? 'font-semibold text-[#0066cc] bg-[#0066cc]/5' : ''}`}>
+                    {r.riskFormatted || `${r.riskScore} / 100`}
+                  </td>
+                ))}
               </tr>
 
               {/* Icebreaker Requirement */}

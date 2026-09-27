@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { AntarcticMap } from '@/components/map/AntarcticMap';
+import { useAppStore } from '@/store/useAppStore';
 import {
   ForecastTimelineControls,
   SeaIceSummarySidebar,
@@ -34,9 +35,13 @@ import {
 const HORIZON_SEQUENCE: ForecastHorizonKey[] = ['Current', '+24h', '+48h', '+72h', '+7 Days'];
 
 export const SeaIceForecast: React.FC = () => {
+  const storeRoutes = useAppStore((s) => s.activeRoutes);
+  const storeSelectedRouteId = useAppStore((s) => s.selectedRouteId);
+  const routes = (storeRoutes && storeRoutes.length > 0) ? storeRoutes : ROUTE_PATHS_DATA;
+
   const [activeHorizon, setActiveHorizon] = useState<ForecastHorizonKey>('Current');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [selectedRouteKey, setSelectedRouteKey] = useState<string>('route-balanced');
+  const [selectedRouteKey, setSelectedRouteKey] = useState<string>(storeSelectedRouteId || routes[0]?.id || 'route-opt-balanced');
   const [sarThreshold, setSarThreshold] = useState<number>(-14.5);
   const [thicknessOverride, setThicknessOverride] = useState<number>(1.25);
   const [driftVelocityOverride, setDriftVelocityOverride] = useState<number>(1.2);
@@ -238,7 +243,7 @@ export const SeaIceForecast: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-1.5 overflow-x-auto">
-                {ROUTE_PATHS_DATA.map((r) => {
+                {routes.map((r) => {
                   const isSelected = r.id === selectedRouteKey;
                   return (
                     <button
@@ -250,7 +255,7 @@ export const SeaIceForecast: React.FC = () => {
                           : 'bg-[#f5f5f7] hover:bg-[#ebebed] text-[#1d1d1f] border border-[#e0e0e0]'
                       }`}
                     >
-                      {r.name} ({r.safetyScore}%)
+                      {r.name.split(' (')[0]} ({r.safetyScore}%)
                     </button>
                   );
                 })}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AntarcticMap } from '@/components/map/AntarcticMap';
+import { useAppStore } from '@/store/useAppStore';
 import { MapLayerVisibility } from '@/types/map';
 import {
   ShieldCheck,
@@ -19,6 +20,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+
+  // Connect to Global Mission Store (Source of Truth configured in Vessel Setup)
+  const departure = useAppStore((s) => s.departureLocation);
+  const destination = useAppStore((s) => s.destinationLocation);
+  const activeRoutes = useAppStore((s) => s.activeRoutes);
+  const vesselName = useAppStore((s) => s.vesselName);
+  const optimalRoute = activeRoutes[0];
 
   // 1. Operational State
   const [isOnline, setIsOnline] = useState<boolean>(true);
@@ -116,7 +124,7 @@ export const Dashboard: React.FC = () => {
               </span>
               <span className="hidden sm:inline text-neutral-600">|</span>
               <span className="hidden sm:inline text-[13px] text-[#cccccc] font-normal">
-                Prydz Bay Corridor &bull; 68°34.8' S, 77°58.2' E
+                {(departure.name || 'Departure').split('(')[0].trim()} &rarr; {(destination.name || 'Destination').split('(')[0].trim()} Corridor &bull; {optimalRoute?.totalDistanceNm ?? 1845} NM
               </span>
             </div>
 
@@ -273,7 +281,7 @@ export const Dashboard: React.FC = () => {
             <div className="absolute bottom-4 left-4 z-[400] px-4 py-2 rounded-full bg-[#272729]/80 border border-neutral-700 backdrop-blur-md text-[12px] text-[#cccccc] flex items-center gap-4 hidden sm:flex">
               <div className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#2997ff]" />
-                <span className="text-white">SA Agulhas II</span>
+                <span className="text-white">{vesselName}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="h-1 w-5 bg-emerald-400 rounded-full" />
@@ -346,26 +354,26 @@ export const Dashboard: React.FC = () => {
           {/* Card 5: ETA */}
           <div className="apple-card p-5 space-y-1">
             <span className="text-[12px] text-neutral-500 font-normal uppercase block">
-              ETA (Bharati Base)
+              ETA ({(destination.name || 'Target Base').split('(')[0].trim()})
             </span>
             <div className="text-[34px] font-semibold text-[#1d1d1f] tracking-tight">
-              4d 06h
+              {optimalRoute?.etaFormatted || '4d 06h'}
             </div>
             <span className="text-[12px] text-[#0066cc] font-normal block">
               14.8 kts SOG
             </span>
           </div>
 
-          {/* Card 6: Distance Left */}
+          {/* Card 6: Total Distance */}
           <div className="apple-card p-5 space-y-1">
             <span className="text-[12px] text-neutral-500 font-normal uppercase block">
-              Distance Left
+              Route Distance
             </span>
             <div className="text-[34px] font-semibold text-[#1d1d1f] tracking-tight">
-              840 NM
+              {optimalRoute?.totalDistanceNm || 840} NM
             </div>
             <span className="text-[12px] text-neutral-500 font-normal block">
-              Remaining Voyage
+              Destinated Corridor
             </span>
           </div>
         </div>

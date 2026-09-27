@@ -34,7 +34,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-export type BasemapMode = 'voyager' | 'openseamap' | 'esriOcean' | 'satellite' | 'polar' | 'osm';
+export type BasemapMode = 'voyager' | 'openseamap' | 'esriOcean' | 'satellite' | 'polar' | 'osm' | 'dark';
 
 export interface MapControlsProps {
   layers: MapLayerVisibility;

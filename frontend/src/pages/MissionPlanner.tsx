@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { AntarcticMap } from '@/components/map/AntarcticMap';
+import { useAppStore } from '@/store/useAppStore';
 import {
   MissionForm,
   MissionProgressPipeline,
@@ -8,14 +9,20 @@ import {
 } from '@/components/mission';
 import { missionService } from '@/services/missionService';
 import { MissionConfig, MissionPlanResult, PipelineStage } from '@/types';
+import { RoutePath } from '@/types/map';
+import { generateDynamicRoutes } from '@/utils/dynamicPolarRouting';
 import { Sparkles, Radio, CheckCircle } from 'lucide-react';
 
 export const MissionPlanner: React.FC = () => {
+  const storeRoutes = useAppStore((s) => s.activeRoutes);
+  const setVoyageEndpoints = useAppStore((s) => s.setVoyageEndpoints);
+
   const [pipelineState, setPipelineState] = useState<'idle' | 'running' | 'completed'>('idle');
   const [currentStage, setCurrentStage] = useState<PipelineStage>('ingestion');
   const [progressPct, setProgressPct] = useState<number>(0);
   const [progressMessage, setProgressMessage] = useState<string>('');
   const [planResult, setPlanResult] = useState<MissionPlanResult | null>(null);
+  const [activeRoutes, setActiveRoutes] = useState<RoutePath[] | undefined>(undefined);
 
   const handleGeneratePlan = async (config: MissionConfig) => {
     setPipelineState('running');
@@ -23,6 +30,20 @@ export const MissionPlanner: React.FC = () => {
     setCurrentStage('ingestion');
 
     try {
+      const dynRoutes = generateDynamicRoutes({
+        origin: { name: config.startLocation.name, lat: config.startLocation.lat, lng: config.startLocation.lng },
+        destination: { name: config.destination.name, lat: config.destination.lat, lng: config.destination.lng },
+        polarClass: config.polarCapability,
+        vesselSpeedKts: 14.5,
+      });
+      setActiveRoutes(dynRoutes);
+      setVoyageEndpoints(
+        { name: config.startLocation.name, lat: config.startLocation.lat, lng: config.startLocation.lng },
+        { name: config.destination.name, lat: config.destination.lat, lng: config.destination.lng },
+        config.polarCapability,
+        14.5
+      );
+
       const result = await missionService.generateNavigationPlan(
         config,
         (stage, pct, msg) => {
@@ -120,7 +141,10 @@ export const MissionPlanner: React.FC = () => {
               Live AIS Waypoint Synchronization
             </span>
           </div>
-          <AntarcticMap heightClass="h-[520px] sm:h-[600px] lg:h-[680px]" />
+          <AntarcticMap
+            customRoutes={activeRoutes || storeRoutes}
+            heightClass="h-[520px] sm:h-[600px] lg:h-[680px]"
+          />
         </div>
       </div>
     </PageContainer>

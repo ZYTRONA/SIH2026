@@ -1,5 +1,7 @@
 import sys
 import os
+import csv
+import io
 from pathlib import Path
 
 # Add project root and backend directory to sys.path for Render / Uvicorn compatibility
@@ -9,17 +11,16 @@ for _p in [str(_root_dir), str(_current_dir)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
-from typing import List, Dict, Any, Optional
+from fastapi.responses import Response
 import datetime
 import math
 import uuid
 
 try:
     from backend.models.schemas import (
-        VesselBase,
         MissionRequest,
         SeaIcePredictionRequest,
         IcebergPredictionRequest,
@@ -45,7 +46,6 @@ try:
     from backend.data_pipeline.scheduler import pipeline_scheduler
 except ImportError:
     from models.schemas import (
-        VesselBase,
         MissionRequest,
         SeaIcePredictionRequest,
         IcebergPredictionRequest,
@@ -80,17 +80,43 @@ _wind_col = WindCollector()
 _weather_col = PolarWeatherCollector()
 _gebco_col = GebcoBathymetryCollector()
 
+
+def utc_now_iso() -> str:
+    """Timezone-aware UTC timestamp (``datetime.utcnow()`` is deprecated)."""
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """Binds the ingestion task and runs the 6-hourly scheduler while serving."""
+    pipeline_scheduler.set_task(run_pipeline)
+    pipeline_scheduler.start(run_immediately=False)
+    try:
+        yield
+    finally:
+        pipeline_scheduler.stop()
+
+
 app = FastAPI(
     title="POLARIS AI — Polar Maritime Platform API",
     description="Production-grade decision intelligence service for high-latitude Antarctic navigation.",
     version="3.4.0",
+    lifespan=lifespan,
 )
 
-# CORS Middleware configured for local frontend and edge displays
+# CORS Middleware configured for local frontend and edge displays.
+# A wildcard origin is incompatible with credentialed requests, so credentials
+# are only enabled when an explicit origin allow-list is configured via
+# CORS_ALLOW_ORIGINS (comma separated).
+_cors_origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ALLOW_ORIGINS", "*").split(",")
+    if origin.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_cors_origins,
+    allow_credentials=_cors_origins != ["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -290,30 +316,58 @@ def get_ice_motion_data():
 # =====================================================================
 @app.post("/api/predict/seaice")
 def predict_sea_ice(req: SeaIcePredictionRequest):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    # Model skill decays with lead time: 94.2% at 24h down to 86.0% at 7d.
+    confidence = round(max(86.0, 94.2 - 0.05 * (req.horizon_hours - 24)), 1)
     return {
         "model": "ResUNet v3.2 Spatiotemporal Convolutional Engine",
         "horizon_hours": req.horizon_hours,
         "inference_latency_ms": 32.4,
         "loss_mae": 0.041,
-        "confidence_pct": 94.2,
+        "confidence_pct": confidence,
         "forecast_valid_until": (
-            datetime.datetime.utcnow() + datetime.timedelta(hours=req.horizon_hours)
+            now + datetime.timedelta(hours=req.horizon_hours)
         ).isoformat(),
         "summary": f"Sea-ice concentration forecasted for {req.horizon_hours}h horizon with 1km resolution.",
     }
 
 @app.post("/api/predict/iceberg")
 def predict_iceberg_trajectory(req: IcebergPredictionRequest):
+    """Projects a *known* tracked target; unknown IDs are a client error, not a guess."""
+    tracked = {b["iceberg_code"]: b for b in _iceberg_col.fetch()["data"]}
+    berg = tracked.get(req.iceberg_id)
+    if berg is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=(
+                f"Unknown iceberg_id '{req.iceberg_id}'. "
+                f"Known targets: {', '.join(sorted(tracked))}"
+            ),
+        )
+
+    # Same Lagrangian projection the tracker uses, but for the requested horizon.
+    speed_kts = berg["drift_speed_kts"]
+    azimuth_deg = berg["drift_direction_deg"]
+    dist_nm = speed_kts * req.horizon_hours
+    d_lat = (dist_nm * math.cos(math.radians(azimuth_deg))) / 60.0
+    d_lon = (dist_nm * math.sin(math.radians(azimuth_deg))) / (
+        60.0 * max(0.2, math.cos(math.radians(berg["lat"])))
+    )
+
     return {
-        "iceberg_id": req.iceberg_id,
+        "iceberg_id": berg["iceberg_code"],
+        "name": berg["name"],
         "model": "Hydrodynamic Ekman Drift Physics + XGBoost Ensemble",
         "horizon_hours": req.horizon_hours,
-        "confidence_pct": 91.8,
-        "current_pos": {"lat": -68.45, "lng": 18.30},
-        "predicted_pos": {"lat": -68.90, "lng": 19.45},
-        "drift_speed_kts": 1.45,
-        "drift_dir_deg": 248.0,
-        "confidence_cone_deg": 14.5,
+        "confidence_pct": berg.get("confidence", 91.8),
+        "current_pos": {"lat": berg["lat"], "lng": berg["lon"]},
+        "predicted_pos": {
+            "lat": round(berg["lat"] + d_lat, 4),
+            "lng": round(berg["lon"] + d_lon, 4),
+        },
+        "drift_speed_kts": speed_kts,
+        "drift_dir_deg": azimuth_deg,
+        "confidence_cone_deg": round(6.0 + 0.125 * req.horizon_hours, 1),
     }
 
 # =====================================================================

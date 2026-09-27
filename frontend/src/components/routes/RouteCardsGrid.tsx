@@ -19,12 +19,16 @@ import { Badge } from '@/components/ui/badge';
 interface RouteCardsGridProps {
   selectedRouteKey: RouteKey;
   onSelectRoute: (key: RouteKey) => void;
+  customCandidates?: RouteCandidateDetail[];
 }
 
 export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
   selectedRouteKey,
   onSelectRoute,
+  customCandidates,
 }) => {
+  const candidates = customCandidates || ROUTE_CANDIDATES;
+
   return (
     <div className="space-y-3 select-none">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
@@ -40,7 +44,7 @@ export const RouteCardsGrid: React.FC<RouteCardsGridProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {ROUTE_CANDIDATES.map((route: RouteCandidateDetail) => {
+        {candidates.map((route: RouteCandidateDetail) => {
           const isSelected = route.key === selectedRouteKey;
           const isRecommended = route.isRecommended;
 

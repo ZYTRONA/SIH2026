@@ -15,6 +15,7 @@ import {
   NavigationPriority,
   ForecastHorizon,
 } from '@/types';
+import { useAppStore } from '@/store/useAppStore';
 import {
   Select,
   SelectContent,
@@ -30,6 +31,7 @@ interface MissionFormProps {
 
 const START_PRESETS = [
   { name: 'Maitri Station Offshore Fairway (-70.77°S, 11.73°E)', lat: -70.7700, lng: 11.7300 },
+  { name: 'Cape Town Port Gateway (-33.92°S, 18.42°E)', lat: -33.9200, lng: 18.4200 },
   { name: 'Novolazarevskaya Station (-70.77°S, 11.83°E)', lat: -70.7700, lng: 11.8300 },
   { name: 'Showa Station / Queen Maud Land (-69.00°S, 39.58°E)', lat: -69.0042, lng: 39.5819 },
   { name: 'Molodezhnaya Base (-67.66°S, 45.85°E)', lat: -67.6644, lng: 45.8500 },
@@ -37,6 +39,7 @@ const START_PRESETS = [
 
 const DESTINATION_PRESETS = [
   { name: 'Bharati Station (Larsemann Hills) (-69.41°S, 76.19°E)', lat: -69.4100, lng: 76.1900 },
+  { name: 'Prydz Bay Anchorage (-68.50°S, 74.00°E)', lat: -68.5000, lng: 74.0000 },
   { name: 'Zhongshan Station / Prydz Bay (-69.37°S, 76.38°E)', lat: -69.3731, lng: 76.3781 },
   { name: 'Progress Station (-69.38°S, 76.39°E)', lat: -69.3783, lng: 76.3889 },
   { name: 'Mawson Station (-67.60°S, 62.87°E)', lat: -67.6044, lng: 62.8739 },
@@ -46,14 +49,23 @@ export const MissionForm: React.FC<MissionFormProps> = ({
   onSubmit,
   isLoading = false,
 }) => {
-  const [vessel, setVessel] = useState<MissionConfig['vessel']>('Polar Research Vessel');
-  const [polarCapability, setPolarCapability] = useState<PolarCapability>('PC3');
-  const [startName, setStartName] = useState('Maitri Station Offshore Fairway');
-  const [startLat, setStartLat] = useState(-70.7700);
-  const [startLng, setStartLng] = useState(11.7300);
-  const [destName, setDestName] = useState('Bharati Station (Larsemann Hills)');
-  const [destLat, setDestLat] = useState(-69.4100);
-  const [destLng, setDestLng] = useState(76.1900);
+  const storeOrigin = useAppStore((s) => s.departureLocation);
+  const storeDest = useAppStore((s) => s.destinationLocation);
+  const storePolarClass = useAppStore((s) => s.polarClass);
+  const storeVesselName = useAppStore((s) => s.vesselName);
+
+  const [vessel, setVessel] = useState<MissionConfig['vessel']>(
+    (storeVesselName as MissionConfig['vessel']) || 'Polar Research Vessel'
+  );
+  const [polarCapability, setPolarCapability] = useState<PolarCapability>(
+    (storePolarClass as PolarCapability) || 'PC3'
+  );
+  const [startName, setStartName] = useState(storeOrigin.name || 'Maitri Station Offshore Fairway');
+  const [startLat, setStartLat] = useState(storeOrigin.lat);
+  const [startLng, setStartLng] = useState(storeOrigin.lng);
+  const [destName, setDestName] = useState(storeDest.name || 'Bharati Station (Larsemann Hills)');
+  const [destLat, setDestLat] = useState(storeDest.lat);
+  const [destLng, setDestLng] = useState(storeDest.lng);
   const [missionDate, setMissionDate] = useState('2026-09-15');
   const [departureTime, setDepartureTime] = useState('06:00 UTC');
   const [navigationPriority, setNavigationPriority] = useState<NavigationPriority>('Balanced');

@@ -6,3 +6,6 @@ export * from './IcebergMarker';
 export * from './RouteLayer';
 export * from './RiskLayer';
 export * from './SeaIceLayer';
+export * from './FromToRouteSelector';
+export * from './MultiMapBar';
+export * from './MultiMapContainer';
